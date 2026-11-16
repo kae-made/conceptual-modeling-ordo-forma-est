@@ -26,9 +26,10 @@
 本研究は、厳密な数理的・工学的定式化（**Paper 0〜3**）と、そこから導かれる哲学的・宇宙論的帰結（**Paper 4**）の二層構造で順次公開する。
 
 ### 【Paper 0】基礎存在論・認識論（公開済み / Published）
+### 【Paper 0】基礎存在論・認識論（公開済み / Published — 2026年11月16日）
 * **タイトル：** 関係基底の存在論と意味の場の圏論的定式化：言語的多義性による構造崩壊とユニバースの内包としての現象
   （*Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe*）
-* **DOI：** *v1.0.0 リリース後に記載*
+* **DOI：** [`10.5281/zenodo.24267213`](https://doi.org)（英語版初版 v1.0.0：[`10.5281/zenodo.24267214`](https://doi.org)）
 * **ファイル：**
   * 英語版： `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.pdf`
   * 日本語版： `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.jp.pdf`

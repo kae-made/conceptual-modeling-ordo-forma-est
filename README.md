@@ -25,11 +25,9 @@ This research program builds upon the practical and structural principles of con
 The series is structured into two tiers: rigorous mathematical and engineering formalizations (**Papers 0–3**), followed by their philosophical and cosmological implications (**Paper 4**).
 
 
-### [Paper 0] Foundational Ontology and Epistemology *(Published)*
+### [Paper 0] Foundational Ontology and Epistemology *(Published — Nov 16, 2026)*
 * **Title:** *Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe*
-* **DOI:** *To be issued upon v1.0.0 release*
-* **Files:**
-  * English Version: `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.pdf`
+* **DOI:** [`10.5281/zenodo.24267213`](https://doi.org) (v1.0.0 English Version: [`10.5281/zenodo.24267214`](https://doi.org))
 * **Files:**
   * English Version: `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.pdf`
   * Japanese Version: `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.jp.pdf`
