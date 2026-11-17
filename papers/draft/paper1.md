@@ -1,6 +1,4 @@
 # 概念情報モデリングの圏論的基礎：厳密なスキーマ表現、同型性、および思考の有限性のもとでの漸近的接近
-（サブタイトル別案：――単一の意味の場における存在保証と構造の厳密化――）
-
 
 ## 要旨（Abstract）
 前稿（Paper 0）において、我々は関係（スパン構造）を実在の基底とする存在論を出発点とし、日常言語の多義性による構造崩壊を回避するために世界が複数の「意味の場（Fields of Sense）」と「ブリッジ」からなるユニバースとして分節化されていることを定式化した。さらに、観測される「現象」はユニバースの「内包」であり、観測結果のみから背後の全体構造を一意に逆算することは原理的に不可能であることを証明した。
@@ -167,7 +165,7 @@ $$m_O, m_T \in \{\, \mathbf{1},\; \mathbf{0..1},\; \mathbf{1..*},\; \mathbf{*} \
 
 概念情報モデルにおける各リレーションシップの定義は、インスタンスモデルの状態を記述する基本命題文（Elementary Propositional Sentences）のテンプレートを自動導出する。
 1. **二項リレーションシップ（Binary）の場合：** インスタンス $o:O$ と $t:T$ に対し、双方向の命題文
-   $$\text{「}\underline{o:O}\;\; P_T \;\;\underline{t:T}\text{」} \quad \text{および} \quad \text{「}\underline{t:T}\;\; P_O \;\;\underline{o:O}\text{」}\$$
+   $$\text{「}\underline{o:O}\;\; P_T \;\;\underline{t:T}\text{」} \quad \text{および} \quad \text{「}\underline{t:T}\;\; P_O \;\;\underline{o:O}\text{」}$$
    が導出される。
 2. **特化関係（Is-a）の場合：** スーパー側 $O$ とサブ側 $T$ に対し、命題文 $\text{「}\underline{t:T}\;\; \text{is-a} \;\;\underline{o:O}\text{」}$ が導出される。
 3. **関連クラス（Associative）の場合：** 関連クラス $A$ のインスタンス $a:A$ に対し、$\text{「}\underline{a:A}\;\; P_O \;\;\underline{o:O}\text{」}$ および $\text{「}\underline{a:A}\;\; P_T \;\;\underline{t:T}\text{」}$ が導出される。
@@ -180,7 +178,7 @@ $$m_O, m_T \in \{\, \mathbf{1},\; \mathbf{0..1},\; \mathbf{1..*},\; \mathbf{*} \
 **定義 3.4（参照特徴値の可換分解：公理 C-1.5, C-4）**
 
 概念クラス $B$ がリレーションシップ $r : B \to A$ を介して概念クラス $A$ を参照するとき、$B$ 側に付与される参照特徴値の組 $\beta_{B \to A} : B \to \prod_{j=1}^k T_{i_j}$ は、独立に定義された静的データ型ではなく、$A$ のいずれかの識別子射 $\alpha_I = \langle \mathrm{attr}_{i_1}, \dots, \mathrm{attr}_{i_k} \rangle : A \to \prod_{j=1}^k T_{i_j}$ とリレーション射 $r$ の **合成射（Composition）** として、以下の可換図式を満たすように等式拘束される。
-$$\beta_{B \to A} = \alpha_I \circ r\$$
+$$\beta_{B \to A} = \alpha_I \circ r$$
 
 ```text
           r
@@ -360,19 +358,10 @@ $\blacksquare$
 * **記法そのものに意味保証はない：** 単なる箱と線の図式を描くだけでは、そこに定義されたクラスが識別子（モニック射）を持つのか、`Is-a` が排他直和分解（$S \cong \coprod C_i$）なのか、それとも単なる実装上の継承や曖昧な `0..1` の放置なのかは確定しない。意味論（Semantics）を欠いた図式表現は、どれほど精密に見えても無意味な落書きに陥る危険を常に孕んでいる。
 * **厳密な意味論を背景に据えたときの記法の復権：** 逆に、モデラーが本稿で証明した圏論的意味論（第2章〜第5章の公理系と制約）をバックグラウンドとして明確に把握した上で記述するならば、UML のクラス図や ER図といった既存の国際標準記法であっても、 **商 2-圏 $\mathcal{C}$ の厳密な構造を過不足なく表現する正当な言語として完全に機能する**。さらに、定理 5.2（同型定理）が示す通り、どの記法（図式であれテキスト形式であれ）を採用したとしても、厳密化の条件を満たす限り、その背後にある意味構造はすべて互いに圏同値（同型）な同一のモデルへと帰着する。
 
-したがって、実務におけるモデリング教育や設計レビューの本質は、特定の記法の文法を暗記することではなく、 **アブダクションと構造精密化（サブクラス化・関連クラス化）を通じて、背後のスキーマ圏 $\mathcal{C}$ から曖昧さを削ぎ落とし、同型な真の構造へと近づけていく思考の訓練** にあると言える。
+なお、記法と意味論を峻別するこの視座からは、従来の UML ツール等でしばしば理想とされてきた「要求モデル $\to$ 設計モデル $\to$ 実装コード $\to$ 要求モデル」という可逆的なラウンドトリップ変換が原理的に成り立たないことも自然に示唆される。要求（問題領域の意味の場）と実装（実行プラットフォームの意味の場）はそもそも異なるスキーマ圏に属しており、非機能要件という境界条件を伴う変換は本質的に一方向（不可逆）であるためである（この構造変換の非対称性については Paper 3 にて厳密に定式化する）。したがって、実務におけるモデリングの本質は、コードからの逆変換に頼ることではなく、 **アブダクションと構造精密化（サブクラス化・関連クラス化）を通じて、背後のスキーマ圏 $\mathcal{C}$ から曖昧さを削ぎ落とし、同型な真の構造へと近づけていく思考の営み** にあると言える。
 
-### 6.2 哲学的・認識論的意義：批判に対する形式の堅牢性
-本稿の成果は、工学的な設計手法にとどまらず、前稿（Paper 0）から続く哲学・認識論の議論に対しても決定的な防壁を築く。
 
-人文系の哲学や科学哲学の立場から、「モデリングによる世界の分節化は人間の主観的な押し付けに過ぎないのではないか」「実在と認識の接続が飛躍しているのではないか」という批判が投げかけられることがある。しかし、本稿で確立した枠組みのもとでは、その批判を行う側自身が **「実在」「認識」「飛躍」といった概念を、本稿と同等以上に厳密かつ無矛盾なスキーマ圏として定義して提示する義務** を負うことになる。
-
-* もし批判者が曖昧な日常言語のまま議論を続けるならば、Paper 0 で証明した通り、その議論自体が多義性による構造崩壊（恒等射への縮退）を起こしており、厳密な体系を批判する論理的基盤を持たない。
-* 逆に、批判者が自身の主張を矛盾なく厳密な形式へと定式化することに成功したならば、本稿の **定理 5.2（同型定理）** により、その厳密化された体系は本稿の枠組みと数学的に同型（圏同値）であることに帰着する。
-
-このように、本稿で定式化した「厳密なスキーマ圏の形式」は、任意の領域における有意味な言説が成立するための普遍的な基準（基盤形式）として機能する。
-
-### 6.3 結論と次稿（Paper 2）への展望
+### 6.2 結論と次稿（Paper 2）への展望
 本稿（Paper 1）では、Paper 0 で提示した「関係基底の存在論と意味の場のユニバース」を受け継ぎ、単一の意味の場における静的な意味構造（概念情報モデル）の記述形式を商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ として厳密に定式化した。そして、データ型の厳密な分類、単一・複合識別子（モニック射）、両端に意味的フレーズ（2-射）と4種の多重度を持つ双方向リレーションシップ、参照特徴値の可換図式、排他直和分解としての `Is-a`、多脚スパン頂点としての関連クラス、および自己ループ排除公理という一見厳格な諸制約こそが、実は以下の3つの根源的命題をすべて肯定するための必要十分条件であることを証明した。
 
 1. **存在の肯定（定理 5.1）：** 厳密な制約を備えたスキーマ圏 $\mathcal{C}$ に対しては、矛盾のない健全なインスタンス関手が構成的に存在し（$\mathrm{Valid}(\mathcal{C}) \neq \emptyset$）、スキーマ圏は実効的な存在の形式として確実に実在する。
@@ -381,3 +370,20 @@ $\blacksquare$
 
 本稿によって、単一の意味の場における「静的な存在の形式（空間の骨格）」は完全に確立された。次稿（**Paper 2**）では、この厳密な静的スキーマ圏 $\mathcal{C}$ の上で生起する **「時間の経過と状態の動的変化」** へと議論を進める。具体的には、各概念クラスに随伴する状態モデル（状態遷移）と、プロセス入出力を記述するデータフロー型アクションモデル、さらには外部境界条件や形式への言及としての実行セマンティクス（非機能的制約や不変条件）を組み込み、 **意味の場の動的振る舞い全体が対称モノイド圏（Symmetric Monoidal Category）として閉じ、離散的な状態遷移でありながら連続的な現実の変化をも矛盾なく描写できること** を厳密に証明する。
 
+## 参考文献（References）
+
+1. **Ota, H. (2026).** *Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe* (Version 1.0.1). Zenodo. DOI: [10.5281/zenodo.24267213](https://doi.org)
+2. **Mac Lane, S. (1998).** *Categories for the Working Mathematician* (2nd ed.). Springer.
+3. **Lawvere, F. W. (1963).** *Functorial Semantics of Algebraic Theories*. Proceedings of the National Academy of Sciences of the United States of America, 50(5), 869–872.
+4. **Gabriel, P., & Ulmer, F. (1971).** *Lokal präsentierbare Kategorien*. Lecture Notes in Mathematics, Vol. 221, Springer.
+5. **Spivak, D. I. (2012).** *Functorial Data Migration*. Information and Computation, 217, 31–51.
+6. **Barr, M., & Wells, C. (1990).** *Category Theory for Computing Science*. Prentice Hall.
+7. **Mac Lane, S., & Moerdijk, I. (1992).** *Sheaves in Geometry and Logic: A First Introduction to Topos Theory*. Springer.
+8. **Peirce, C. S. (1903/1998).** *Pragmatism as the Logic of Abduction*. In *The Essential Peirce: Selected Philosophical Writings*, Vol. 2 (1893–1913), Indiana University Press.
+9. **Gabriel, M. (2015).** *Fields of Sense: A New Realist Ontology*. Edinburgh University Press.
+10. **Wittgenstein, L. (1921/1922).** *Tractatus Logico-Philosophicus*. Kegan Paul, Trench, Trubner & Co.
+11. **Shlaer, S., & Mellor, S. J. (1988).** *Object-Oriented Systems Analysis: Modeling the World in Data*. Yourdon Press.
+12. **Shlaer, S., & Mellor, S. J. (1992).** *Object Lifecycles: Modeling the World in States*. Yourdon Press.
+13. **Mellor, S. J., & Balcer, M. J. (2002).** *Executable UML: A Foundation for Model-Driven Architecture*. Addison-Wesley.
+14. **Chen, P. P. (1976).** *The Entity-Relationship Model—Toward a Unified View of Data*. ACM Transactions on Database Systems, 1(1), 9–36.
+15. **Codd, E. F. (1970).** *A Relational Model of Data for Large Shared Data Banks*. Communications of the ACM, 13(6), 377–387.
