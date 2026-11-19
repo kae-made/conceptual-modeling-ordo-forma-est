@@ -1,0 +1,540 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={Category-Theoretic Foundations of Conceptual Information Modeling},
+    pdfauthor={Hiroshi Ota}
+}
+
+% Theorem environments
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}{Axiom}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+
+% Custom macros
+\newcommand{\Ob}{\mathrm{Ob}}
+\newcommand{\Valid}{\mathrm{Valid}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\colim}{\operatorname{colim}}
+\newcommand{\TwoSet}{\mathbf{2\text{-}Set}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Dstatic}{\mathcal{D}_{\mathrm{static}}}
+\newcommand{\Dscalar}{\mathcal{D}_{\mathrm{Scalar}}}
+\newcommand{\Duid}{\mathcal{D}_{\mathrm{UID}}}
+\newcommand{\Dref}{\mathcal{D}_{\mathrm{REF}}}
+\newcommand{\Denumint}{\mathcal{D}_{\mathrm{Enum\text{-}Int}}}
+\newcommand{\Denumext}{\mathcal{D}_{\mathrm{Enum\text{-}Ext}}}
+\newcommand{\Dext}{\mathcal{D}_{\mathrm{Ext}}}
+\newcommand{\Dstruct}{\mathcal{D}_{\mathrm{Struct}}}
+\newcommand{\Rsub}{\mathcal{R}_{\mathrm{sub}}}
+\newcommand{\Rassoc}{\mathcal{R}_{\mathrm{assoc}}}
+
+\title{\textbf{Category-Theoretic Foundations of Conceptual Information Modeling:\\
+Rigorous Schema Representation, Isomorphism, and Asymptotic Refinement under Cognitive Finitude}}
+
+\author{Hiroshi Ota\\
+\small Independent Researcher / Knowledge \& Experience\\
+\small \texttt{master@kae-made.jp} \quad | \quad \url{https://www.kae-made.jp}}
+
+\date{November 17, 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+In my preceding paper (Paper 0) \cite{ota2026paper0}, I established an ontology grounded in relations (span structures) rather than isolated objects, formalizing how the world is partitioned into a Universe of multiple ``Fields of Sense'' connected by ``Bridges'' in order to avoid structural collapse caused by the inherent polysemy of everyday language. Furthermore, I demonstrated that observed ``phenomena'' constitute the ``intension'' of this Universe, and proved that it is in principle impossible to uniquely invert or reconstruct the global underlying structure solely from observed phenomena.
+
+Accepting this epistemological limitation, the present paper (Paper 1) aims to provide affirmative mathematical answers to three fundamental questions: (1) For any given Field of Sense, does a valid schema governing its semantic structure necessarily exist? (2) If such a schema exists, is it unique---or mutually isomorphic across different representations? (3) Can human beings, possessing only finite memory and finite cognitive capacity, asymptotically approach the true underlying schema through iterative inquiry?
+
+While modeling (abstraction) is commonly misunderstood as discarding details to render descriptions vague, this paper argues the exact opposite: eliminating ambiguity and establishing a concrete, rigorous structure is a necessary condition for a sound instance model (Field of Sense) to exist without contradiction. Specifically, I formalize the schema governing a single Field of Sense as a finitely complete and finitely cocomplete quotient 2-category equipped with identifiers (monomorphisms), strictly bounded data types, referential properties factored via commutative diagrams, bidirectional relationships bearing semantic phrases (2-morphisms) and four primitive multiplicities, exclusive coproduct decompositions (\texttt{Is-a}), multi-legged spans (associative classes), and axioms prohibiting self-loops (identity-link collapse). Within this rigorous framework, I prove: (i) the expressive completeness of this minimal formalism and the constructive existence of sound models, (ii) the categorical equivalence (isomorphism) of models that adequately capture the same Field of Sense, and (iii) an asymptotic convergence theorem---grounded in the Yoneda Lemma and the Density Theorem---showing how finite human cognition refines initial approximate models (containing \texttt{0..1} or \texttt{Nullable} ambiguities) into the true schema via subclassing and associative-class reification. Finally, I demonstrate that existing visual notations such as UML and ER diagrams function as rigorous, meaningful schema representations only when grounded in the category-theoretic semantics derived herein.
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{Background and Problem Statement: From Limits of Observation to Ontology of Schemas}
+In Paper 0 \cite{ota2026paper0}, starting from an ontology in which relations (span structures) rather than standalone objects (``things'') serve as the primary substrate of reality, I formalized in category-theoretic terms how the world is partitioned into a Universe $\mathcal{U}$ comprising multiple ``Fields of Sense'' \cite{gabriel2015} governed by schema categories and connected via ``Bridges,'' thereby preventing semantic structures from collapsing into trivial identity morphisms under linguistic polysemy. Moreover, I proved that humanly observed ``phenomena'' manifest as the ``intension'' (projection via forgetful functors) of this Universe, and that it is fundamentally impossible to uniquely invert or reconstruct the global underlying structure (schema categories and states) solely from observed phenomena.
+
+This proof of epistemological limitation immediately confronts this inquiry with three fundamental and practical questions:
+\begin{enumerate}
+    \item \textbf{The Question of Existence:} If the underlying structure cannot be uniquely inverted from observation, can one assert that for any given Field of Sense, a valid schema consistently governing its semantic structure \emph{necessarily exists}?
+    \item \textbf{The Question of Uniqueness and Isomorphism:} Assuming a valid schema exists, is it uniquely determined? Or, when multiple models are constructed using different representational forms, do they essentially reduce to being \emph{isomorphic} (categorically equivalent)?
+    \item \textbf{The Question of Asymptotic Refinement:} Given that human beings possess only finite memory and finite cognitive capacity and cannot survey the entire structure at once, is it in principle possible to progressively approach the true underlying schema through iterative trial and error?
+\end{enumerate}
+
+The objective of this paper (Paper 1) is to provide affirmative mathematical answers to all three questions. To achieve this, I deductively derive the rigorous formal specification required to describe the schema of a single Field of Sense---namely, the specification of a \emph{Conceptual Information Model}---using category theory (quotient 2-categories and functorial semantics \cite{maclane1998,lawvere1963}).
+
+The third question, in particular, directly connects to the category-theoretic formalization of \textbf{abduction} (hypothesis formation) \cite{peirce1903} as the primary mode of inference in scientific inquiry and human modeling. Whereas \emph{deduction} (deriving phenomena/intensions from a fixed schema) is uniquely determined, and \emph{induction} (merely accumulating statistical regularities from observed data) cannot identify underlying structural principles, the essence of modeling by finite human minds lies in abductively hypothesizing a schema category $\mathcal{C}$ that most coherently explains observed phenomena, and iteratively refining it through an adjoint interplay of deductive verification and structural revision.
+
+\subsection{Paradigm Shift: Refuting ``Modeling as Vague Abstraction''}
+In conventional software engineering and general modeling practice, there persists a widespread misconception that ``modeling (abstraction) means discarding details to make descriptions rough and ambiguous.'' However, from the perspective of function spaces and functorial semantics, this conventional view is fundamentally flawed.
+
+For a Field of Sense to be said to ``reliably exist as a meaningful structure,'' there must exist non-trivial structure-preserving functors $\mathcal{F}$ (instance models) defined on the schema category $\mathcal{C}$ without internal contradiction ($\Valid(\mathcal{C}) \neq \emptyset$). If a schema is left ambiguous---for instance, if data-type value domains are ill-defined, injective individual identifiers are missing, or undifferentiated exceptions such as \texttt{0..1}, \texttt{Nullable}, and self-referential loops are permitted---then either constraints clash so that no sound model exists at all (structural breakdown), or infinitely many spurious models intrude, making it impossible to claim that the intended Field of Sense uniquely exists (explosion of indeterminacy).
+
+Consequently, \textbf{modeling is not making things vague; rather, it must be the disciplined act of stripping away ambiguity to establish concrete, rigorous boundaries and constraints}. As demonstrated in this paper, the structural constructs of conceptual information modeling---data types, single and composite identifiers, referential properties via commutative diagrams, bidirectional relationships with semantic phrases and four multiplicities, exclusive coproduct decompositions (\texttt{Is-a}), and multi-legged spans (associative classes)---are not mere empirical rules of thumb or notational conventions. They are the \textbf{mathematically necessary and sufficient conditions required for the Universe and Fields of Sense introduced in Paper 0 to subsist without contradiction as forms of reality}.
+
+\subsection{Separation of Syntax and Semantics, and Structure of This Paper}
+
+This conclusion provides decisive guidance for practical modeling. Existing graphical notations such as UML (Unified Modeling Language) class diagrams and ER (Entity-Relationship) diagrams \cite{chen1976} are, in themselves, merely \emph{visual syntaxes} for drawing boxes and lines; the notation alone possesses no power to guarantee the validity of a model. Although UML is backed by the \textbf{MOF (Meta-Object Facility)} \cite{omg2019mof} as a metamodeling infrastructure, MOF relies on a monistic, top-down hierarchy anchored by a single privileged meta-metamodel (M3). Consequently, MOF cannot satisfy the pluralistic, ontological requirement presupposed in Paper 0 and this work---namely, the rejection of a single overarching Universe in favor of autonomous Fields of Sense coexisting on a flat, equal footing. Conversely, when grounded not in a monistic meta-hierarchy but in the category-theoretic and ontological semantics derived herein, existing notations such as UML and ER diagrams function seamlessly as rigorous languages for expressing schemas of Fields of Sense.
+
+The remainder of this paper is organized as follows:
+\begin{itemize}
+    \item \textbf{Section 2} clarifies the phenomenological origin of instance models, defines the basic components of conceptual information models, formalizes the schema category $\mathcal{C}$ of a single Field of Sense as a quotient 2-category ($\mathcal{C} \equiv CG/\mathcal{R}$), establishes the equivalence between instance functors and instance categories via the category of elements, and classifies the seven static data types ($\Dstatic$) while excluding array types.
+    \item \textbf{Section 3} formalizes conceptual classes and identifiers (monomorphisms), bidirectional relationships with four primitive multiplicities, semantic phrases (2-morphisms) and propositional sentence generation, referential properties via commutative diagrams, and structural classifications (\texttt{Is-a} as exclusive coproducts and associative classes as span vertices).
+    \item \textbf{Section 4} establishes the non-degeneracy axiom prohibiting diagonal embedding (identity self-loops) and the closure of internal topos logic defining the boundary of nonsense.
+    \item \textbf{Section 5} proves four foundational theorems within this rigorous framework: (1) the Expressive Completeness Theorem (Theorem~\ref{thm:completeness}), (2) the Constructive Existence Theorem (Theorem~\ref{thm:existence}), (3) the Isomorphism / Categorical Equivalence Theorem (Theorem~\ref{thm:isomorphism}), and (4) the Asymptotic Convergence Theorem under cognitive finitude (Theorem~\ref{thm:convergence}).
+    \item \textbf{Section 6} discusses practical implications for visual notations (including the inherent irreversibility of round-trip engineering) and outlines the transition to dynamic modeling in Paper 2.
+\end{itemize}
+
+\section{Schema Categories and Data Types of a Field of Sense}
+
+\subsection{Instance Models as the Starting Point of Cognition and the Necessity of Classification}
+Before entering the formal definition of a conceptual information model (schema), it is necessary to clarify how models originate in human cognition---namely, the structure of an \textbf{Instance Model}.
+
+As argued in Paper 0 \cite{ota2026paper0}, what human beings first encounter in engaging with the world are ``phenomena'' (the intension of the Universe). From a phenomenological standpoint (akin to Husserl's \emph{epoch\'e}), when we suspend preconceptions and attend directly to immediate phenomena, the primary elements that emerge are individual entities (``objects'' or \emph{instances}) that can be demonstratively pointed out and distinguished in thought, together with their accompanying \emph{property values} (for example, a particular apple before us along with its ``redness'' and ``weight''). Furthermore, as emphasized in the philosophy of language from Frege to Wittgenstein \cite{wittgenstein1922}, the world is not a mere heap of isolated objects, but a network of states of affairs in which objects are interconnected by \textbf{semantic links} bearing bidirectional predicates (phrases).
+
+However, as noted in Paper 0, human beings---constrained by finite memory and finite cognitive capacity---cannot comprehend the world by assigning ad-hoc individual labels to every newly encountered entity and link from scratch. Only by \textbf{classifying} individuals that share common property structures and relational patterns into unified types (templates) can a finite mind bring intelligible order to infinitely varied phenomena. This system of classification governing concrete networks of instances and semantic links (instance models) is precisely what constitutes a \textbf{Conceptual Information Model (Schema)}.
+
+\subsection{Basic Components and Terminological Conventions}
+The comprehensive conceptual model governing structure and behavior within a single Field of Sense comprises three sub-models: the \textbf{Conceptual Information Model} (describing static semantic structure), the State Model (describing temporal state transitions of individuals), and the Data Flow Action Model (describing input-output process transformations). This paper focuses on the category-theoretic formalization of the foundational static layer: the \textbf{Conceptual Information Model}.
+
+Prior to formalization, I stipulate its three primary building blocks:
+\begin{enumerate}
+    \item \textbf{Conceptual Class:} A concept or classification of entities (``objects'') manifesting within a Field of Sense, characterized by a fixed tuple of properties and relationships with other classes. Each conceptual class bears a unique name within its domain, and every individual instance in an instance model is instantiated from exactly one conceptual class.
+    \item \textbf{Property:} An attribute characterizing a conceptual class, bearing a unique name within that class. The admissible values and operations of each property are strictly constrained by a domain-defined \emph{Data Type}.
+    \item \textbf{Relationship:} A semantic relation defined between two conceptual classes (including recursive relations on a single class), serving as the template for \emph{semantic links} connecting individual instances.
+    \begin{itemize}
+        \item \emph{Terminological Note (Relation vs.\ Relationship):} Mathematically and category-theoretically, the construct defined here is strictly a \textbf{Relation} \cite{codd1970}. I adopt the term \textbf{Relationship} solely to maintain terminological alignment with standard conventions in relational database theory and software engineering; conceptually and formally, it denotes a rigorous mathematical relation realized via bidirectional morphisms and span structures.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Construction of the Schema Category as a Quotient 2-Category (Axiom C-Base)}
+A conceptual information model is not a mere collection of boxes and lines; mathematically, it is defined as a \textbf{finitely complete and finitely cocomplete quotient 2-category} obtained by imposing static consistency constraints (congruence relations) upon a free category generated from a directed graph schema.
+
+\begin{definition}[Schema Category $\mathcal{C}$: Axiom C-Base]\label{def:schema-cat}
+For a given Field of Sense, the object space (0-cells) $\Ob(\mathcal{C})$ of its schema category $\mathcal{C}$ is constructed as the disjoint union of three mutually disjoint sets:
+\begin{equation}
+\Ob(\mathcal{C}) = \mathcal{K} \sqcup \Dstatic \sqcup \mathcal{EE},
+\end{equation}
+where:
+\begin{enumerate}
+    \item $\mathcal{K}$ is a finite set of \textbf{Conceptual Classes} (each uniquely named within the domain),
+    \item $\Dstatic$ is the set of admissible \textbf{Static Data Types}, and
+    \item $\mathcal{EE}$ is the set of \textbf{External Entities} serving as boundary interfaces to autonomous external universes (such as time, character strings, physical laws, or international standards).
+\end{enumerate}
+Let $CG$ denote the free 2-category generated by directed edges representing property morphisms and bidirectional relationship morphisms among $\mathcal{K}$, $\Dstatic$, and $\mathcal{EE}$, together with 2-morphisms representing the semantic phrases attached to relationship ends. The schema category $\mathcal{C}$ is uniquely defined as the quotient 2-category of $CG$ modulo the congruence relation $\mathcal{R}$ induced by the static consistency axioms (Axioms C-1 through C-5) specified below:
+\begin{equation}
+\mathcal{C} \equiv CG / \mathcal{R}.
+\end{equation}
+\end{definition}
+
+Through this quotient construction, distinct navigation paths or referential expressions that resolve to the same identifier or semantic target are unified into a single equivalence class of morphisms within $\mathcal{C}$. Thus, stating that a schema category $\mathcal{C}$ ``exists as a consistent form of reality'' means that $\mathcal{C}$ does not collapse into the initial object $0$ (the empty space) and admits non-trivial structure-preserving functors.
+
+\subsection{Equivalence of Instance Functors and Instance Categories}
+A concrete state of a Field of Sense instantiated from a schema category $\mathcal{C}$ (an \emph{instance model}) is formalized in functorial semantics as a structure-preserving functor out of $\mathcal{C}$.
+
+\begin{definition}[Instance Functors and the Valid State Space $\Valid(\mathcal{C})$]\label{def:instance-functor}
+An \textbf{instance model} for a schema category $\mathcal{C}$ is a finite-limit and finite-colimit preserving 2-functor $\mathcal{F} : \mathcal{C} \to \TwoSet$ (where $\TwoSet$ denotes the 2-category of sets, functions, and natural logical constraints). For each conceptual class $A \in \mathcal{K}$, $\mathcal{F}(A)$ assigns the set of individuals existing at a given instant, and for each morphism $f : X \to Y$, $\mathcal{F}(f)$ assigns the corresponding property values or semantic links. The functor category of all instance functors satisfying every axiom of $\mathcal{C}$ is denoted $\Valid(\mathcal{C})$.
+\end{definition}
+
+The perspective introduced in Paper 0 \cite{ota2026paper0}---viewing an instance model as an \emph{instance category} $\mathcal{I}$ whose objects are individual instances and whose morphisms are semantic links---and the present perspective of a \emph{structure-preserving functor} $\mathcal{F}$ are in exact one-to-one correspondence via the \textbf{Category of Elements ($\int \mathcal{F}$)} and \textbf{Discrete Fibrations} \cite{maclane1998,spivak2012}.
+
+\begin{proposition}[Equivalence of Instance Functors $\mathcal{F}$ and Instance Categories $\mathcal{I}$]\label{prop:cat-elements}
+For any instance functor $\mathcal{F} \in \Valid(\mathcal{C})$, let $\mathcal{I} \equiv \int \mathcal{F}$ be the category whose objects are pairs $(A, a)$ ($A \in \mathcal{K},\, a \in \mathcal{F}(A)$) and whose morphisms are semantic links $(A, a) \to (B, b)$ corresponding to $\mathcal{F}(r)(a) = b$ for schema morphisms $r : A \to B$. The canonical projection $\pi : \int \mathcal{F} \to \mathcal{C}$ forms a discrete fibration. Conversely, any discrete fibration $\pi : \mathcal{I} \to \mathcal{C}$ uniquely determines (up to natural isomorphism) a structure-preserving functor $\mathcal{F} \in \Valid(\mathcal{C})$ assigning to each $A$ its fiber $\pi^{-1}(A)$.
+\end{proposition}
+
+By this equivalence, the existence of an instance functor $\mathcal{F} \in \Valid(\mathcal{C})$ ($\Valid(\mathcal{C}) \neq \emptyset$) is mathematically identical to the existence of a consistent instance category $\mathcal{I}$ governed by the schema $\mathcal{C}$.
+
+\subsection{Rigorous Classification of Static Data Types ($\Dstatic$)}
+For a schema category $\mathcal{C}$ to be constructed without ambiguity, the value domains and admissible operations of class properties---the static data-type space $\Dstatic$---must be strictly closed. To eliminate structural ambiguity and out-of-bounds state spaces, variable- and fixed-length array types are excluded in principle. Only the disjoint union of the following \textbf{seven mutually disjoint type categories} is permitted:
+\begin{equation}
+\Dstatic = \Dscalar \sqcup \Duid \sqcup \Dref \sqcup \Denumint \sqcup \Denumext \sqcup \Dext \sqcup \Dstruct.
+\end{equation}
+
+\begin{enumerate}
+    \item \textbf{Scalar Complete Objects ($\Dscalar$):} Numeric sorts closed under internal algebraic operations (integers $\mathbb{Z}$, reals $\mathbb{R}$, complex numbers $\mathbb{C}$), together with domain-specific range-restricted subobjects. Any operation exceeding domain bounds or dividing by zero collapses via pullback into the initial object $0$ (empty space).
+    \item \textbf{Persistent Unique Identifiers ($\Duid$):} System-generated identifier spaces (\texttt{Unique-ID}) guaranteeing strict injectivity (monomorphism) across past, present, and future state transitions.
+    \item \textbf{Referential Types ($\Dref$):} Types (\texttt{Reference}) pointing to the identifier ($\Duid$, etc.) of a related conceptual class. Rather than an independent primitive sort, $\Dref$ is dynamically derived via composition with relationship morphisms (formalized in Definition~\ref{def:ref-prop}).
+    \item \textbf{Endogenous Complete-Lattice Enumerations ($\Denumint$):} Finite sets of two or more distinct symbolic constants arising from the internal logic of the Field of Sense itself, formalized as finite coproducts $\coprod_{i=1}^m \mathbf{1}$ (e.g., \texttt{\{'Blue', 'Yellow', 'Red'\}}).
+    \item \textbf{Exogenous Projected Enumerations ($\Denumext$):} Finite choice sets imported via pullback from standardized external universes $\mathcal{EE}$ (e.g., ISO country codes, days of the week).
+    \item \textbf{External-Entity Projected Types ($\Dext$):} Minimal operational interfaces (value domains and admissible operators) projected from vast autonomous external universes such as time ($\mathcal{EE}_{\mathrm{Time}}$) or character strings ($\mathcal{EE}_{\mathrm{String}}$, treated as a free monoid $\Sigma^*$).
+    \begin{itemize}
+        \item \emph{Remark (Boundary Isolation for Constructibility):} Internalizing the full foundational construction of real numbers (e.g., Dedekind cuts) or relativistic spacetime metrics inside an ordinary application domain is unnecessary. By explicitly delegating their internal mechanics to an external Field of Sense ($\mathcal{EE}$) while specifying only the minimal interface form and operators required locally, finiteness and constructibility of $\mathcal{C}$ are preserved.
+    \end{itemize}
+    \item \textbf{Finite Product Composite Types ($\Dstruct$):} Finite nested Cartesian products ($\mathcal{M} \cong \prod_{i=1}^n \mathcal{D}_i$) composed of types from categories 1--6 (and other composite types) under uniquely named sub-fields.
+\end{enumerate}
+
+\section{Category-Theoretic Formalization of Conceptual Classes and Relationships}
+
+\subsection{Conceptual Classes and Single/Composite Identifiers (Axiom C-1)}
+In the schema category $\mathcal{C}$, each conceptual class $A \in \mathcal{K}$ is equipped with a finite family of property morphisms
+\begin{equation}
+\{\mathrm{attr}_i : A \to T_i\}_{i \in \Lambda_A} \quad (T_i \in \Dstatic),
+\end{equation}
+where property names are unique within $A$. For entities (``objects'') to be distinguishable as individuals within a Field of Sense, there must exist identifying tuples of properties that uniquely determine each instance.
+
+\begin{definition}[Identifiers and Monomorphism Constraint: Axiom C-1]\label{def:identifier}
+Each conceptual class $A \in \mathcal{K}$ possesses a non-empty family of candidate identifiers $\mathcal{U}_A \subseteq \mathcal{P}(\Lambda_A) \setminus \{\emptyset\}$. For every identifier $I = \{i_1, \dots, i_k\} \in \mathcal{U}_A$, the universal mediating morphism into the product of its property types,
+\begin{equation}
+\alpha_I = \langle \mathrm{attr}_{i_1}, \dots, \mathrm{attr}_{i_k} \rangle : A \longrightarrow \prod_{j=1}^k T_{i_j},
+\end{equation}
+must be a \textbf{monomorphism} in $\mathcal{C}$.
+\end{definition}
+
+Consequently, under any valid instance functor $\mathcal{F} \in \Valid(\mathcal{C})$, the image $\mathcal{F}(\alpha_I) : \mathcal{F}(A) \to \prod_{j=1}^k \mathcal{F}(T_{i_j})$ is an injective function in $\Set$. No two distinct instances of the same class can share identical values across all identifying properties, geometrically guaranteeing individuality for both single ($k=1$) and composite ($k \ge 2$) identifiers. Multiple candidate identifiers ($\lvert \mathcal{U}_A \rvert \ge 1$) are permitted.
+
+\subsection{Bidirectional Relationships and the Four Multiplicity Primitives}
+A binary relationship $R$ defined between conceptual classes $O, T \in \mathcal{K}$ (including recursive cases where $O = T$) carries a unique domain index and is obligatorily annotated at both ends with a \textbf{multiplicity} and a \textbf{semantic phrase}.
+
+\begin{definition}[Bidirectional Relationships and Multiplicity Basis]\label{def:relationship}
+A relationship $R$ between $O, T \in \mathcal{K}$ is formalized as an opposing pair of 1-morphisms $(r^{\rightarrow} : O \to T,\, r^{\leftarrow} : T \to O)$ (or equivalently as a span $O \xleftarrow{p_O} R \xrightarrow{p_T} T$). The multiplicities $m_O, m_T$ at both ends take values in the \textbf{four-element basis} proven necessary and sufficient to capture structural connection topologies:
+\begin{equation}
+m_O, m_T \in \{\, \mathbf{1},\; \mathbf{0..1},\; \mathbf{1..*},\; \mathbf{*} \,\}.
+\end{equation}
+\begin{itemize}
+    \item \textbf{$\mathbf{1}$ (Total Functional):} Fiber cardinality is strictly $1$ (total function).
+    \item \textbf{$\mathbf{0..1}$ (Partial Functional):} Fiber cardinality is $0$ or $1$ (partial function).
+    \item \textbf{$\mathbf{1..*}$ (Total Relational):} Fiber cardinality is $\ge 1$ (surjective/total relation).
+    \item \textbf{$\mathbf{*}$ (General Relational):} Fiber cardinality is $\ge 0$, permitting up to countably infinite ($\infty$) links.
+\end{itemize}
+\end{definition}
+
+In every valid instance model $\mathcal{F} \in \Valid(\mathcal{C})$, the cardinality of the preimage fiber $\mathcal{F}(p_O)^{-1}(o)$ for any instance $o \in \mathcal{F}(O)$ is strictly bounded by $m_T$.
+
+\subsection{Semantic Phrases (2-Morphisms) and Propositional Derivation (Axiom C-0)}
+What elevates a relationship from an unlabeled graph edge to a semantic structure is the pair of semantic phrases attached to its ends, which maps instance links directly into propositional statements of fact.
+
+\begin{definition}[Semantic Phrases and Non-Duplication Constraints]\label{def:phrases}
+The semantic phrases $P_O, P_T$ attached to the $O$-end and $T$-end of a relationship $R$ are non-empty strings in the free monoid $\Sigma^*$, formalized in $\mathcal{C}$ as \textbf{2-morphisms (natural transformations)} $\mu_O, \mu_T$ accompanying the relationship morphisms. To ensure unambiguous semantics:
+\begin{enumerate}
+
+        \item The two phrases attached to opposite ends of the same relationship $R$ must be distinct ($P_O \neq P_T$).
+    \item If multiple relationships $R_1, R_2$ exist between the same pair of classes $(O, T)$, their ordered phrase pairs must be distinct ($(P_{O,1}, P_{T,1}) \neq (P_{O,2}, P_{T,2})$).
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Derivation of Elementary Propositions and Topos Truth Evaluation: Axiom C-0]\label{prop:propositions}
+Each relationship specification in a conceptual information model automatically generates templates for elementary propositional sentences describing instance states:
+\begin{enumerate}
+    \item \textbf{Binary Relationship:} For instances $o:O$ and $t:T$, bidirectional propositions
+    \begin{equation}
+    \text{``}\underline{o:O}\;\; P_T \;\;\underline{t:T}\text{''} \quad \text{and} \quad \text{``}\underline{t:T}\;\; P_O \;\;\underline{o:O}\text{''}
+    \end{equation}
+    are derived.
+    \item \textbf{Specialization (\texttt{Is-a}):} For supertype $O$ and subtype $T$, the proposition $\text{``}\underline{t:T}\;\; \text{is-a} \;\;\underline{o:O}\text{''}$ is derived.
+    \item \textbf{Associative Class:} For an associative instance $a:A$, propositions $\text{``}\underline{a:A}\;\; P_O \;\;\underline{o:O}\text{''}$ and $\text{``}\underline{a:A}\;\; P_T \;\;\underline{t:T}\text{''}$ are derived.
+\end{enumerate}
+Under $\mathcal{F} \in \Valid(\mathcal{C})$, the 2-morphism $\mathcal{F}(\mu)$ induces a characteristic evaluation into the subobject classifier $\Omega = \{\mathrm{True}, \mathrm{False}\}$ \cite{maclane1992}, evaluating to $\mathrm{True}$ if and only if the corresponding semantic link exists in the instance model. Moreover, because morphism composition in $\mathcal{C}$ is associative, chaining propositions across multiple relationships (navigation) is uniquely well-defined.
+\end{proposition}
+
+\subsection{Commutative Factorization of Referential Properties (Axioms C-1.5, C-4)}
+In an instance model, the existence of a semantic link between two instances is encoded by matching the value of a property on one instance with the identifier value of the target instance. Such attributes are termed \textbf{Referential Properties}.
+
+\begin{definition}[Commutative Factorization of Referential Properties: Axioms C-1.5, C-4]\label{def:ref-prop}
+When class $B$ references class $A$ via a relationship morphism $r : B \to A$, the referential property tuple $\beta_{B \to A} : B \to \prod_{j=1}^k T_{i_j}$ on $B$ is not an independent static type; rather, it is equationally constrained to factor as the \textbf{composition} of $r$ with one of $A$'s identifier monomorphisms $\alpha_I : A \to \prod_{j=1}^k T_{i_j}$:
+\begin{equation}
+\beta_{B \to A} = \alpha_I \circ r,
+\end{equation}
+making the following diagram commute in $\mathcal{C}$:
+\begin{center}
+\begin{tikzcd}[row sep=large, column sep=large]
+B \arrow[r, "r"] \arrow[dr, "\beta_{B \to A}"', dashed] & A \arrow[d, "\alpha_I", hook] \\
+ & \displaystyle\prod_{j=1}^k T_{i_j}
+\end{tikzcd}
+\end{center}
+\end{definition}
+
+Because this commutative diagram is built directly into the congruence relation $\mathcal{R}$ of the quotient 2-category $\mathcal{C} \equiv CG/\mathcal{R}$, referential data types automatically match target identifier types, and dangling references (pointing to non-existent identifiers) are structurally impossible.
+
+\subsection{Structural Classifications: \texttt{Is-a} and Associative Classes (Axioms C-2, C-3)}
+To support rigorous semantic classification beyond simple binary links, two structural relationship constructs are defined.
+
+\begin{definition}[\texttt{Is-a} as Exclusive Coproduct Decomposition: Axiom C-3]\label{def:isa}
+An \texttt{Is-a} relationship between a superclass $S \in \mathcal{K}$ and a finite family of subclasses $\{C_1, C_2, \dots, C_n\} \subset \mathcal{K}$ is defined via inclusion morphisms $\{\iota_i : C_i \to S\}_{i=1}^n$ such that $S$ is isomorphic to the \textbf{coproduct (disjoint union)} of its subclasses, and pairwise intersections vanish (exhaustive and mutually exclusive partitioning):
+\begin{equation}
+S \cong \coprod_{i=1}^n C_i, \qquad C_i \times_S C_j \cong 0 \quad (\forall i \neq j).
+\end{equation}
+Furthermore, each subclass's referential property satisfies $\beta_{C_i \to S} = \alpha_{I_S} \circ \iota_i$.
+\end{definition}
+
+\begin{remark}[Distinction from Object-Oriented Inheritance]
+Unlike inheritance in object-oriented programming---which is a mechanism for code reuse and differential extension---\texttt{Is-a} here signifies an \textbf{ontological partition}: an individual instance of $S$ simultaneously and exclusively belongs to exactly one concrete subtype $C_i$. This coproduct decomposition is the decisive mechanism that eliminates \texttt{0..1} and \texttt{Nullable} ambiguities in Section~5.
+\end{remark}
+
+\begin{definition}[Associative Classes as Multi-Legged Span Vertices: Axiom C-2]\label{def:associative}
+When individual semantic links arising from a relationship between $O, T \in \mathcal{K}$ possess intrinsic properties or participate in further relationships, an \textbf{Associative Class} $A \in \mathcal{K}$ is introduced such that each link corresponds bijectively to one instance of $A$. Category-theoretically, $A$ is the vertex of a \textbf{span} $O \xleftarrow{p_O} A \xrightarrow{p_T} T$ whose mediating morphism
+\begin{equation}
+\langle p_O, p_T \rangle : A \longrightarrow O \times T
+\end{equation}
+is a \textbf{monomorphism}, equipped with referential properties $\beta_{A \to O} = \alpha_{I_O} \circ p_O$ and $\beta_{A \to T} = \alpha_{I_T} \circ p_T$. Relations are thereby reified as first-class objects within $\mathcal{C}$.
+\end{definition}
+
+\section{Non-Degeneracy Axioms and Internal Logic Closure}
+
+\subsection{Prohibition of Diagonal Embedding (Identity Self-Loops)}
+In Paper 0 \cite{ota2026paper0}, I showed that unrestricted link identification causes distinct semantic morphisms to degenerate into identity morphisms, trivializing the entire semantic network. To prevent such internal collapse at both the schema and instance levels, I impose a strict non-degeneracy axiom.
+
+\begin{definition}[Prohibition of Diagonal Embedding and Identity Degeneration]\label{def:non-degeneracy}
+For every conceptual class $A \in \mathcal{K}$ in $\mathcal{C}$, two constraints prevent structural trivialization:
+\begin{enumerate}
+    \item \textbf{Prohibition of Direct Self-Loops (Diagonal Embedding):} For any recursive relationship $r : A \to A$, an instance $a \in \mathcal{F}(A)$ is strictly prohibited from linking directly to itself---that is, no realized semantic link may fall into the image of the diagonal morphism $\Delta_{\mathcal{F}(A)} : a \mapsto (a, a)$ in $\mathcal{F}(A) \times \mathcal{F}(A)$:
+    \begin{equation}
+    \forall A \in \mathcal{K},\; \forall r : A \to A,\; \forall a \in \mathcal{F}(A),\quad \mathcal{F}(\mu_r)(a, a) = \mathrm{False}.
+    \end{equation}
+    \item \textbf{Prohibition of Global Identity Collapse:} For composite paths $p = r_n \circ \dots \circ r_1 : A \to A$ ($n \ge 2$) traversing distinct classes or semantic phrases, closed cycles at the instance level (e.g., a commutative triangle $A \to B \to C \to A$) are legitimately permitted. However, the congruence relation $\mathcal{R}$ of $\mathcal{C}$ prohibits equating a non-trivial composite path $p$ with the pure identity morphism $\id_A$ ($p = \id_A$), which would erase semantic differentiation.
+\end{enumerate}
+\end{definition}
+
+Any state attempting to instantiate a direct self-link $(a, a)$ fails pullback composition and automatically collapses into the initial object $0$ (empty space) of the internal topos logic.
+
+\begin{remark}[Distinction from Implicate Topology]
+Static schema optimizations that equalize a boundary reference morphism with $\id_A$ via an equalizer to eliminate surplus degrees of freedom (e.g., representing the head/tail of a linear sequence) operate at the schema level and are strictly distinct from instantiating dynamic self-links $(a, a)$.
+\end{remark}
+
+\subsection{Closure of Internal Logic and the Boundary of Nonsense (Axiom C-5)}
+Building on Proposition~\ref{prop:propositions}, I rigorously demarcate the domain of meaningful statements within a Field of Sense.
+
+\begin{definition}[Closure of Internal Logic: Axiom C-5]\label{def:logic-closure}
+The space of meaningful propositions $\mathcal{L}(\mathcal{SYS})$ admissible within a Field of Sense $\mathcal{SYS}$ governed by $\mathcal{C}$ is defined inductively solely from the vocabulary of $\mathcal{C}$ ($\mathcal{K}$, $\Dstatic$, and semantic phrases $\mu$).
+\end{definition}
+
+\begin{proposition}[Trichotomy of Propositional Status and Incompleteness Boundary]\label{prop:trichotomy}
+Every proposition $\varphi$ falls exclusively into one of three categories:
+\begin{enumerate}
+    \item \textbf{Meaningful and True ($\mathrm{True}$):} $\varphi \in \mathcal{L}(\mathcal{SYS})$ and $\varphi$ matches the realized links and property values of the current instance functor $\mathcal{F} \in \Valid(\mathcal{C})$.
+    \item \textbf{Meaningful and False ($\mathrm{False}$):} $\varphi \in \mathcal{L}(\mathcal{SYS})$ but $\varphi$ does not match the current state $\mathcal{F}$.
+    \item \textbf{Nonsense (Collapse to Initial Object $0$):} $\varphi \notin \mathcal{L}(\mathcal{SYS})$. Any statement unconstructible from $\mathcal{C}$ or mixing vocabulary from an external Field of Sense is neither true nor false; it is rejected as \emph{nonsense} and mapped immediately to the initial object $0$.
+\end{enumerate}
+\end{proposition}
+
+Thus, truth evaluation within $\mathcal{SYS}$ is 100\% self-contained without appealing to an overarching meta-universe. Simultaneously, the existence of statements undecidable within a single schema $\mathcal{C}$ mirrors G\"odel's incompleteness theorem and Lawvere's fixed-point theorem, necessitating \textbf{Bridges} across distinct Fields of Sense (connecting Paper 0 and Paper 3).
+
+\section{Theorems of Completeness, Existence, Isomorphism, and Asymptotic Refinement}
+
+Having formalized the schema of a single Field of Sense as a quotient 2-category $\mathcal{C} \equiv CG/\mathcal{R}$, I now prove four core theorems answering the three fundamental questions posed in Section~1.
+
+\subsection{Expressive Completeness Theorem: Representability of Arbitrary Static Structures}
+First, I prove that the minimal primitives defined in Sections~2--4 suffice to express the static semantic structure of \emph{any} Field of Sense without requiring additional structural constructs.
+
+\begin{theorem}[Expressive Completeness of the Conceptual Information Model Formalism]\label{thm:completeness}
+The static semantic structure of any Field of Sense $\mathcal{SYS}$ axiomatizable within the geometric fragment of first-order logic (Geometric Logic) and locally presentable categories is adequately representable as an appropriate quotient 2-category $\mathcal{C} \equiv CG/\mathcal{R}$ adhering to the axioms of Sections~2--4. No additional primitives (such as direct $n$-ary relationship symbols for $n \ge 3$ or array types) are required.
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+\begin{enumerate}
+    \item \textbf{Reduction of Arbitrary $n$-ary Relations to Associative Classes:} Any $n$-ary relation $R \subseteq X_1 \times \dots \times X_n$ ($n \ge 3$) is losslessly reduced to binary relationships by introducing an associative class $A_R \in \mathcal{K}$ with $n$ projection morphisms $p_k : A_R \to X_k$ (multiplicity \texttt{1}) and a monic mediating morphism $\langle p_1, \dots, p_n \rangle : A_R \to \prod_{k=1}^n X_k$ (extending Definition~\ref{def:associative}).
+    \item \textbf{Reduction of Classification and Cardinality Topologies:} Any exclusive partitioning or conditional attribute structure reduces to coproduct decompositions $S \cong \coprod_{i=1}^m C_i$ (\texttt{Is-a}, Definition~\ref{def:isa}) and finite enumerations ($\Denumint, \Denumext$), while relational connection topologies are exhaustively spanned by the $2 \times 2 = 4$ combinations of totality and functionality encoded in $\{\mathbf{1}, \mathbf{0..1}, \mathbf{1..*}, \mathbf{*}\}$.
+    \item \textbf{Universality via Sketch Theory:} By standard theorems of categorical sketch theory \cite{gabriel1971,barr1990}, a quotient category equipped with finite products (identifiers and composite structures), finite coproducts (\texttt{Is-a}), pullbacks/spans (associative classes and referential properties), and commutative diagrams (congruence $\mathcal{R}$) possesses the full expressive power of finite limit-colimit sketches, whose model categories are precisely the locally presentable categories axiomatizable by geometric logic. \qedhere
+\end{enumerate}
+\end{proof}
+
+\subsection{Existence Theorem: Constructive Reality of Rigorous Schema Categories}
+Next, I prove that imposing strict consistency constraints does not render a schema category vacuous; rather, any well-formed schema category $\mathcal{C}$ admits non-trivial sound instance models.
+
+\begin{theorem}[Consistency and Constructive Existence of Rigorous Schema Categories]\label{thm:existence}
+For any schema category $\mathcal{C} \equiv CG/\mathcal{R}$ satisfying all axioms of Sections~2--4 (data-type closure, identifier monicity, referential commutativity, \texttt{Is-a} coproduct exclusivity, associative span injectivity, multiplicity consistency, and diagonal non-degeneracy), there constructively exists a non-trivial structure-preserving functor $\mathcal{F} \in \Valid(\mathcal{C})$; that is,
+\begin{equation}
+\Valid(\mathcal{C}) \neq \emptyset.
+\end{equation}
+Hence, $\mathcal{C}$ exists as a consistent, effective form of reality.
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+I construct $\mathcal{F} \in \Valid(\mathcal{C})$ by structural induction:
+\begin{enumerate}
+    \item \textbf{Base Assignment:} Assign to each static data type $T \in \Dstatic$ its non-empty canonical value set $\mathcal{F}(T)$ per Section~2.5 ($\mathbb{Z}$, $\mathbb{R}$, $\Sigma^*$, countable injective $\Duid$, finite lattices $\Denumint, \Denumext$), fixing minimal interface domains for $\mathcal{EE}$.
+    \item \textbf{Coproduct Class Population:} Populate conceptual classes bottom-up along \texttt{Is-a} hierarchies. Assign disjoint non-empty finite sets $\mathcal{F}(C_i)$ to leaf subclasses and define $\mathcal{F}(S) = \coprod_{i=1}^n \mathcal{F}(C_i)$ for superclasses, automatically satisfying Definition~\ref{def:isa} ($C_i \times_S C_j \cong 0$).
+    \item \textbf{Injective Identifiers and Commutative References:} Choose $\lvert \mathcal{F}(A) \rvert \le \lvert \prod_{j=1}^k \mathcal{F}(T_{i_j}) \rvert$ and fix injective maps $\mathcal{F}(\alpha_I)$. Construct bipartite link sets respecting the multiplicity basis $\{\mathbf{1}, \mathbf{0..1}, \mathbf{1..*}, \mathbf{*}\}$ and irreflexivity ($\mathcal{F}(\mu_r)(a, a) = \mathrm{False}$), and define referential values via composition $\mathcal{F}(\beta_{B \to A}) = \mathcal{F}(\alpha_I) \circ \mathcal{F}(r)$.
+    \item \textbf{Preservation of Congruence:} By construction, all commutative diagrams and propositional truth evaluations (Proposition~\ref{prop:propositions} and Proposition~\ref{prop:trichotomy}) hold identically, yielding $\mathcal{F} \in \Valid(\mathcal{C})$. \qedhere
+\end{enumerate}
+\end{proof}
+
+This theorem refutes the fallacy that abstraction requires vagueness: it is precisely because ambiguity is eliminated that contradiction-free instance models can be constructed, guaranteeing the reality of the schema category $\mathcal{C}$.
+
+\subsection{Isomorphism Theorem: Uniqueness Across Representational Variations}
+I now prove that two schema categories adequately capturing the same Field of Sense are categorically equivalent regardless of syntactic or representational differences.
+
+\begin{definition}[Adequacy and Representational Equivalence]\label{def:adequacy}
+Let $\Omega_{\mathcal{SYS}}$ denote the valid state space of a target Field of Sense $\mathcal{SYS}$. A schema category $\mathcal{C}$ is said to \textbf{adequately represent} $\mathcal{SYS}$ if there exists a natural bijection between $\Valid(\mathcal{C})$ and $\Omega_{\mathcal{SYS}}$ preserving the truth valuation of all meaningful propositions in $\mathcal{L}(\mathcal{SYS})$.
+\end{definition}
+
+\begin{theorem}[Schema Isomorphism Theorem: Uniqueness up to Categorical Equivalence]\label{thm:isomorphism}
+Any two schema categories $\mathcal{C}_1$ and $\mathcal{C}_2$ that adequately represent the same Field of Sense $\mathcal{SYS}$ are \textbf{categorically equivalent} ($\mathcal{C}_1 \simeq \mathcal{C}_2$), and their valid model categories are naturally equivalent ($\Valid(\mathcal{C}_1) \simeq \Valid(\mathcal{C}_2)$).
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+Adequacy induces a natural equivalence $\Phi : \Valid(\mathcal{C}_1) \xrightarrow{\sim} \Valid(\mathcal{C}_2)$ preserving internal logical truth across all states.
+\begin{enumerate}
+    \item \textbf{Normalization via Quotient Congruence:} Whether a relation is expressed explicitly via a relationship morphism $r : B \to A$ in $\mathcal{C}_1$ or via a referential property pullback $\beta_{B \to A} = \alpha_I \circ r$ in $\mathcal{C}_2$, Definition~\ref{def:schema-cat} and Definition~\ref{def:ref-prop} equate them under the congruence $\mathcal{R}$. Similarly, associative spans (Definition~\ref{def:associative}) and \texttt{Is-a} coproducts (Definition~\ref{def:isa}) are defined by universal properties, which are unique up to unique isomorphism.
+    \item \textbf{Gabriel--Ulmer / Lawvere Reconstruction Duality:} By standard reconstruction theorems in functorial semantics \cite{lawvere1963,gabriel1971}, an equivalence of finite-limit/colimit-preserving functor categories $\Valid(\mathcal{C}_1) \simeq \Valid(\mathcal{C}_2)$ uniquely induces a categorical equivalence $F : \mathcal{C}_1 \simeq \mathcal{C}_2$ between the underlying schema categories. \qedhere
+\end{enumerate}
+\end{proof}
+
+An intuitive, canonical illustration of Theorem~\ref{thm:isomorphism} is the comparison between a schema whose class names, property names, and phrases are written entirely in Japanese and one written entirely in English: although their surface string tokens differ completely, if both adequately capture the same network of monic identifiers, multiplicities, and commutative constraints, they are categorically equivalent. Conversely, if two modelers rigorously refine models of what they believe to be the same domain yet arrive at \emph{non-equivalent} schema categories, the contrapositive of Theorem~\ref{thm:isomorphism} proves that they are implicitly modeling \textbf{two distinct Fields of Sense} governed by different schemas (which must then be connected via a Bridge as formalized in Paper 0 and Paper 3).
+
+\subsection{Cognitive Finitude and the Asymptotic Convergence Theorem}
+Because human beings possess finite memory and finite cognitive capacity, a modeler cannot write down the complete true schema $\mathcal{C}^*$ in a single step upon encountering an unfamiliar Field of Sense. Nevertheless, by formalizing iterative \textbf{abduction} \cite{peirce1903} and \textbf{structural refinement}, I prove that finite human cognition can asymptotically converge to $\mathcal{C}^*$.
+
+\begin{definition}[Initial Approximate Models and Two Refinement Operators]\label{def:refinement}
+Let $\mathcal{C}^{(n)}$ denote the $n$-th approximate schema category abductively constructed by a modeler from finite observations. Due to cognitive finitude, an initial approximation $\mathcal{C}^{(0)}$ typically harbors two forms of undifferentiated ambiguity:
+\begin{itemize}
+    \item \textbf{Ambiguity I (Conditional Attributes / Partial Links):} Properties populated only for a subset of instances in a class $S$, or relationships bearing \texttt{0..1} (or implementation-level \texttt{Nullable}) multiplicities.
+    \item \textbf{Ambiguity II (Unreified Many-to-Many Relations):} Undifferentiated \texttt{*}-to-\texttt{*} relationships between classes $O$ and $T$ whose intrinsic relational attributes or temporal multiplicities have not yet been isolated.
+\end{itemize}
+Whenever deductive predictions from $\mathcal{C}^{(n)}$ diverge from newly observed phenomena (intensions), the modeler applies two refinement operators to obtain $\mathcal{C}^{(n+1)}$:
+\begin{enumerate}
+    \item \textbf{Subclassing Operator $\Rsub$ (Coproduct Decomposition):} Discovering the latent semantic distinction behind a \texttt{0..1} link or conditional property in $S$, and partitioning $S$ into an exclusive coproduct $S \cong \coprod_{i=1}^k C_i$ (Definition~\ref{def:isa}). This transforms ambiguous \texttt{0..1} links into mandatory, total \texttt{1} links on specific subtypes $C_i$.
+    \item \textbf{Associative-Class Operator $\Rassoc$ (Span Reification):} Reifying an undifferentiated many-to-many relationship into a first-class associative class $A$ at the vertex of a span $O \xleftarrow{p_O} A \xrightarrow{p_T} T$ (Definition~\ref{def:associative}), endowed with its own identifier and strict \texttt{1} projections.
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[Asymptotic Convergence under Cognitive Finitude]\label{thm:convergence}
+Let $\mathcal{C}^*$ be the true schema category of a Field of Sense $\mathcal{SYS}$, and let
+\begin{equation}
+\mathcal{C}^{(0)} \longrightarrow \mathcal{C}^{(1)} \longrightarrow \cdots \longrightarrow \mathcal{C}^{(n)} \longrightarrow \cdots
+\end{equation}
+be a sequence of approximate schemas generated via abductive refinement operators ($\Rsub,\, \Rassoc$) such that each step strictly increases fiber separation. Then:
+\begin{enumerate}
+    \item \textbf{Monotonic Contraction of Spurious State Space:} The space of invalid states spuriously admitted by $\mathcal{C}^{(n)}$ contracts monotonically toward the true state space $\Valid(\mathcal{C}^*)$.
+    \item \textbf{Unique Convergence in the Limit (via the Density Theorem):} Because every instance functor $\mathcal{F} \in \Valid(\mathcal{C}^*)$ is canonically expressed as a colimit of representable functors $h^X = \mathcal{C}^*(X, -)$ over its category of elements (the \textbf{Density Theorem} \cite{maclane1998,maclane1992}),
+    \begin{equation}
+    \mathcal{F} \cong \colim_{(X, a) \in \int \mathcal{F}} h^X,
+    \end{equation}
+    the inductive limit of the refinement sequence converges up to categorical equivalence to the true schema: $\varinjlim \mathcal{C}^{(n)} \simeq \mathcal{C}^*$.
+    \item \textbf{Practical Sufficiency at Finite Stages:} At any finite stage $\mathcal{C}^{(N)}$ prior to the infinite limit, the differentiated sub-domain is isomorphic to a structure-preserving projection (partial polynomial approximation) of $\mathcal{C}^*$, functioning as a completely sound and practical model for its bounded scope.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+Each application of $\Rsub$ (coproduct splitting) or $\Rassoc$ (span vertex introduction) adjoins new objects, monic identifiers, and universal constraints to the generating graph of $\mathcal{C}^{(n)}$, strengthening the congruence $\mathcal{R}^{(n)} \subset \mathcal{R}^{(n+1)}$. The induced forgetful projection $\Valid(\mathcal{C}^{(n+1)}) \to \Valid(\mathcal{C}^{(n)})$ monotonically prunes spurious models permitted by \texttt{0..1} or undifferentiated \texttt{*}-to-\texttt{*} configurations. Under separability (countable dense generation of $\mathcal{SYS}$), the Yoneda Lemma and the Density Theorem guarantee that the colimit of representable approximations uniquely recovers $\mathcal{F}$ up to natural isomorphism, ensuring asymptotic convergence $\varinjlim \mathcal{C}^{(n)} \simeq \mathcal{C}^*$. \qedhere
+\end{proof}
+
+In real-world modeling practice, the quintessential trajectory of Theorem~\ref{thm:convergence} is the gradual elimination of \texttt{0..1} and \texttt{0..*} (\texttt{Nullable} or optional) multiplicities: beginning from a coarse model $\mathcal{C}^{(0)}$ riddled with conditional exceptions, the modeler repeatedly applies subclassing ($\Rsub$) to replace \texttt{0..1} with mandatory \texttt{1} and associative reification ($\Rassoc$) to structure \texttt{0..*} entanglements, steadily converging toward $\mathcal{C}^*$.
+
+\section{Practical Implications and Conclusion}
+
+\subsection{Re-evaluating Visual Notations (UML and ER Diagrams): Syntax vs.\ Semantics}
+The category-theoretic formalization established in this paper clarifies the true status of modeling notations in software engineering and information system design \cite{shlaer1988,shlaer1992,mellor2002}. In everyday practice, graphical syntaxes such as UML class diagrams, ER diagrams \cite{chen1976}, or textual formats (YAML/JSON) are frequently mistaken for the ``model'' itself. In my framework, however, \textbf{the model is the intrinsic semantic structure (the schema category $\mathcal{C}$), whereas UML and ER diagrams are merely visual syntaxes used to communicate that structure}.
+
+\begin{itemize}
+    \item \textbf{Syntax Alone Guarantees Nothing:} Drawing boxes and lines does not by itself determine whether classes possess monic identifiers, whether \texttt{Is-a} denotes an exclusive coproduct ($S \cong \coprod C_i$) rather than implementation inheritance, or whether \texttt{0..1} ambiguities remain unresolved. Without rigorous semantics, visual diagrams risk degenerating into arbitrary sketches.
+    \item \textbf{Vindication of Standard Notations under Rigorous Semantics:} Conversely, when a modeler writes with the category-theoretic semantics of Sections~2--5 explicitly in mind, standard notations such as UML and ER diagrams function seamlessly as faithful representations of $\mathcal{C}$. Moreover, by Theorem~\ref{thm:isomorphism}, any two representations---whether diagrammatic or textual, in Japanese or in English---that satisfy these rigor conditions converge to the exact same model up to categorical equivalence.
+\end{itemize}
+
+Furthermore, separating syntax from semantics naturally reveals why the traditional ideal of bidirectional ``round-trip engineering'' ($\text{Requirements Model} \to \text{Design Model} \to \text{Implementation Code} \to \text{Requirements Model}$) cannot hold in principle: problem-domain requirements and execution platforms inhabit distinct Fields of Sense governed by different schema categories, and transformations mediated by non-functional boundary conditions are inherently unidirectional and irreversible (a structural asymmetry formalized in Paper 3). Practical modeling mastery therefore lies not in automated reverse-engineering from code, but in disciplined abductive refinement toward $\mathcal{C}^*$.
+
+\subsection{Conclusion and Outlook for Paper 2}
+Building upon the relation-based ontology and Universe of Fields of Sense introduced in Paper 0 \cite{ota2026paper0}, this paper (Paper 1) has formalized the static semantic structure of a single Field of Sense (the Conceptual Information Model) as a quotient 2-category $\mathcal{C} \equiv CG/\mathcal{R}$. I have demonstrated that seemingly strict modeling rules---closed data types, monic identifiers, bidirectional relationships with four multiplicities and semantic phrases, commutative referential properties, exclusive coproduct \texttt{Is-a} partitions, associative span classes, and diagonal non-degeneracy---constitute the exact necessary and sufficient conditions to affirm all three foundational questions:
+\begin{enumerate}
+    \item \textbf{Affirmation of Existence (Theorems~\ref{thm:completeness} and \ref{thm:existence}):} The static structure of any Field of Sense is expressively representable within this minimal formalism (Theorem~\ref{thm:completeness}), and every well-formed schema category $\mathcal{C}$ constructively admits non-trivial, contradiction-free instance models ($\Valid(\mathcal{C}) \neq \emptyset$, Theorem~\ref{thm:existence}).
+    \item \textbf{Affirmation of Uniqueness / Isomorphism (Theorem~\ref{thm:isomorphism}):} Any two schema categories adequately describing the same Field of Sense are categorically equivalent ($\mathcal{C}_1 \simeq \mathcal{C}_2$) across variations in notation, representation, or natural language.
+    \item \textbf{Affirmation of Asymptotic Refinement (Theorem~\ref{thm:convergence}):} Even with finite cognitive capacity, human modelers can iteratively refine initial approximations via abduction, subclassing, and associative-class reification, converging asymptotically to the true schema $\mathcal{C}^*$ by virtue of the Yoneda Lemma and the Density Theorem.
+\end{enumerate}
+
+With the static spatial skeleton of a single Field of Sense firmly established, \textbf{Paper 2} will extend this framework to \textbf{temporal evolution and dynamic state transitions}. By integrating instance state models, data-flow action models, and execution semantics (boundary conditions and invariants), Paper 2 will prove that the dynamic behavior of a Field of Sense closes as a \textbf{Symmetric Monoidal Category}, capable of faithfully representing continuous real-world dynamics through discrete state transitions.
+
+\begin{thebibliography}{99}
+
+\bibitem{ota2026paper0}
+Ota, H. (2026).
+\emph{Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe} (Version 1.0.1).
+Zenodo. \url{https://doi.org}
+
+\bibitem{maclane1998}
+Mac Lane, S. (1998).
+\emph{Categories for the Working Mathematician} (2nd ed.).
+Springer.
+
+\bibitem{lawvere1963}
+Lawvere, F. W. (1963).
+Functorial Semantics of Algebraic Theories.
+\emph{Proceedings of the National Academy of Sciences of the United States of America}, 50(5), 869--872.
+
+\bibitem{gabriel1971}
+Gabriel, P., \& Ulmer, F. (1971).
+\emph{Lokal pr\"asentierbare Kategorien}.
+Lecture Notes in Mathematics, Vol.~221, Springer.
+
+\bibitem{spivak2012}
+Spivak, D. I. (2012).
+Functorial Data Migration.
+\emph{Information and Computation}, 217, 31--51.
+
+\bibitem{barr1990}
+Barr, M., \& Wells, C. (1990).
+\emph{Category Theory for Computing Science}.
+Prentice Hall.
+
+\bibitem{maclane1992}
+Mac Lane, S., \& Moerdijk, I. (1992).
+\emph{Sheaves in Geometry and Logic: A First Introduction to Topos Theory}.
+Springer.
+
+\bibitem{peirce1903}
+Peirce, C. S. (1903/1998).
+Pragmatism as the Logic of Abduction.
+In \emph{The Essential Peirce: Selected Philosophical Writings}, Vol.~2 (1893--1913), Indiana University Press.
+
+\bibitem{gabriel2015}
+Gabriel, M. (2015).
+\emph{Fields of Sense: A New Realist Ontology}.
+Edinburgh University Press.
+
+\bibitem{wittgenstein1922}
+Wittgenstein, L. (1921/1922).
+\emph{Tractatus Logico-Philosophicus}.
+Kegan Paul, Trench, Trubner \& Co.
+
+\bibitem{shlaer1988}
+Shlaer, S., \& Mellor, S. J. (1988).
+\emph{Object-Oriented Systems Analysis: Modeling the World in Data}.
+Yourdon Press.
+
+\bibitem{shlaer1992}
+Shlaer, S., \& Mellor, S. J. (1992).
+\emph{Object Lifecycles: Modeling the World in States}.
+Yourdon Press.
+
+\bibitem{mellor2002}
+Mellor, S. J., \& Balcer, M. J. (2002).
+\emph{Executable UML: A Foundation for Model-Driven Architecture}.
+Addison-Wesley.
+
+\bibitem{chen1976}
+Chen, P. P. (1976).
+The Entity-Relationship Model---Toward a Unified View of Data.
+\emph{ACM Transactions on Database Systems}, 1(1), 9--36.
+
+\bibitem{codd1970}
+Codd, E. F. (1970).
+A Relational Model of Data for Large Shared Data Banks.
+\emph{Communications of the ACM}, 13(6), 377--387.
+
+\bibitem{omg2019mof}
+Object Management Group (OMG). (2019).
+\emph{OMG Meta Object Facility (MOF) Core Specification} (Version 2.5.1).
+OMG Document Number: formal/2019-10-01.
+
+\end{thebibliography}
+
+\end{document}
