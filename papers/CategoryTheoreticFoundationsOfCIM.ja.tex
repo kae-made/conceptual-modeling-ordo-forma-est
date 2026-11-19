@@ -1,0 +1,544 @@
+\documentclass[11pt,a4paper]{ltjsarticle}
+
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={概念情報モデリングの圏論的基礎：厳密なスキーマ表現、同型性、および思考の有限性のもとでの漸近的接近},
+    pdfauthor={太田 寛 (Hiroshi Ota)}
+}
+
+% 定理環境（日本語表記）
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{lemma}{補題}[section]
+
+\theoremstyle{remark}
+\newtheorem{remark}{注記}[section]
+
+\renewcommand{\proofname}{\textbf{証明の概略}}
+
+% カスタムマクロ（英語版と共通）
+\newcommand{\Ob}{\mathrm{Ob}}
+\newcommand{\Valid}{\mathrm{Valid}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\colim}{\operatorname{colim}}
+\newcommand{\TwoSet}{\mathbf{2\text{-}Set}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Dstatic}{\mathcal{D}_{\mathrm{static}}}
+\newcommand{\Dscalar}{\mathcal{D}_{\mathrm{Scalar}}}
+\newcommand{\Duid}{\mathcal{D}_{\mathrm{UID}}}
+\newcommand{\Dref}{\mathcal{D}_{\mathrm{REF}}}
+\newcommand{\Denumint}{\mathcal{D}_{\mathrm{Enum\text{-}Int}}}
+\newcommand{\Denumext}{\mathcal{D}_{\mathrm{Enum\text{-}Ext}}}
+\newcommand{\Dext}{\mathcal{D}_{\mathrm{Ext}}}
+\newcommand{\Dstruct}{\mathcal{D}_{\mathrm{Struct}}}
+\newcommand{\Rsub}{\mathcal{R}_{\mathrm{sub}}}
+\newcommand{\Rassoc}{\mathcal{R}_{\mathrm{assoc}}}
+
+\title{\textbf{概念情報モデリングの圏論的基礎：\\
+厳密なスキーマ表現、同型性、および思考の有限性のもとでの漸近的接近}}
+
+\author{太田 寛（Hiroshi Ota）\thanks{10.5281/zenodo.24359112: \url{https://doi.org} (All Versions: \url{https://doi.org}) \\ Homepage: \url{https://kae-made.jp}, Research Notes: \url{https://note.com}} \\
+\small Independent Researcher / Knowledge \& Experience\\
+\small \texttt{master@kae-made.jp} \quad | \quad \url{https://kae-made.jp}}
+
+\date{2026年11月19日}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+前稿（Paper 0）\cite{ota2026paper0} において、著者は関係（スパン構造）を実在の基底とする存在論を出発点とし、日常言語の多義性による構造崩壊を回避するために世界が複数の「意味の場（Fields of Sense）」と「ブリッジ」からなるユニバースとして分節化されていることを定式化した。さらに、観測される「現象」はユニバースの「内包」であり、観測結果のみから背後の全体構造を一意に逆算することは原理的に不可能であることを証明した。
+
+本稿（Paper 1）は、この認識論的限界を受け止めた上で、次の3つの根源的問いに肯定的な解答を与えることを目的とする。すなわち、(1) 任意の意味の場に対して、その意味構造を規定する妥当なスキーマは本当に存在するのか、(2) 存在するとすれば、それは一意（あるいは表現を超えて互いに同型）なのか、(3) 有限の思考能力しか持たない人間は、存在するはずの真のスキーマへと近づいていくことができるのか、である。
+
+一般にモデリング（抽象化）は「細部を捨てて曖昧にすること」と誤解されがちであるが、本稿では逆に、曖昧さを徹底的に排除し、具体的かつ厳密な構造を確定することこそが、健全なインスタンスモデル（意味の場）が矛盾なく実在するための必要条件であることを論証する。具体的には、単一の意味の場を規定するスキーマを、識別子（モノ射）、厳密に値域・演算を制限されたデータ型、可換図式として分解される参照特徴値、両端に意味的フレーズ（2-射）と4種の多重度を持つ双方向リレーションシップ、排他直和分解としての \texttt{Is-a}、多脚スパンとしての関連クラス、および自己ループ（恒等射リンク）の排除公理を備えた有限完備・余完備な商 2-圏として定式化する。この厳密な枠組みのもとで、(i) この最小形式の表現的完備性と健全なモデルの構成的存在保証、(ii) 同一の意味の場を充足するモデルの圏同値性（同型定理）、および (iii) 米田の補題と密度の定理に基づき、人間の有限性ゆえの初期近似（\texttt{0..1} や \texttt{Nullable} を含む未分化モデル）からサブクラス化と関連クラス化を経て真のスキーマへと収束する漸近的接近定理を証明する。最後に、UML や ER図といった既存の視覚記法も、本稿が導出した圏論的意味論を背景に据えて記述されることで初めて、厳密で有意味なスキーマ表現として機能することを明らかにする。
+\end{abstract}
+
+\section{序論（Introduction）}
+
+\subsection{背景と問題設定：観測の限界からスキーマの存在論へ}
+前稿（Paper 0）\cite{ota2026paper0} において、著者は「対象（モノ）」ではなく「関係（スパン構造）」を実在の基底とする存在論を出発点とし、日常言語の多義性による意味構造の崩壊（恒等射への縮退）を回避するために、世界がスキーマ圏に支配された複数の「意味の場（Fields of Sense）」\cite{gabriel2015} と「ブリッジ」からなるユニバース $\mathcal{U}$ として分節化されていることを圏論的に定式化した。さらに、人間が観測する「現象」とはこのユニバースの「内包（忘却関手による射影）」にほかならず、観測された現象のみから背後の全体構造（スキーマ圏と状態）を一意に逆算・復元することは原理的に不可能であることを証明した。
+
+この認識論的限界の証明は、直ちに次の3つの根源的かつ実践的な問いを我々に突きつける。
+\begin{enumerate}
+    \item \textbf{存在の問い（Existence）：} 観測から一意に逆算できないのであれば、そもそも任意の意味の場に対して、その意味構造を矛盾なく規定する妥当なスキーマは「必ず存在する」と言えるのか。
+    \item \textbf{一意性と同型性の問い（Uniqueness and Isomorphism）：} 仮に妥当なスキーマが存在するとして、それはただ一つに定まるのか。あるいは、異なる表現形式によって複数のモデルが記述された場合、それらは本質的に「同型（圏同値）」に帰着するのか。
+    \item \textbf{漸近的接近の問い（Asymptotic Refinement）：} 有限の記憶と有限の思考能力しか持たない人間が、最初から完全な全体像を見通せないにもかかわらず、試行錯誤を通じて「存在するはずの真のスキーマ」へと近づいていくことは原理的に可能なのか。
+\end{enumerate}
+
+本稿（Paper 1）の目的は、これら3つの問いすべてに対して肯定的な数学的解答を与えることである。そして、これらを肯定するために必要不可欠な「単一の意味の場のスキーマを記述するための厳密な形式（概念情報モデルの仕様）」を、圏論（商 2-圏および関手意味論 \cite{maclane1998,lawvere1963}）によって演繹的に導出する。
+
+とりわけ第3の問いは、人間の科学的探究およびモデリングにおける推論の様式――すなわち\textbf{アブダクション（Abduction：仮説形成）}\cite{peirce1903} の圏論的定式化に直結する。確定したスキーマから現象（内包）を導く「演繹（Deduction）」は一意に定まり、単なる観測データの集積に過ぎない「帰納（Induction）」からは背後の構造原理を特定できない。したがって、観測された現象の背後にある「それを最も美しく矛盾なく説明できるスキーマ圏 $\mathcal{C}$」を仮説として構成し、演繹による検証と修正の往復運動（随伴的探索）を通じて真のスキーマへと漸近していくプロセスこそが、有限な人間によるモデリングの本質にほかならない。
+
+\subsection{パラダイム転換：「モデリング＝曖昧化」の否定}
+従来のソフトウェア工学や一般的なモデリング実務においては、「モデリング（抽象化）とは、細部を捨てて対象を大雑把で曖昧なものにすることである」という根強い誤解が存在してきた。しかし、関数空間論および関手意味論（Functorial Semantics）の視座に立つとき、この通俗的見解は完全に誤りであることが明らかになる。
+
+ある意味の場が「意味のある構造として確実に存在する」と言えるためには、スキーマ圏 $\mathcal{C}$ を定義域とする構造保存関手 $\mathcal{F}$（インスタンスモデル）が、矛盾なく・非自明に構成可能でなければならない（$\Valid(\mathcal{C}) \neq \emptyset$）。もしスキーマの定義が曖昧なまま放置されれば――たとえば、データ型の値域が未確定であったり、個体を識別する単射性が欠落していたり、\texttt{0..1} や \texttt{Nullable} といった未分化な例外や自己参照ループが許容されていたりすれば――、制約同士が矛盾して健全なモデルが一つも存在しなくなる（構造の破綻）か、あるいは無数の偽モデルが紛れ込んで「本来の意味の場がそこに一意に存在する」と言えなくなる（不定性の爆発）。
+
+したがって、\textbf{モデリングとは曖昧化ではなく、曖昧さを徹底的に削ぎ落とし、具体的かつ厳密な構造（境界と制約）を確定する営みでなければならない}。本稿が示すように、データ型、単一・複合識別子、可換図式としての参照特徴値、両端に意味的フレーズと4種の多重度を持つ双方向リレーションシップ、排他直和分解としての \texttt{Is-a}、多脚スパンとしての関連クラスといった「概念情報モデルの記述体系」は、単なる実務上の経験則や便利な慣習ではない。それらは、\textbf{Paper 0 で提示したユニバースと意味の場が実在の形式として矛盾なく成立するために数学的に要請される必要十分条件}にほかならない。
+
+\subsection{記法と意味論の分離、および本稿の構成}
+この結論は、現実のモデリング実務に対しても決定的な指針を与える。UML（統一モデリング言語）のクラス図や ER図（実体関連図）\cite{chen1976} といった既存の図式表現は、それ自体としては単なる「箱と線を描くための視覚記法（Syntax）」に過ぎず、記法そのものにモデルの正しさを保証する力はない。もっとも、UML の背後にはメタモデル基盤として \textbf{MOF（Meta-Object Facility）}\cite{omg2019mof} が定義されているものの、MOF は単一の特権的な最上位メタモデル（M3）を頂点に据えてすべてをトップダウンに階層化する一元論的枠組みに依拠しているため、本稿（および Paper 0）が前提とする「特権的全体宇宙を否定し、対等な意味の場がフラットに並立する多元的・存在論的要件」を満たすことができない。しかし、こうした一元論的メタ階層ではなく、本稿が導出する圏論的・存在論的な意味論（Semantics）を背後に据え、厳密な構造制約を踏まえて記述するならば、UML や ER図のような既存の記法であっても、そのまま厳密で有意味な「意味の場のスキーマ」を表現する言語として完全に機能する。
+
+本稿の構成は以下の通りである。
+\begin{itemize}
+    \item \textbf{第2章}では、認識の起点としてのインスタンスモデルの現象学的起源を明らかにし、概念情報モデルの基本構成要素を規定した上で、単一の意味の場のスキーマ圏 $\mathcal{C}$ を生成自由圏の商 2-圏（$\mathcal{C} \equiv CG/\mathcal{R}$）として定式化し、インスタンス関手 $\mathcal{F}$ とインスタンス圏の等価性、および配列型を排除した7種の厳密なデータ型分類（$\Dstatic$）を定義する。
+    \item \textbf{第3章}では、概念クラスと識別子（モノ射）、両端にフレーズ（2-射）と4種の多重度を持つ双方向リレーションシップ、命題文の導出と真偽判定、可換図式による参照特徴値の導出、および排他直和分解としての \texttt{Is-a} とスパン頂点としての関連クラスを圏論的に定式化する。
+    \item \textbf{第4章}では、局所的・大域的な自己ループ（恒等射リンク）を排除する「対角線埋没の禁止公理」と、他ドメイン語彙の混入を「無意味（ナンセンス）」として遮断する内部論理の閉包性を定式化する。
+    \item \textbf{第5章}では、以上の厳密な形式のもとで、(1) 表現的完備性定理（定理~\ref{thm:completeness}）、(2) 健全なモデルの構成的存在保証（定理~\ref{thm:existence}）、(3) 同一の意味の場を充足するモデルの圏同値性（定理~\ref{thm:isomorphism}）、および (4) 米田の補題と密度の定理に基づき、人間の有限性ゆえの初期不完全モデルからサブクラス化と関連クラス化を経て真のスキーマへ収束する「漸近的接近定理」（定理~\ref{thm:convergence}）を証明する。
+    \item \textbf{第6章}では、視覚記法（UML・ER図）への実践的帰結（ラウンドトリップ変換の本質的不可逆性を含む）を総括し、次稿（Paper 2）で扱う状態遷移とデータフロー型アクションの動的モノイド圏への展望を示す。
+\end{itemize}
+\section{意味の場のスキーマ圏とデータ型の基礎（Schema Categories and Data Types）}
+
+\subsection{認識の起点としてのインスタンスモデルと「分類」の必然性}
+概念情報モデル（スキーマ）の厳密な定義に入る前に、そもそも人間の認識において「モデル」が立ち現れる起源――すなわち\textbf{インスタンスモデル（Instance Model）}の構造――を確認しておく必要がある。
+
+前稿（Paper 0）\cite{ota2026paper0} で論じた通り、人間が世界と向き合うとき、最初に経験されるのは「現象（ユニバースの内包）」である。現象学（フッサールのエポケー）の視座に立てば、我々が判断を保留して目の前の現象を直視するとき、認識の第一歩として立ち現れるのは、思考上で「これ（this）」と指差し（区別）できる個別の対象――すなわち\textbf{モノ（インスタンス）}と、そのモノに随伴する\textbf{特徴値（Property Values）}（例えば、目の前の一つのリンゴと、その「赤さ」や「重さ」）である。さらに、フレーゲやウィトゲンシュタイン \cite{wittgenstein1922} の言語哲学が示す通り、世界は孤立したモノの集積ではなく、モノとモノの間に双方向の述語（フレーズ）を伴う\textbf{意味的リンク（Semantic Links）}が張り巡らされた事態のネットワーク（インスタンスモデル）として捉えられる。
+
+しかし、Paper 0 で指摘したように、有限の記憶と思考能力しか持たない人間は、経験するすべての個体やリンクに対して毎回一から個別のラベルを貼り続けて世界を把握することはできない。同じ特徴値の構造を持ち、同じ述語的関係を取り結ぶ個体群を「同種のもの」として一括りに\textbf{分類（Classification）}し、その共通の型（ひな型）を抽出することで初めて、有限の人間は無限に多様な現象を秩序立てて思考できるようになる。この「個別のインスタンスと意味的リンクのネットワーク（インスタンスモデル）」を背後から規定する分類の体系こそが、\textbf{概念情報モデル（スキーマ）}にほかならない。
+
+\subsection{概念情報モデルの基本構成要素と用語規定}
+単一の意味の場（Field of Sense）における振る舞いと構造を規定する全体モデル（概念モデル）は、静的な意味構造を記述する\textbf{概念情報モデル（Conceptual Information Model）}、個体の時間的状態変化を記述する状態モデル（State Model）、およびプロセスの入出力変換を記述するデータフローアクションモデル（Data Flow Action Model）の三者から構成される。本稿（Paper 1）では、これらすべての土台となる静的な意味構造、すなわち\textbf{概念情報モデル}の圏論的定式化に焦点を当てる。
+
+議論に先立ち、概念情報モデルを構成する基本要素を以下の通り規定する。
+\begin{enumerate}
+    \item \textbf{概念クラス（Conceptual Class）：} 当該意味の場に立ち現れる「モノ（Object）」の概念・分類であり、一定の特徴値の組と、他クラスとの間に定義されるリレーションシップによって規定される。概念クラスは同一の意味の場において一意の名前を持ち、インスタンスモデルにおける個々のインスタンスは、ただ一つの概念クラスをひな型として存在する。
+    \item \textbf{特徴値（Property）：} 概念クラスを特徴づける個々の属性であり、所属する概念クラス内で一意の名前を持つ。各特徴値がとり得る値とその演算は、ドメイン内で定義された「データ型（Data Type）」によって厳密に制約される。
+    \item \textbf{リレーションシップ（Relationship）：} 二つの概念クラス（同一クラス間の場合を含む）の間に定義される意味的関係であり、インスタンス間を結ぶ「意味的リンク（Semantic Link）」のひな型となる。
+    \begin{itemize}
+        \item \emph{用語に関する注記（Relation と Relationship）：} 数学的および圏論的に厳密に言えば、ここで定義される構造は\textbf{「リレーション（Relation）」}\cite{codd1970} そのものである。本稿において「リレーションシップ（Relationship）」という呼称を採用しているのは、リレーショナルデータベースやソフトウェア工学の分野における標準的な慣用句との対応を明確にするためであり、概念情報モデルにおける「リレーションシップ」とは、厳密に定式化された数学的リレーション（後述する双方向射およびスパン構造）を指すものとする。
+    \end{itemize}
+\end{enumerate}
+
+\subsection{商 2-圏としてのスキーマ圏の構成（公理 C-Base）}
+単一の意味の場（Field of Sense）における意味構造を規定する「概念情報モデル（Conceptual Information Model）」は、単なる図形や記号の集積ではない。数学的には、有向グラフ（図式スキーム）から生成される自由圏に、静的一貫性制約（識別子の一意性、参照整合性、可換図式制約）という合同関係を課して構成される\textbf{有限完備かつ有限余完備な商 2-圏（Quotient 2-Category）}として定義される。
+
+\begin{definition}[スキーマ圏 $\mathcal{C}$ の構成：公理 C-Base]\label{def:schema-cat}
+ある意味の場に対するスキーマ圏 $\mathcal{C}$ の対象空間（0-セル）$\Ob(\mathcal{C})$ は、互いに素な以下の3つの集合の非交和（Disjoint Union）として構成される。
+\begin{equation}
+\Ob(\mathcal{C}) = \mathcal{K} \sqcup \Dstatic \sqcup \mathcal{EE}.
+\end{equation}
+ここで、
+\begin{enumerate}
+    \item $\mathcal{K}$ は\textbf{概念クラス（Conceptual Classes）}の有限集合（各元はドメイン内で一意の名前を持つ）、
+    \item $\Dstatic$ は当該意味の場で許容される\textbf{静的データ型（Static Data Types）}の集合、
+    \item $\mathcal{EE}$ は当該意味の場の外部に並立する宇宙（時間・文字列・物理法則・共通規格など）との接点をなす\textbf{外部実体（External Entities）}の集合
+\end{enumerate}
+である。概念クラス、データ型、外部実体の間に定義される特徴値射および双方向リレーションシップ射を辺（有向アロー）とし、リレーションシップの両端に付与される意味的フレーズを 2-射とする生成自由 2-圏を $CG$ とする。このとき、スキーマ圏 $\mathcal{C}$ は、次章以降で定める静的一貫性制約（公理 C-1 〜 C-5）が誘導する合同関係（Congruence Relation）$\mathcal{R}$ によって $CG$ を割った商 2-圏として一意に定義される。
+\begin{equation}
+\mathcal{C} \equiv CG / \mathcal{R}.
+\end{equation}
+\end{definition}
+
+この商圏構成により、異なるナビゲーション経路や参照表現であっても、同一の識別子や意味的到達点に帰着する射の合成は、スキーマ空間 $\mathcal{C}$ の内部で最初から同一の同値類（等しい射）へと統合される。したがって、スキーマ圏 $\mathcal{C}$ が「無矛盾な実在の形式として存在する」とは、この商 2-圏 $\mathcal{C}$ が始対象 $0$（空空間）へと自壊することなく、非自明な構造保存関手を許容することにほかならない。
+
+\subsection{インスタンス関手とインスタンス圏の等価性（要素の圏による翻訳）}
+スキーマ圏 $\mathcal{C}$ をひな型として立ち現れる「意味の場の具体的な状態（インスタンスモデル）」は、関手意味論の視座からは $\mathcal{C}$ を定義域とする構造保存関手として定式化される。
+
+\begin{definition}[インスタンス関手と正当な状態空間 $\Valid(\mathcal{C})$]\label{def:instance-functor}
+スキーマ圏 $\mathcal{C}$ に対する\textbf{インスタンスモデル}とは、$\mathcal{C}$ から高次集合圏 $\TwoSet$（対象として集合、1-射として写像、2-射として自然変換・論理拘束を持つ 2-圏）への有限極限・余極限保存 2-関手 $\mathcal{F} : \mathcal{C} \to \TwoSet$ のことである。各概念クラス $A \in \mathcal{K}$ に対して集合 $\mathcal{F}(A)$ はその瞬間に実在する個体の集合を割り当て、各射 $f : X \to Y$ に対して写像 $\mathcal{F}(f)$ はその間の具体的な特徴値や意味的リンクを割り当てる。$\mathcal{C}$ のすべての公理・制約を充足するインスタンス関手全体のなす関手圏を $\Valid(\mathcal{C})$ と記す。
+\end{definition}
+
+ここで、前稿（Paper 0）\cite{ota2026paper0} で導入した「個々のインスタンスと意味的リンクそのものを対象・射とするインスタンス圏 $\mathcal{I}$」の視点と、本稿の「構造保存関手 $\mathcal{F}$」の視点は、圏論における\textbf{要素の圏（Category of Elements: $\int \mathcal{F}$）}および\textbf{離散ファイブレーション（Discrete Fibration）}\cite{maclane1998,spivak2012} によって 1対1 に完全に等価変換される。
+
+\begin{proposition}[インスタンス関手 $\mathcal{F}$ とインスタンス圏 $\mathcal{I}$ の等価性]\label{prop:cat-elements}
+任意のインスタンス関手 $\mathcal{F} \in \Valid(\mathcal{C})$ に対し、対象をペア $(A, a)$（ただし $A \in \mathcal{K},\, a \in \mathcal{F}(A)$）、射をスキーマ射 $r : A \to B$ による像 $\mathcal{F}(r)(a) = b$ に対応する意味的リンク $(A, a) \to (B, b)$ とする圏 $\mathcal{I} \equiv \int \mathcal{F}$ を構成すると、第一射影 $\pi : \int \mathcal{F} \to \mathcal{C}$ は離散ファイブレーションをなす。逆に、$\mathcal{C}$ 上の任意の離散ファイブレーション $\pi : \mathcal{I} \to \mathcal{C}$ からは、各対象 $A$ にそのファイバー $\pi^{-1}(A)$ を割り当てる構造保存関手 $\mathcal{F} \in \Valid(\mathcal{C})$ が自然同型を除いて一意に復元される。
+\end{proposition}
+
+この等価性により、「スキーマ圏 $\mathcal{C}$ を充足するインスタンス関手 $\mathcal{F}$ が存在する（$\Valid(\mathcal{C}) \neq \emptyset$）」ことと、「スキーマ $\mathcal{C}$ をひな型とする無矛盾なインスタンスモデル $\mathcal{I}$ が実在する」ことは数学的に完全に同値となる。
+
+\subsection{データ型の厳密な分類（静的型空間 $\Dstatic$）}
+スキーマ圏 $\mathcal{C}$ が曖昧さなく構成可能であるためには、概念クラスの特徴値（Property）がとり得る値域と演算の空間――すなわちデータ型 $\Dstatic$――が厳密に閉じている必要がある。本体系では、構造の曖昧化やバグ空間（境界外アクセス等）を生む「可変長・固定長の配列型」を原理的に排除し、以下の\textbf{7つの互いに素なカテゴリの非交和}のみを静的データ型空間 $\Dstatic$ として許容する。
+\begin{equation}
+\Dstatic = \Dscalar \sqcup \Duid \sqcup \Dref \sqcup \Denumint \sqcup \Denumext \sqcup \Dext \sqcup \Dstruct.
+\end{equation}
+
+\begin{enumerate}
+    \item \textbf{スカラー完備対象（$\Dscalar$）：} 整数（$\mathbb{Z}$）、実数（$\mathbb{R}$）、複素数（$\mathbb{C}$）など、数理的に内部演算（四則演算・比較演算等）が閉じている数ソート、および意味の場固有の値域制限を課したその部分対象。演算結果が定義された値域の境界を超えた場合やゼロ除算が生じた場合、その射の引き戻しは始対象 $0$（空空間）へと崩壊する。
+    \item \textbf{永続的一意識別子対象（$\Duid$）：} 過去・現在・未来を通じたあらゆる状態遷移においても決して重複しない単射性（モノ射）を保証するシステム生成の一意空間（\texttt{Unique-ID}）。
+    \item \textbf{指示参照対象（$\Dref$）：} リレーションシップで結ばれた反対側の概念クラスの識別子（$\Duid$ 等）を指し示す型（\texttt{Reference}）。これは独立した基本型ではなく、リレーション射との合成によって可換図式から動的に導出される型である（定義~\ref{def:ref-prop} にて定式化）。
+    \item \textbf{内因性完備束列挙対象（$\Denumint$）：} 当該意味の場の内部論理そのものから要請される、2つ以上の異なる有限個の識別記号からなる完備束（直和オブジェクト $\coprod_{i=1}^m \mathbf{1}$、例：\texttt{\{青, 黄, 赤\}}）。
+    \item \textbf{外因性射影列挙対象（$\Denumext$）：} 外部実体 $\mathcal{EE}$ が統治する共通規格の宇宙にすでに存在する有限の選択肢集合を引き戻し（インポート）によって取り込んだ対象（例：ISO国名コード、曜日）。
+    \item \textbf{外部実体射影対象（$\Dext$）：} 時間宇宙 $\mathcal{EE}_{\mathrm{Time}}$ や文字列宇宙 $\mathcal{EE}_{\mathrm{String}}$ といった、本来の内部構造や物理法則が別の意味の場で定義されている巨大な自律宇宙から、当該意味の場で利用するために必要な最小限の形式（値域と許容演算）のみを射影した部分対象（例：日時型 \texttt{DateTime}、自由モノイド $\Sigma^*$ としての文字列型 \texttt{String}）。
+    \begin{itemize}
+        \item \emph{注記（境界化による存在保証）：} 例えば「実数」や「時刻」の厳密な構成原理（デデキント切断や相対論的時空計量）そのものを当該意味の場の内部に抱え込む必要はない。別の意味の場（$\mathcal{EE}$）で定義されていることを明示した上で、利用に必要な最小限の形式と演算子のみをインターフェースとして規定することで、スキーマ圏 $\mathcal{C}$ の有限性と構成可能性が保たれる。
+    \end{itemize}
+    \item \textbf{有限直積複合対象（$\Dstruct$）：} 上記 1 〜 6 のデータ型および他の複合対象を、一意な要素名のもとで有限個ネストした直積構造体（$\mathcal{M} \cong \prod_{i=1}^n \mathcal{D}_i$）。
+\end{enumerate}
+
+以上の7分類により、すべての特徴値射 $\mathrm{attr} : A \to T$（$A \in \mathcal{K},\, T \in \Dstatic$）の値域と許容演算が事前に確定し、未定義や型不整合による構造崩壊がスキーマレベルで完全に遮断される。
+
+\section{概念クラスとリレーションシップの圏論的定式化（Conceptual Classes and Relationships）}
+
+\subsection{概念クラスと単一・複合識別子（公理 C-1）}
+スキーマ圏 $\mathcal{C}$ において、各概念クラス $A \in \mathcal{K}$ は、それを特徴づける有限個の特徴値射（Property Morphisms）の族
+\begin{equation}
+\{\mathrm{attr}_i : A \to T_i\}_{i \in \Lambda_A} \quad (T_i \in \Dstatic)
+\end{equation}
+を備える。ここで、各特徴値の名前はクラス $A$ の内部で一意である。さらに、ある意味の場において「モノ（Object）」が個別の実体として識別可能であるためには、その個体性（Identity）を規定する特徴値の組が存在しなければならない。
+
+\begin{definition}[識別子とモニック性制約：公理 C-1]\label{def:identifier}
+各概念クラス $A \in \mathcal{K}$ は、空でない識別子集合 $\mathcal{U}_A \subseteq \mathcal{P}(\Lambda_A) \setminus \{\emptyset\}$ を持つ。任意の識別子 $I = \{i_1, \dots, i_k\} \in \mathcal{U}_A$ に対し、特徴値射の組から誘導される直積対象への普遍射（媒介射）
+\begin{equation}
+\alpha_I = \langle \mathrm{attr}_{i_1}, \dots, \mathrm{attr}_{i_k} \rangle : A \longrightarrow \prod_{j=1}^k T_{i_j}
+\end{equation}
+は、スキーマ圏 $\mathcal{C}$ における\textbf{モニック射（Monomorphism）}でなければならない。
+\end{definition}
+
+この公理により、任意の正当なインスタンス関手 $\mathcal{F} \in \Valid(\mathcal{C})$ において、像 $\mathcal{F}(\alpha_I) : \mathcal{F}(A) \to \prod_{j=1}^k \mathcal{F}(T_{i_j})$ は集合間の\textbf{単射（Injective Map）}となる。すなわち、同一クラスに属する異なる二つのインスタンスが、識別子を構成する特徴値すべての値を共有することは構造的に不可能であり、単一識別子（$k=1$）および複合識別子（$k \ge 2$）による個体の一意性が幾何学的に保証される。なお、候補となる識別子の組 $\mathcal{U}_A$ は複数存在してよい（多重視点からの一意性識別）。
+
+\subsection{双方向リレーションシップと4種の多重度基底}
+概念クラス $O, T \in \mathcal{K}$（$O = T$ となる再帰的リレーションシップを含む）の間に定義される二項リレーションシップ $R$ は、ドメイン内で一意の識別インデックスを付与され、両端に\textbf{多重度（Multiplicity）}と\textbf{意味的フレーズ（Semantic Phrase）}を必ず伴う。
+
+\begin{definition}[双方向リレーションシップと多重度の基底]\label{def:relationship}
+二つの概念クラス $O, T \in \mathcal{K}$ 間のリレーションシップ $R$ は、対向する 1-射の対 $(r^{\rightarrow} : O \to T,\, r^{\leftarrow} : T \to O)$（またはスパン頂点 $R$ を介した射影対 $O \xleftarrow{p_O} R \xrightarrow{p_T} T$）として定式化される。両端の多重度 $m_O, m_T$ は、0以上の自然数からなる濃度制約のうち、意味構造の必要十分性を満たす以下の\textbf{4種類の基底}のいずれかをとる。
+\begin{equation}
+m_O, m_T \in \{\, \mathbf{1},\; \mathbf{0..1},\; \mathbf{1..*},\; \mathbf{*} \,\}.
+\end{equation}
+\begin{itemize}
+    \item \textbf{$\mathbf{1}$（全域一意対応）：} ファイバーの濃度が常に厳密に $1$（全域関数に対応）。
+    \item \textbf{$\mathbf{0..1}$（部分的・一意対応）：} ファイバーの濃度が $0$ または $1$（部分関数に対応）。
+    \item \textbf{$\mathbf{1..*}$（全域多対多対応）：} ファイバーの濃度が $1$ 以上（全域関係・全射的対応）。
+    \item \textbf{$\mathbf{*}$（一般多対多対応）：} ファイバーの濃度が $0$ 以上（可算無限 $\infty$ までを許容する一般関係）。
+\end{itemize}
+\end{definition}
+
+任意のインスタンス関手 $\mathcal{F} \in \Valid(\mathcal{C})$ において、あるインスタンス $o \in \mathcal{F}(O)$ に接続される意味的リンクの集合（逆像ファイバー $\mathcal{F}(p_O)^{-1}(o)$）の濃度は、必ず指定された多重度 $m_T$ の許容範囲内に拘束される。
+
+\subsection{意味的フレーズ（2-射）と命題文の導出（公理 C-0）}
+リレーションシップが単なる無色のグラフの辺ではなく「意味構造」である理由は、両端に付与される意味的フレーズによって、インスタンス間の関係が自然言語の命題文（事実）へと写像される点にある。
+
+\begin{definition}[意味的フレーズと非重複性制約]\label{def:phrases}
+リレーションシップ $R$ の $O$ 側および $T$ 側に付与される意味的フレーズ $P_O, P_T$ は、自由モノイド $\Sigma^*$（空でない文字列空間）の元であり、圏 $\mathcal{C}$ においてはリレーションシップ射に随伴する\textbf{2-射（自然変換）} $\mu_O, \mu_T$ として定式化される。一意な意味構造を保証するため、以下の2つの構文制約が課される。
+\begin{enumerate}
+    \item 単一のリレーションシップ $R$ の両端に付与されるフレーズは、必ず互いに異なる文字列でなければならない（$P_O \neq P_T$）。
+    \item 同一の概念クラス対 $(O, T)$ の間に複数のリレーションシップ $R_1, R_2$ が定義される場合、両端のフレーズの組は互いに異なっていなければならない（$(P_{O,1}, P_{T,1}) \neq (P_{O,2}, P_{T,2})$）。
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[基本命題文の導出とトポス的真偽判定：公理 C-0]\label{prop:propositions}
+概念情報モデルにおける各リレーションシップの定義は、インスタンスモデルの状態を記述する基本命題文（Elementary Propositional Sentences）のテンプレートを自動導出する。
+\begin{enumerate}
+    \item \textbf{二項リレーションシップ（Binary）の場合：} インスタンス $o:O$ と $t:T$ に対し、双方向の命題文
+    \begin{equation}
+    \text{「}\underline{o:O}\;\; P_T \;\;\underline{t:T}\text{」} \quad \text{および} \quad \text{「}\underline{t:T}\;\; P_O \;\;\underline{o:O}\text{」}
+    \end{equation}
+    が導出される。
+    \item \textbf{特化関係（\texttt{Is-a}）の場合：} スーパー側 $O$ とサブ側 $T$ に対し、命題文 $\text{「}\underline{t:T}\;\; \text{is-a} \;\;\underline{o:O}\text{」}$ が導出される。
+    \item \textbf{関連クラス（Associative）の場合：} 関連クラス $A$ のインスタンス $a:A$ に対し、$\text{「}\underline{a:A}\;\; P_O \;\;\underline{o:O}\text{」}$ および $\text{「}\underline{a:A}\;\; P_T \;\;\underline{t:T}\text{」}$ が導出される。
+\end{enumerate}
+インスタンス関手 $\mathcal{F} \in \Valid(\mathcal{C})$ による写像において、2-射 $\mathcal{F}(\mu)$ は部分対象分類子 $\Omega = \{\mathrm{True}, \mathrm{False}\}$ \cite{maclane1992} への評価写像を誘導し、導出された命題文が実際のインスタンスモデルのリンク構造と一致するとき、またそのときに限り真理値 $\mathrm{True}$ をとる。さらに、圏 $\mathcal{C}$ における射の合成が結合則を満たすことにより、複数のリレーションシップを跨いだ命題文の連結（ナビゲーション）もまた一意に結合可能となる。
+\end{proposition}
+
+\subsection{参照特徴値の可換図式による導出（公理 C-1.5, C-4）}
+インスタンスモデルにおいて、二つのインスタンス間に意味的リンクが存在することは、一方のインスタンスが持つ特徴値の値が、他方のインスタンスの識別子の値と一致することによって表現される。この役割を担う特徴値が\textbf{参照特徴値（Referential Property）}である。
+
+\begin{definition}[参照特徴値の可換分解：公理 C-1.5, C-4]\label{def:ref-prop}
+概念クラス $B$ がリレーションシップ $r : B \to A$ を介して概念クラス $A$ を参照するとき、$B$ 側に付与される参照特徴値の組 $\beta_{B \to A} : B \to \prod_{j=1}^k T_{i_j}$ は、独立に定義された静的データ型ではなく、$A$ のいずれかの識別子射 $\alpha_I = \langle \mathrm{attr}_{i_1}, \dots, \mathrm{attr}_{i_k} \rangle : A \to \prod_{j=1}^k T_{i_j}$ とリレーション射 $r$ の\textbf{合成射（Composition）}として、以下の可換図式を満たすように等式拘束される。
+\begin{equation}
+\beta_{B \to A} = \alpha_I \circ r,
+\end{equation}
+すなわち、圏 $\mathcal{C}$ において次の図式が可換となる。
+\begin{center}
+\begin{tikzcd}[row sep=large, column sep=large]
+B \arrow[r, "r"] \arrow[dr, "\beta_{B \to A}"', dashed] & A \arrow[d, "\alpha_I", hook] \\
+ & \displaystyle\prod_{j=1}^k T_{i_j}
+\end{tikzcd}
+\end{center}
+\end{definition}
+
+商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ の合同関係 $\mathcal{R}$ にこの可換図式が組み込まれているため、参照特徴値のデータ型は対応する識別子のデータ型と自動的に一致し、かつ「存在しない識別子を指し示す参照不整合」はスキーマ構造上、最初から存在し得ない。
+
+\subsection{構造的分類：\texttt{Is-a} と関連クラス（公理 C-2, C-3）}
+二項リレーションシップに加え、意味構造の厳密な分類を実現するために、概念情報モデルでは以下の2つの構造的リレーションシップを規定する。
+
+\begin{definition}[排他直和分解としての \texttt{Is-a}：公理 C-3]\label{def:isa}
+スーパークラス $S \in \mathcal{K}$ と有限個のサブクラス群 $\{C_1, C_2, \dots, C_n\} \subset \mathcal{K}$ の間に定義される \texttt{Is-a} 関係は、包含射の族 $\{\iota_i : C_i \to S\}_{i=1}^n$ によって、$S$ がサブクラス群の\textbf{余積（直和：Coproduct）}と同型であり、かつ異なるサブクラス同士が交わりを持たない（排他的かつ網羅的である）構造として定義される。
+\begin{equation}
+S \cong \coprod_{i=1}^n C_i, \qquad C_i \times_S C_j \cong 0 \quad (\forall i \neq j).
+\end{equation}
+また、各サブクラス $C_i$ の参照特徴値 $\beta_{C_i \to S}$ は $\beta_{C_i \to S} = \alpha_{I_S} \circ \iota_i$ によって $S$ の識別子と等式結合される。
+\end{definition}
+
+\begin{remark}[オブジェクト指向の継承との峻別]
+プログラミング言語における「継承（Inheritance）」がコードや属性の再利用・差分拡張の仕組みであるのに対し、本体系の \texttt{Is-a} は\textbf{「同一の個体（インスタンス）が、全体の分類 $S$ に属すると同時に、互いに排他的な下位分類 $C_1, \dots, C_n$ のうち必ずただ一つに属する」}という存在論的な直和分割（Partition）を表す。この直和分解こそが、第5章で論じる \texttt{0..1} や \texttt{Nullable} な曖昧さを完全に解消する決定的な装置となる。
+\end{remark}
+
+\begin{definition}[多脚スパン頂点としての関連クラス：公理 C-2]\label{def:associative}
+二つの概念クラス $O, T \in \mathcal{K}$ 間のリレーションシップに立ち現れる個々の意味的リンク自体が固有の特徴値や他のクラスとの関係を持つ場合、リンク一つひとつに対してただ一つのインスタンスが対応する\textbf{関連クラス（Associative Class）} $A \in \mathcal{K}$ が導入される。圏論的には、関連クラス $A$ は射影射対 $O \xleftarrow{p_O} A \xrightarrow{p_T} T$ を備えた\textbf{スパンの頂点}であり、媒介射
+\begin{equation}
+\langle p_O, p_T \rangle : A \longrightarrow O \times T
+\end{equation}
+が\textbf{モニック射（単射）}であることを満たす。関連クラス $A$ には双方の識別子を参照する特徴値 $\beta_{A \to O} = \alpha_{I_O} \circ p_O$ および $\beta_{A \to T} = \alpha_{I_T} \circ p_T$ が付与され、関係そのものが第一級の対象（モノ）としてスキーマ圏内に定着する。
+\end{definition}
+
+\section{非縮退公理と内部論理の閉包性（Non-Degeneracy and Internal Logic Closure）}
+
+\subsection{対角線埋没（恒等射リンク）の完全排除}
+前稿（Paper 0）\cite{ota2026paper0} において、著者は言葉の多義性や無制限なリンク合成によって異なる意味的関係が同一視されると、すべての射が恒等射（Identity Morphism）へと縮退し、意味構造そのものが無意味化・崩壊するメカニズムを証明した。概念情報モデルにおいては、この構造崩壊をスキーマレベルおよびインスタンスレベルの双方で完全に遮断するために、\textbf{自己参照ループ（対角線埋没）の禁止公理}を課す。
+
+\begin{definition}[対角線埋没および恒等射縮退の排除公理]\label{def:non-degeneracy}
+スキーマ圏 $\mathcal{C}$ 内の任意の概念クラス $A \in \mathcal{K}$ に対し、意味構造の自明化（恒等射への縮退）を防ぐため、以下の2つの制約を課す。
+\begin{enumerate}
+    \item \textbf{直接的自己ループ（対角線埋没）の禁止：} 同一クラス上の再帰的リレーションシップ射 $r : A \to A$ において、あるインスタンス $a \in \mathcal{F}(A)$ が自分自身へと直接結びつく自己リンク（直積空間 $\mathcal{F}(A) \times \mathcal{F}(A)$ の対角射 $\Delta_{\mathcal{F}(A)} : a \mapsto (a, a)$ の像に落ちる事実）は構造的に存在しないものとする。
+    \begin{equation}
+    \forall A \in \mathcal{K},\; \forall r : A \to A,\; \forall a \in \mathcal{F}(A),\quad \mathcal{F}(\mu_r)(a, a) = \mathrm{False}.
+    \end{equation}
+    \item \textbf{大域的な恒等射縮退の禁止：} 複数のリレーションシップの合成経路 $p = r_n \circ \dots \circ r_1 : A \to A$（ただし $n \ge 2$ で異なる概念クラスや意味的フレーズを経由するもの）において、インスタンスモデル上で閉路（例：$A \to B \to C \to A$ の可換図式）が成立することは正当に許容される。ただし、スキーマ圏 $\mathcal{C}$ の合同関係において、非自明な意味的合成経路 $p$ が純粋な自己恒等射 $\id_A$ と同一視（$p = \id_A$ として情報量が消滅）されることは禁止される。
+\end{enumerate}
+\end{definition}
+
+ここで「存在しないものとする」とは、単なる運用上の推奨ではなく、当該スキーマ圏 $\mathcal{C}$ を充足する正当なインスタンス関手の空間 $\Valid(\mathcal{C})$ において、局所的（単一リレーション）にも大域的（複数リレーションの合成経路）にも $(a, a)$ 型のリンクを持つ状態が一切許容されない（仮にそのような状態が構成された場合、引き戻しが成立せずトポス内部論理の始対象 $0$＝空空間へと自動崩壊する）ことを意味する。
+
+\begin{remark}[インプリケイト・トポロジーとの峻別]
+順序構造（例：一列に並ぶ要素の先頭や末尾の表現）において、構造の次元を最適化するためにスキーマ上の参照射をイコライザー（等化子）によって自己恒等射 $\id_A$ と等価結合する「インプリケイト・トポロジー（構造的自己参照結合）」は、余剰自由度を削ぎ落とす静的なスキーマ圧縮操作であり、動的な事実としての自己ループリンク $(a, a)$ の生成とは厳密に区別される。
+\end{remark}
+
+\subsection{内部論理の閉包性と「無意味（ナンセンス）」の境界（公理 C-5）}
+命題~\ref{prop:propositions} で示した通り、概念情報モデルのリレーションシップはインスタンスモデルの状態を記述する基本命題文を導出する。ここで、ある一つの意味の場における「意味の成立範囲」と「無意味（ナンセンス）の境界」を厳密に確定する。
+
+\begin{definition}[内部論理の閉包性：公理 C-5]\label{def:logic-closure}
+ある意味の場 $\mathcal{SYS}$ のスキーマ圏 $\mathcal{C}$ が許容する有意味な命題文の空間 $\mathcal{L}(\mathcal{SYS})$ は、$\mathcal{C}$ に属する概念クラス $\mathcal{K}$、データ型 $\Dstatic$、およびリレーションシップのフレーズ $\mu$ のみから帰納的（Inductively）に構成される論理式の集合として定義される。
+\end{definition}
+
+\begin{proposition}[命題の有意味性と不完全性の境界]\label{prop:trichotomy}
+任意の命題文 $\varphi$ について、その論理的地位は以下の3つに排他的に分類される。
+\begin{enumerate}
+    \item \textbf{有意味かつ真（$\mathrm{True}$）：} $\varphi \in \mathcal{L}(\mathcal{SYS})$ であり、かつ現在のインスタンス関手 $\mathcal{F} \in \Valid(\mathcal{C})$ が規定する実際のリンク構造・特徴値と一致する場合。
+    \item \textbf{有意味かつ偽（$\mathrm{False}$）：} $\varphi \in \mathcal{L}(\mathcal{SYS})$ であるが、現在のインスタンス関手 $\mathcal{F}$ の状態と一致しない場合。
+    \item \textbf{無意味（Nonsense / 始対象 $0$ への崩壊）：} $\varphi \notin \mathcal{L}(\mathcal{SYS})$ である場合。すなわち、当該スキーマ圏 $\mathcal{C}$ から導出不可能な構造を持つ文や、別の意味の場（他ドメイン）の語彙・記号が混入した原子命題は、真でも偽でもなく「無意味」として判定され、トポス内部論理において始対象 $0$（空空間）へと直ちに排除される。
+\end{enumerate}
+\end{proposition}
+
+この内部論理の閉包性により、意味の場 $\mathcal{SYS}$ の真理値評価は外部の特権的基準に頼ることなく、その場の内部だけで 100\% 自己完結して決定される。同時に、単一のスキーマ圏 $\mathcal{C}$ の内部からは導出できない命題が存在し得るという構造は、形式体系におけるゲーデルの不完全性定理およびローヴェアの不動点定理と同型の境界を形成し、異なる意味の場同士を結ぶ「ブリッジ（Bridge）」の必然性を裏づける（Paper 0 および Paper 3 の接続点）。
+
+\section{表現的完備性・存在・同型・漸近的接近の諸定理（Completeness, Existence, Isomorphism, and Asymptotic Refinement）}
+
+第2章から第4章にかけて、著者は単一の意味の場（Field of Sense）を規定する概念情報モデルを、データ型、単一・複合識別子（モニック射）、両端にフレーズ（2-射）と4種の多重度を持つ双方向リレーションシップ、参照特徴値の可換図式、排他直和分解としての \texttt{Is-a}、多脚スパン頂点としての関連クラス、および非縮退公理を備えた商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ として厳密に定式化した。
+
+本章では、第1章で提起した3つの根源的問いに肯定的な解答を与えるため、この厳密な形式のもとで、(1) 任意の意味の場の静的構造をこの形式のみで過不足なく記述できること（\textbf{表現的完備性定理}）、(2) 妥当なスキーマ圏が矛盾なく実在すること（\textbf{存在定理}）、(3) 同一の意味の場を記述するスキーマは表現を超えて本質的に同一であること（\textbf{同型定理}）、および (4) 有限の思考能力しか持たない人間がアブダクション（仮説形成）を通じて真のスキーマへと近づいていけること（\textbf{漸近的接近定理}）を数学的に証明する。
+
+\subsection{表現的完備性定理：任意の意味の場の静的構造の記述可能性}
+まず、本稿が定式化した概念情報モデルの記述形式（7種のデータ型、単一・複合識別子、4種の多重度を持つ双方向リレーションシップ、排他直和分解としての \texttt{Is-a}、および関連クラス）が、特殊な例外構造を残すことなく、\textbf{あらゆる意味の場の静的な意味構造を過不足なく記述できる（表現的完備性：Expressive Completeness）}ことを証明する。
+
+\begin{theorem}[概念情報モデル形式の表現的完備性]\label{thm:completeness}
+一階述語論理の幾何学的断片（Geometric Logic）および局所表示可能圏（Locally Presentable Category）によって規定される任意の意味の場 $\mathcal{SYS}$ の静的意味構造は、本稿の公理系（第2章〜第4章）に従う適切な商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ として過不足なく記述可能である。すなわち、新たなプリミティブ（3項以上の直接リレーションや配列型など）を追加する必要はなく、本稿の最小基底のみで任意の静的構造が表現される。
+\end{theorem}
+
+\begin{proof}
+任意の静的意味構造を規定する要素が、本稿の基底へと完全に還元可能であることを示す。
+\begin{enumerate}
+    \item \textbf{任意多項関係（$n$-ary Relations）の関連クラスへの還元：} 領域内に任意の $n$ 項関係 $R \subseteq X_1 \times X_2 \times \dots \times X_n$（$n \ge 3$）が存在する場合であっても、関連クラス $A_R \in \mathcal{K}$ を導入し、$n$ 本の射影射 $p_k : A_R \to X_k$（多重度 \texttt{1}）と単射媒介射 $\langle p_1, \dots, p_n \rangle : A_R \to \prod_{k=1}^n X_k$（定義~\ref{def:associative} の自然な拡張）を構成することで、すべての多項関係は二項リレーションシップの組み合わせへと情報損失なく等価変換される。
+    \item \textbf{分類・制約トポロジーの直和分解と4種多重度への還元：} 対象領域における任意の排他的分類や条件付き構造は、\texttt{Is-a} による余積分解 $S \cong \coprod_{i=1}^m C_i$（定義~\ref{def:isa}）および内因性・外因性列挙型（$\Denumint, \Denumext$）によって表現され、要素間の対応関係は全域性・単射性の有無の直積（$2 \times 2 = 4$ 通り）に対応する4種の多重度基底（\texttt{1}, \texttt{0..1}, \texttt{1..*}, \texttt{*}）によってトポロジー的に完全に網羅される。
+    \item \textbf{スケッチ定理による普遍性：} 圏論におけるスケッチ理論（Sketch Theory）の標準定理 \cite{gabriel1971,barr1990} により、有限積（識別子・構造型）、有限余積（\texttt{Is-a}）、引き戻し・スパン（関連クラス・参照特徴値）、および可換図式（合同関係 $\mathcal{R}$）を備えた商圏の記述力は、幾何学的論理（Geometric Logic）で公理化可能なあらゆる数理的・概念的構造のモデル圏（局所表示可能圏）と圏同値となる表現能力を持つ。 \qedhere
+\end{enumerate}
+\end{proof}
+
+\subsection{存在定理：厳密なスキーマ圏の構成的実在}
+次に、厳密な制約（公理 C-Base 〜 C-5 および非縮退公理）を課したスキーマ圏 $\mathcal{C}$ が、制約同士の矛盾によって空虚な体系（$\Valid(\mathcal{C}) = \emptyset$）に陥ることなく、実効的な「存在の形式」として構成可能であることを示す。
+
+\begin{theorem}[厳密スキーマ圏の無矛盾性と構成的存在保証]\label{thm:existence}
+第2章〜第4章のすべての公理（データ型の閉包性、識別子のモニック性、参照特徴値の可換性、\texttt{Is-a} の排他直和性、関連クラスのスパン単射性、多重度整合性、および対角線埋没の排除）を満足する任意のスキーマ圏 $\mathcal{C} \equiv CG/\mathcal{R}$ に対し、その制約をすべて充足する非自明な構造保存関手 $\mathcal{F} \in \Valid(\mathcal{C})$ が構成的に存在する。すなわち、
+\begin{equation}
+\Valid(\mathcal{C}) \neq \emptyset
+\end{equation}
+が成り立ち、スキーマ圏 $\mathcal{C}$ は無矛盾な意味構造の形式として確実に実在する。
+\end{theorem}
+
+\begin{proof}
+構成的帰納法（Constructive Induction）により、$\mathcal{C}$ を充足するインスタンス関手 $\mathcal{F}$ を実際に構築する。
+\begin{enumerate}
+    \item \textbf{基底の割り当て（データ型と外部実体）：} 各静的データ型 $T \in \Dstatic$ に対し、第2.5節の定義に従い対応する非空の値集合 $\mathcal{F}(T)$（整数・実数・自由モノイド $\Sigma^*$・単射生成可能な $\Duid$・有限完備束 $\Denumint, \Denumext$ 等）を割り当てる。外部実体 $\mathcal{EE}$ については最小インターフェース値域のみを固定する。
+    \item \textbf{直和分解（\texttt{Is-a}）に基づく概念クラスの個体配置：} 概念クラス集合 $\mathcal{K}$ を \texttt{Is-a} 階層に沿って最下層の葉クラス（サブ側）から順に関手値を構成する。各葉クラス $C_i$ に非空の互いに素な有限個体集合 $\mathcal{F}(C_i)$ を割り当て、スーパークラス $S$ に対してはその非交和 $\mathcal{F}(S) = \coprod_{i=1}^n \mathcal{F}(C_i)$ を割り当てる。これにより定義~\ref{def:isa}（排他直和性 $C_i \times_S C_j \cong 0$）が自動的に満たされる。
+    \item \textbf{識別子の単射埋め込みと参照特徴値の可換構成：} 各クラスの個体集合 $\mathcal{F}(A)$ の濃度を、識別子積集合 $\prod_{j=1}^k \mathcal{F}(T_{i_j})$ の濃度以下（$\Duid$ を含む場合は可算無限まで許容）に選び、識別子射 $\mathcal{F}(\alpha_I)$ を単射（モニック射）として定める。二項リレーションシップおよび関連クラスについては、指定された多重度基底（\texttt{1}, \texttt{0..1}, \texttt{1..*}, \texttt{*}）のファイバー条件および非対角性（$\mathcal{F}(\mu_r)(a, a) = \mathrm{False}$）を満たすよう bipartite（二部グラフ）的なリンク集合を構成し、参照特徴値 $\mathcal{F}(\beta_{B \to A})$ を合成 $\mathcal{F}(\alpha_I) \circ \mathcal{F}(r)$ によって定義する。
+    \item \textbf{商圏合同関係の保存：} 上記の構成において、すべての可換図式（参照整合性および閉路の可換性）と 2-射による命題評価（命題~\ref{prop:propositions} および命題~\ref{prop:trichotomy}）は定義により等式拘束を満たすため、誘導される関手 $\mathcal{F}$ は商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ のすべての制約を保存する $\Valid(\mathcal{C})$ の元となる。 \qedhere
+\end{enumerate}
+\end{proof}
+
+この定理は、実務における「抽象化＝曖昧化」という誤解を完全に覆す。むしろ、曖昧さを排除して識別子・型・多重度・直和分解を厳密に固定したからこそ、矛盾のないインスタンスモデルが構成可能となり、スキーマ圏 $\mathcal{C}$ の実在性が保証されるのである。
+
+\subsection{同型定理：表現の差異を超えた一意性}
+次に、同一の意味の場（現実の対象領域 $\mathcal{SYS}$）のすべての事実と制約を過不足なく記述した二つのスキーマ圏 $\mathcal{C}_1, \mathcal{C}_2$ が存在したとき、それらが表現の細部（例：参照特徴値中心の記述かスパン中心の記述か、同値な識別子の選択、あるいは正規化されたクラス分割の経路）において異なっていても、圏論的には完全に同型（圏同値）に帰着することを示す。
+
+\begin{definition}[意味の場に対するスキーマの充足性と表現的等価性]\label{def:adequacy}
+ある対象となる意味の場 $\mathcal{SYS}$ のとり得る正当な状態空間を $\Omega_{\mathcal{SYS}}$ とする。スキーマ圏 $\mathcal{C}$ が $\mathcal{SYS}$ を\textbf{過不足なく厳密に記述している（Adequate）}とは、そのモデル空間 $\Valid(\mathcal{C})$ と $\Omega_{\mathcal{SYS}}$ の間に自然な双射対応が存在し、$\mathcal{SYS}$ 上で有意味なすべての命題文の真偽判定（命題~\ref{prop:propositions} および命題~\ref{prop:trichotomy}）を完全に再現することをいう。
+\end{definition}
+
+\begin{theorem}[スキーマ圏の同型定理：Uniqueness up to Categorical Equivalence]\label{thm:isomorphism}
+同一の意味の場 $\mathcal{SYS}$ を過不足なく厳密に記述する任意の二つのスキーマ圏 $\mathcal{C}_1$ と $\mathcal{C}_2$ は、商 2-圏としての普遍性により互いに\textbf{圏同値（Categorically Equivalent：$\mathcal{C}_1 \simeq \mathcal{C}_2$）}であり、それらの正当なインスタンスモデル空間もまた自然同型（$\Valid(\mathcal{C}_1) \simeq \Valid(\mathcal{C}_2)$）となる。
+\end{theorem}
+
+\begin{proof}
+$\mathcal{C}_1$ と $\mathcal{C}_2$ がともに同一の意味の場 $\mathcal{SYS}$ を過不足なく記述しているとき、両者の正当なインスタンスモデル空間 $\Valid(\mathcal{C}_1)$ と $\Valid(\mathcal{C}_2)$ の間には、各状態における有意味命題の真偽（内部論理のモデル）を保存する自然同型対応 $\Phi : \Valid(\mathcal{C}_1) \xrightarrow{\sim} \Valid(\mathcal{C}_2)$ が誘導される。
+\begin{enumerate}
+    \item \textbf{商圏の合同関係による正規化：} たとえば、$\mathcal{C}_1$ がリレーションシップ $r : B \to A$ を基本射として明示し、$\mathcal{C}_2$ が参照特徴値 $\beta_{B \to A}$ と識別子 $\alpha_I$ の引き戻しによって同等の関係を表現している場合であっても、定義~\ref{def:schema-cat} および定義~\ref{def:ref-prop} の可換図式 $\beta_{B \to A} = \alpha_I \circ r$ により、両者は商 2-圏の合同関係 $\mathcal{R}$ のもとで同一の普遍的対象・射を張る。同様に、関連クラスのスパン頂点（定義~\ref{def:associative}）と \texttt{Is-a} の余積分解（定義~\ref{def:isa}）もそれぞれ普遍性（Universal Property）によって定義されているため、普遍性の一意性（Unique up to unique isomorphism）により同型な構造を誘導する。
+    \item \textbf{Lawvere 関手意味論の双対性（再構成定理）：} 関手意味論（Lawvere Theories および有限完備・余完備圏における Gabriel-Ulmer 双対性 \cite{lawvere1963,gabriel1971}）の標準定理により、有限極限・余極限を保存するモデル圏の間の圏同値 $\Valid(\mathcal{C}_1) \simeq \Valid(\mathcal{C}_2)$ は、元のスキーマ圏の間の本質的な圏同値 $F : \mathcal{C}_1 \simeq \mathcal{C}_2$ を一意に誘導する。 \qedhere
+\end{enumerate}
+\end{proof}
+
+この同型定理により、「ある意味の場を厳密に記述する正しいスキーマは本質的にただ一つ（同型を除いて一意）である」ことが保証される。その最も直観的で典型的な例は、クラス名・特徴値名・フレーズの文字列ラベルがすべて日本語で記述されたモデルと、すべて英語で記述されたモデルの対比である。表面上の記号列（シンタックス）はまったく異なって見えても、識別子の単射性、多重度、可換図式、および構造的関係が張るネットワークが同一の意味の場を過不足なく捉えている限り、両者は商 2-圏として完全に同型（圏同値）である。同様に、参照特徴値中心の記述とスパン中心の記述など、表現経路が異なっていても、厳密化の条件を突き詰めていく限り必ず数学的に同一のスキーマ構造へと到達する。
+
+逆に言えば、複数のモデラーが同じ対象領域を議論しているつもりで厳密化を進めたにもかかわらず、最終的に互いに同型とならない異なるスキーマ圏へと帰着したならば、それは単なる表現の好みや記述の揺れではない。定理~\ref{thm:isomorphism} の対偶により、\textbf{両者が暗黙のうちに異なる前提や切り口を持つ「別の意味の場（異なるスキーマ圏が支配する独立した領域）」をモデル化していること}の数学的証明となる。この区別によって、「表現の違いに過ぎない同型モデル」と「ブリッジ（Paper 0・Paper 3）によって接続されるべき別個の意味の場」とが明確に峻別される。
+\subsection{思考の有限性と漸近的接近定理（アブダクションによる精密化）}
+現実の人間は有限の記憶と有限の認識能力しか持たないため、未知の意味の場に直面した最初の瞬間から、定理~\ref{thm:existence}・\ref{thm:isomorphism} が保証する「完全な真のスキーマ圏 $\mathcal{C}^*$」を一挙に書き下すことはできない。しかし、観測された現象（内包）から背後の構造を仮説形成する\textbf{アブダクション（Abduction）}\cite{peirce1903} と、演繹的検証に基づく\textbf{段階的精密化（Refinement）}のプロセスを定式化することで、有限な人間であっても真のスキーマ圏 $\mathcal{C}^*$ へと漸近的に収束できることを証明する。
+
+\begin{definition}[有限人間の初期近似モデルと2つの精密化演算]\label{def:refinement}
+モデラーが有限の観測からアブダクションによって構成した第 $n$ 段階の近似スキーマ圏を $\mathcal{C}^{(n)}$ とする。思考の有限性ゆえに、初期近似モデル $\mathcal{C}^{(0)}$ には通常、以下の2種類の「未分化な曖昧さ（構造の粗さ）」が含まれる。
+\begin{itemize}
+    \item \textbf{曖昧さ I（条件的属性・部分的関係の混在）：} あるクラス $S$ の一部の個体のみが持つ特徴値や、\texttt{0..1}（あるいは実装上の \texttt{Nullable}）の多重度を持つ関係が混在している状態。
+    \item \textbf{曖昧さ II（多対多関係の未統合）：} 二つのクラス $O, T$ の間の多対多（\texttt{*} と \texttt{*}）リレーションシップにおいて、関係そのものに付随する意味や時間的・属性的多重性がまだ対象化されていない状態。
+\end{itemize}
+これに対し、現実の観測（内包）と現在の近似モデル $\mathcal{C}^{(n)}$ の演繹的予測との間に生じる「ズレ（想定外の例外や制約違反）」を検知するたびに、モデラーは以下の2つの構造精密化演算を適用して $\mathcal{C}^{(n+1)}$ へと更新する。
+\begin{enumerate}
+    \item \textbf{演算 $\Rsub$（サブクラス化による直和分解）：} クラス $S$ における \texttt{0..1} の関係や部分的属性の背後にある意味的区分を発見し、$S$ を互いに排他的なサブクラス群の直和 $S \cong \coprod_{i=1}^k C_i$（定義~\ref{def:isa}）へと分解する。これにより、曖昧であった \texttt{0..1} や部分的属性は、特定のサブクラス $C_i$ における必須かつ厳密な \texttt{1} の関係・確定属性へと昇華する。
+    \item \textbf{演算 $\Rassoc$（関連クラス化による多脚スパンへの統合）：} 未分化な多対多リレーションシップを、スパンの頂点をなす独立した\textbf{関連クラス} $A$（定義~\ref{def:associative}：$O \xleftarrow{p_O} A \xrightarrow{p_T} T$）へと対象化（Reification）する。これにより、曖昧な多対多の絡み合いが、一意な識別子と明確な多重度 \texttt{1} を備えた第一級の対象へと構造化される。
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[漸近的接近定理：Asymptotic Convergence under Cognitive Finitude]\label{thm:convergence}
+対象となる意味の場 $\mathcal{SYS}$ の真のスキーマ圏を $\mathcal{C}^*$ とし、有限のモデラーがアブダクションと精密化演算（$\Rsub,\, \Rassoc$）を反復して生成する近似スキーマ列を
+\begin{equation}
+\mathcal{C}^{(0)} \longrightarrow \mathcal{C}^{(1)} \longrightarrow \cdots \longrightarrow \mathcal{C}^{(n)} \longrightarrow \cdots
+\end{equation}
+とする。各ステップにおいて精密化がモデル化対象の識別可能な区別（ファイバーの分離）を厳密に増加させるとき、以下が成り立つ。
+\begin{enumerate}
+    \item \textbf{単調包含と近似誤差の減少：} 各近似モデルの正当なインスタンス空間が許容する「現実には起こり得ない偽の状態（バグ空間）」は単調に縮小し、真の状態空間 $\Valid(\mathcal{C}^*)$ へと内側から（あるいは外側の過剰許容を削ぎ落とす形で）単調に接近する。
+    \item \textbf{極限における一意収束（密度の定理による保証）：} 任意のインスタンス関手 $\mathcal{F} \in \Valid(\mathcal{C}^*)$ が米田埋め込みと表現関手 $h^X = \mathcal{C}^*(X, -)$ の余極限（多項式展開）として
+    \begin{equation}
+    \mathcal{F} \cong \colim_{(X, a) \in \int \mathcal{F}} h^X
+    \end{equation}
+    と一意に表現される（密度の定理：Density Theorem \cite{maclane1998,maclane1992}）ことから、精密化の極限（$\varinjlim \mathcal{C}^{(n)}$）において近似スキーマ列は真のスキーマ圏 $\mathcal{C}^*$ と圏同値（$\varinjlim \mathcal{C}^{(n)} \simeq \mathcal{C}^*$）に収束する。
+    \item \textbf{有限ステップでの実用的十分性：} 仮に無限の極限に到達する前の有限段階 $\mathcal{C}^{(N)}$ で停止したとしても、すでに分節化された部分領域においては真のスキーマ $\mathcal{C}^*$ の構造保存射影（部分多項式近似）と同型であり、当該業務・制御領域の目的に対して完全に実用的かつ健全なモデルとして機能する。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+精密化演算 $\Rsub$（余積分解）および $\Rassoc$（スパン頂点の導入）は、いずれもスキーマ圏の生成グラフに新たな対象・識別子・直和／スパン制約を追加し、合同関係 $\mathcal{R}^{(n)} \subset \mathcal{R}^{(n+1)}$ を強める操作であるため、対応するインスタンス空間の忘却射影 $\Valid(\mathcal{C}^{(n+1)}) \to \Valid(\mathcal{C}^{(n)})$ は、過剰に許容されていた偽モデル（\texttt{0..1} や未分化多対多が許していた不正状態）を段階的に排除する単射的制限を与える。対象領域 $\mathcal{SYS}$ が可算個の生成要素（クラスと関係）によって稠密に張られる（可分性の公理）とき、圏論の密度の定理（Density Theorem）により、すべての表現関手 $h^X$ の有限余極限の増大列の極限は元の関手 $\mathcal{F}$ を自然同型を除いて一意に復元する。したがって、有限の人間による段階的なアブダクションと構造精密化は、数学的に必ず真のスキーマ圏 $\mathcal{C}^*$ へと漸近収束する。 \qedhere
+\end{proof}
+
+実務のモデリングにおいて最も典型的に観察される漸近的接近の軌道は、多重度に \texttt{0..1} や \texttt{0..*}（すなわち \texttt{Nullable} な属性や、成立するかどうか不確定な任意関係）を多く含む粗い初期モデル $\mathcal{C}^{(0)}$ から出発し、業務や対象領域の観察を深めながらそれらを厳密化していく過程である。初期段階では「ある条件のときだけ値が入る」「特定の状況でのみリンクが張られる」といった現象を \texttt{0..1} や \texttt{0..*} で暫定的に受容せざるを得ないが、それらの例外や条件の背後にある本質的な区分をアブダクションによって見出し、サブクラス化（排他直和分解）によって \texttt{0..1} を必須の \texttt{1} へと置き換え、さらに未分化な多対多（\texttt{0..*} と \texttt{0..*}）を関連クラス（多脚スパン）へと対象化していく一連のステップこそが、定理~\ref{thm:convergence} が定式化した $\mathcal{C}^{(0)} \to \mathcal{C}^{(1)} \to \dots \to \mathcal{C}^*$ の漸近的収束プロセスそのものである。
+
+\section{実践的意義と結論（Practical Implications and Conclusion）}
+
+\subsection{視覚記法（UML・ER図）の再評価：記法と意味論の分離}
+本稿が導出した圏論的定式化（商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ および関手意味論）は、ソフトウェア工学や情報システム設計の現場における「モデリング記法」の位置づけを根本から明確化する \cite{shlaer1988,shlaer1992,mellor2002}。
+
+従来のモデリング実務においては、UML（統一モデリング言語）のクラス図や ER図（実体関連図）\cite{chen1976}、あるいは YAML/JSON といったテキスト形式の記述法そのものが「モデル」であると混同され、記法の優劣や流行が議論の中心に置かれがちであった。しかし、本稿の体系においては、\textbf{モデルとは対象に内在する「意味構造（スキーマ圏 $\mathcal{C}$）」そのものであり、UML や ER図はその意味構造を人間同士で共有・可視化するための「表現記法（Syntax）」に過ぎない}。
+
+\begin{itemize}
+    \item \textbf{記法そのものに意味保証はない：} 単なる箱と線の図式を描くだけでは、そこに定義されたクラスが識別子（モニック射）を持つのか、\texttt{Is-a} が排他直和分解（$S \cong \coprod C_i$）なのか、それとも単なる実装上の継承や曖昧な \texttt{0..1} の放置なのかは確定しない。意味論（Semantics）を欠いた図式表現は、どれほど精密に見えても無意味な落書きに陥る危険を常に孕んでいる。
+    \item \textbf{厳密な意味論を背景に据えたときの記法の復権：} 逆に、モデラーが本稿で証明した圏論的意味論（第2章〜第5章の公理系と制約）をバックグラウンドとして明確に把握した上で記述するならば、UML のクラス図や ER図といった既存の国際標準記法であっても、\textbf{商 2-圏 $\mathcal{C}$ の厳密な構造を過不足なく表現する正当な言語として完全に機能する}。さらに、定理~\ref{thm:isomorphism}（同型定理）が示す通り、どの記法（図式であれテキスト形式であれ）を採用したとしても、厳密化の条件を満たす限り、その背後にある意味構造はすべて互いに圏同値（同型）な同一のモデルへと帰着する。
+\end{itemize}
+
+なお、記法と意味論を峻別するこの視座からは、従来の UML ツール等でしばしば理想とされてきた「要求モデル $\to$ 設計モデル $\to$ 実装コード $\to$ 要求モデル」という可逆的なラウンドトリップ変換が原理的に成り立たないことも自然に示唆される。要求（問題領域の意味の場）と実装（実行プラットフォームの意味の場）はそもそも異なるスキーマ圏に属しており、非機能要件という境界条件を伴う変換は本質的に一方向（不可逆）であるためである（この構造変換の非対称性については Paper 3 にて厳密に定式化する）。したがって、実務におけるモデリングの本質は、コードからの逆変換に頼ることではなく、\textbf{アブダクションと構造精密化（サブクラス化・関連クラス化）を通じて、背後のスキーマ圏 $\mathcal{C}$ から曖昧さを削ぎ落とし、同型な真の構造へと近づけていく思考の営み}にあると言える。
+
+\subsection{結論と次稿（Paper 2）への展望}
+本稿（Paper 1）では、Paper 0 \cite{ota2026paper0} で提示した「関係基底の存在論と意味の場のユニバース」を受け継ぎ、単一の意味の場における静的な意味構造（概念情報モデル）の記述形式を商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ として厳密に定式化した。そして、データ型の厳密な分類、単一・複合識別子（モニック射）、両端に意味的フレーズ（2-射）と4種の多重度を持つ双方向リレーションシップ、参照特徴値の可換図式、排他直和分解としての \texttt{Is-a}、多脚スパン頂点としての関連クラス、および自己ループ排除公理という一見厳格な諸制約こそが、実は以下の3つの根源的命題をすべて肯定するための必要十分条件であることを証明した。
+\begin{enumerate}
+    \item \textbf{存在の肯定（定理~\ref{thm:completeness}，定理~\ref{thm:existence}）：} 任意の意味の場の静的構造は本稿の最小基底からなる商 2-圏 $\mathcal{C}$ として過不足なく記述可能であり（表現的完備性）、かつ厳密な制約を備えたスキーマ圏 $\mathcal{C}$ に対しては矛盾のない健全なインスタンス関手が構成的に存在する（$\Valid(\mathcal{C}) \neq \emptyset$）。
+    \item \textbf{一意性・同型性の肯定（定理~\ref{thm:isomorphism}）：} 同一の意味の場を過不足なく記述するスキーマ圏は、表現形式や記法・言語ラベルの差異を超えてすべて圏同値（$\mathcal{C}_1 \simeq \mathcal{C}_2$）に帰着する。
+    \item \textbf{漸近的接近の肯定（定理~\ref{thm:convergence}）：} 有限の思考能力しか持たない人間であっても、観測（内包）からのアブダクションと、サブクラス化・関連クラス化による段階的精密化を反復することで、米田の補題と密度の定理に基づき、存在するはずの真のスキーマ圏 $\mathcal{C}^*$ へと漸近的に収束することができる。
+\end{enumerate}
+
+本稿によって、単一の意味の場における「静的な存在の形式（空間の骨格）」は完全に確立された。次稿（\textbf{Paper 2}）では、この厳密な静的スキーマ圏 $\mathcal{C}$ の上で生起する\textbf{「時間の経過と状態の動的変化」}へと議論を進める。具体的には、各概念クラスに随伴する状態モデル（状態遷移）と、プロセス入出力を記述するデータフロー型アクションモデル、さらには外部境界条件や形式への言及としての実行セマンティクス（非機能的制約や不変条件）を組み込み、\textbf{意味の場の動的振る舞い全体が対称モノイド圏（Symmetric Monoidal Category）として閉じ、離散的な状態遷移でありながら連続的な現実の変化をも矛盾なく描写できること}を厳密に証明する。
+
+\begin{thebibliography}{99}
+
+\bibitem{ota2026paper0}
+Ota, H. (2026).
+\emph{Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe} (Version 1.0.1).
+Zenodo. \url{https://doi.org}
+
+\bibitem{maclane1998}
+Mac Lane, S. (1998).
+\emph{Categories for the Working Mathematician} (2nd ed.).
+Springer.
+
+\bibitem{lawvere1963}
+Lawvere, F. W. (1963).
+Functorial Semantics of Algebraic Theories.
+\emph{Proceedings of the National Academy of Sciences of the United States of America}, 50(5), 869--872.
+
+\bibitem{gabriel1971}
+Gabriel, P., \& Ulmer, F. (1971).
+\emph{Lokal pr\"asentierbare Kategorien}.
+Lecture Notes in Mathematics, Vol.~221, Springer.
+
+\bibitem{spivak2012}
+Spivak, D. I. (2012).
+Functorial Data Migration.
+\emph{Information and Computation}, 217, 31--51.
+
+\bibitem{barr1990}
+Barr, M., \& Wells, C. (1990).
+\emph{Category Theory for Computing Science}.
+Prentice Hall.
+
+\bibitem{maclane1992}
+Mac Lane, S., \& Moerdijk, I. (1992).
+\emph{Sheaves in Geometry and Logic: A First Introduction to Topos Theory}.
+Springer.
+
+\bibitem{peirce1903}
+Peirce, C. S. (1903/1998).
+Pragmatism as the Logic of Abduction.
+In \emph{The Essential Peirce: Selected Philosophical Writings}, Vol.~2 (1893--1913), Indiana University Press.
+
+\bibitem{gabriel2015}
+Gabriel, M. (2015).
+\emph{Fields of Sense: A New Realist Ontology}.
+Edinburgh University Press.
+
+\bibitem{wittgenstein1922}
+Wittgenstein, L. (1921/1922).
+\emph{Tractatus Logico-Philosophicus}.
+Kegan Paul, Trench, Trubner \& Co.
+
+\bibitem{shlaer1988}
+Shlaer, S., \& Mellor, S. J. (1988).
+\emph{Object-Oriented Systems Analysis: Modeling the World in Data}.
+Yourdon Press.
+
+\bibitem{shlaer1992}
+Shlaer, S., \& Mellor, S. J. (1992).
+\emph{Object Lifecycles: Modeling the World in States}.
+Yourdon Press.
+
+\bibitem{mellor2002}
+Mellor, S. J., \& Balcer, M. J. (2002).
+\emph{Executable UML: A Foundation for Model-Driven Architecture}.
+Addison-Wesley.
+
+\bibitem{chen1976}
+Chen, P. P. (1976).
+The Entity-Relationship Model---Toward a Unified View of Data.
+\emph{ACM Transactions on Database Systems}, 1(1), 9--36.
+
+\bibitem{codd1970}
+Codd, E. F. (1970).
+A Relational Model of Data for Large Shared Data Banks.
+\emph{Communications of the ACM}, 13(6), 377--387.
+
+\bibitem{omg2019mof}
+Object Management Group (OMG). (2019).
+\emph{OMG Meta Object Facility (MOF) Core Specification} (Version 2.5.1).
+OMG Document Number: formal/2019-10-01.
+
+\end{thebibliography}
+
+\end{document}
