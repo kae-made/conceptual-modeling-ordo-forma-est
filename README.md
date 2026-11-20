@@ -33,8 +33,12 @@ The series is structured into two tiers: rigorous mathematical and engineering f
   * Japanese Version: `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.jp.pdf`
 * **Summary:** Demonstrates that relation-centered span structures constitute the essence of meaningful existence. Formalizes how linguistic polysemy collapses meaning into trivial identity morphisms, and shows how reality is partitioned into schema-governed *Fields of Sense* connected via *Bridges* (restricted exclusively to objects and feature values) to form a *Universe* $\mathcal{U}$. Proves that observed phenomena are the *intension* of this Universe and that uniquely inverting the global structure of $\mathcal{U}$ from observation is impossible in principle.
 
-### [Paper 1] Static Modeling Theory: Rigorous Schema Representation and Asymptotic Refinement *(In Preparation)*
-* **Tentative Title:** *Category-Theoretic Foundations of Conceptual Information Modeling: Rigorous Schema Representation, Isomorphism, and Asymptotic Refinement under Cognitive Finitude*
+### [Paper 1] Static Modeling Theory: Rigorous Schema Representation and Asymptotic Refinement *(Published - Nov 19, 2026)*
+* **Title:** *Category-Theoretic Foundations of Conceptual Information Modeling: Rigorous Schema Representation, Isomorphism, and Asymptotic Refinement under Cognitive Finitude*
+* **DOI:** [`10.5281/zenodo.24359112`](https://doi.org) (v1.0.0 English Version: [`10.5281/zenodo.24359112`](https://doi.org))
+* **Files:**
+ * English Version: `papers/CategoryTheoreticFoundationsOfCIM.pdf`
+ * Japanese Version: `papers/CategoryTheoreticFoundationsOfCIM.ja.pdf`
 * **Summary:** Derives the necessary conditions required for the Universe $\mathcal{U}$ in Paper 0 to exist consistently, demonstrating that these conditions correspond directly to the core constructs of conceptual information modeling: data types, single and composite identifiers (monomorphisms), referential attributes (commutative factorizations), bidirectional relations with phrases and multiplicities (spans), and associative entities (multispans). Shows that modeling is not "vagueness" but the specification of concrete and rigorous structures. Proves that adequate models of the same Field of Sense are mutually isomorphic (categorically equivalent), and formalizes how finite human cognition asymptotically approaches the true schema via subclassing (resolving `0..1` and `Nullable` ambiguities) and relational integration.
 
 ### [Paper 2] Dynamic Process Theory: Monoidal Categorical Dynamics of State and Action Models *(Planned)*

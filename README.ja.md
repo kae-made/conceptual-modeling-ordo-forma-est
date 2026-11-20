@@ -25,7 +25,6 @@
 
 本研究は、厳密な数理的・工学的定式化（**Paper 0〜3**）と、そこから導かれる哲学的・宇宙論的帰結（**Paper 4**）の二層構造で順次公開する。
 
-### 【Paper 0】基礎存在論・認識論（公開済み / Published）
 ### 【Paper 0】基礎存在論・認識論（公開済み / Published — 2026年11月16日）
 * **タイトル：** 関係基底の存在論と意味の場の圏論的定式化：言語的多義性による構造崩壊とユニバースの内包としての現象
   （*Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe*）
@@ -35,9 +34,13 @@
   * 日本語版： `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.jp.pdf`
 * **概要：** 関係（スパン構造）こそが意味成立の本質であることを示し、言語の多義性によって意味が恒等射へ縮退・崩壊するメカニズムを定式化する。この崩壊を回避するために、世界がスキーマ圏に基づく複数の「意味の場（Fields of Sense）」と、モノ・特徴値のみを結ぶ「ブリッジ」からなる「ユニバース $\mathcal{U}$」として構成されることを示し、私たちが観測する現象（ユニバースの内包）のみから全体構造を一意に逆算することは原理的に不可能であることを証明する。
 
-### 【Paper 1】静的モデリング論：単一の意味の場の厳密性と漸近的接近（執筆中 / In Preparation）
-* **仮題：** 概念情報モデリングの圏論的基礎：厳密なスキーマ表現、同型性、および思考の有限性のもとでの漸近的精密化
+### 【Paper 1】静的モデリング論：単一の意味の場の厳密性と漸近的接近（公開済み / Published - 2026年11月19日）
+* **タイトル：** 概念情報モデリングの圏論的基礎：厳密なスキーマ表現、同型性、および思考の有限性のもとでの漸近的接近
   （*Category-Theoretic Foundations of Conceptual Information Modeling: Rigorous Schema Representation, Isomorphism, and Asymptotic Refinement under Cognitive Finitude*）
+  * **DOI:** [`10.5281/zenodo.24359112`](https://doi.org) (英語版初版 v1.0.0: [`10.5281/zenodo.24359112`](https://doi.org))
+* **ファイル:**
+ * 英語版: `papers/CategoryTheoreticFoundationsOfCIM.pdf`
+ * 日本語版: `papers/CategoryTheoreticFoundationsOfCIM.ja.pdf`
 * **概要：** Paper 0 のユニバースを成立させる必要条件として、任意の意味の場のスキーマ（関手意味論の構文圏）を厳密に記述する体系を導出する。データ型、単一・複合識別子（モニック射）、参照特徴値（可換図式）、両辺にフレーズと多重度を持つスパンリレーション、関連クラス（多脚スパン）の厳密な定義を与え、モデリングとは「曖昧化」ではなく「具体的かつ厳密な構造の確定」であることを示す。さらに、同一の意味の場に対する充足的モデルはすべて圏同型に帰着すること、および有限の人間がサブクラス化や関連クラス化を通じて `0..1` や `Nullable` といった未分化な曖昧さを削ぎ落とし、真のスキーマへ漸近していくプロセスを定式化する。
 
 ### 【Paper 2】動的プロセス論：状態モデル・データフロー型アクションとモノイド圏（予定 / Planned）
