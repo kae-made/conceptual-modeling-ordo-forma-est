@@ -27,7 +27,7 @@ The series is structured into two tiers: rigorous mathematical and engineering f
 
 ### [Paper 0] Foundational Ontology and Epistemology *(Published — Nov 16, 2026)*
 * **Title:** *Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe*
-* **DOI:** [`10.5281/zenodo.24267213`](https://doi.org) (v1.0.0 English Version: [`10.5281/zenodo.24267214`](https://doi.org))
+* **DOI:** [`10.5281/zenodo.24267213`](https://doi.org/10.5281/zenodo.24267213) (v1.0.0 English Version: [`10.5281/zenodo.24267213`](https://doi.org/10.5281/zenodo.24267213))
 * **Files:**
   * English Version: `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.pdf`
   * Japanese Version: `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.jp.pdf`
@@ -35,7 +35,7 @@ The series is structured into two tiers: rigorous mathematical and engineering f
 
 ### [Paper 1] Static Modeling Theory: Rigorous Schema Representation and Asymptotic Refinement *(Published - Nov 19, 2026)*
 * **Title:** *Category-Theoretic Foundations of Conceptual Information Modeling: Rigorous Schema Representation, Isomorphism, and Asymptotic Refinement under Cognitive Finitude*
-* **DOI:** [`10.5281/zenodo.24359112`](https://doi.org) (v1.0.0 English Version: [`10.5281/zenodo.24359112`](https://doi.org))
+* **DOI:** [`10.5281/zenodo.24359112`](https://doi.org/10.5281/zenodo.24359112) (v1.0.1 English Version: [`10.5281/zenodo.24359112`](https://doi.org/10.5281/zenodo.24359112))
 * **Files:**
  * English Version: `papers/CategoryTheoreticFoundationsOfCIM.pdf`
  * Japanese Version: `papers/CategoryTheoreticFoundationsOfCIM.ja.pdf`

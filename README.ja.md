@@ -28,7 +28,7 @@
 ### 【Paper 0】基礎存在論・認識論（公開済み / Published — 2026年11月16日）
 * **タイトル：** 関係基底の存在論と意味の場の圏論的定式化：言語的多義性による構造崩壊とユニバースの内包としての現象
   （*Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe*）
-* **DOI：** [`10.5281/zenodo.24267213`](https://doi.org)（英語版初版 v1.0.0：[`10.5281/zenodo.24267214`](https://doi.org)）
+* **DOI：** [`10.5281/zenodo.24267213`](https://doi.org/10.5281/zenodo.24267213)（英語版初版 v1.0.0：[`10.5281/zenodo.24267213`](https://doi.org/10.5281/zenodo.24267213)）
 * **ファイル：**
   * 英語版： `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.pdf`
   * 日本語版： `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.jp.pdf`
@@ -37,7 +37,7 @@
 ### 【Paper 1】静的モデリング論：単一の意味の場の厳密性と漸近的接近（公開済み / Published - 2026年11月19日）
 * **タイトル：** 概念情報モデリングの圏論的基礎：厳密なスキーマ表現、同型性、および思考の有限性のもとでの漸近的接近
   （*Category-Theoretic Foundations of Conceptual Information Modeling: Rigorous Schema Representation, Isomorphism, and Asymptotic Refinement under Cognitive Finitude*）
-  * **DOI:** [`10.5281/zenodo.24359112`](https://doi.org) (英語版初版 v1.0.0: [`10.5281/zenodo.24359112`](https://doi.org))
+  * **DOI:** [`10.5281/zenodo.24359112`](https://doi.org/10.5281/zenodo.24359112) (英語版 v1.0.1: [`10.5281/zenodo.24359112`](https://doi.org/10.5281/zenodo.24359112))
 * **ファイル:**
  * 英語版: `papers/CategoryTheoreticFoundationsOfCIM.pdf`
  * 日本語版: `papers/CategoryTheoreticFoundationsOfCIM.ja.pdf`
