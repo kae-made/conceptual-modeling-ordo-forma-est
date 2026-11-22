@@ -46,6 +46,7 @@ The series is structured into two tiers: rigorous mathematical and engineering f
 * **DOI:** [`10.5281/zenodo.24430915`](https://doi.org/10.5281/zenodo.24430915) (v1.0.0 English Version: [`https://doi.org/10.5281/zenodo.24430915`](https://doi.org/10.5281/zenodo.24430915))
 * **Files:**
  * English Version: `papers/CategoryTheoriticFondationsOfDynamicModeling.pdf`
+ * Japanese Version: `papers/CategoryTheoriticFondationsOfDynamicModeling.ja.pdf`
 * **Summary:** Introduces boundary conditions (pre- and post-conditions), external entities as boundary interfaces, and data-flow operators over rigorously defined data types. Integrates state models (aspectual Fields of Sense per state) with action models (state transitions), proving that states and transformations form a **Monoidal Category**. Demonstrates how discrete state-action models can faithfully describe continuous change through threshold-driven phase transitions and internal parameter trajectories.
 
 ### [Paper 3] Structural Transformation Theory: Transformations Across Fields of Sense *(Published - Nov 22, 2026)*
@@ -53,6 +54,7 @@ The series is structured into two tiers: rigorous mathematical and engineering f
 * **DOI:** [`10.5281/zenodo.24431232`](https://doi.org/10.5281/zenodo.24431232) (v1.0.0 English Version: [`https://doi.org/10.5281/zenodo.24431232`](https://doi.org/10.5281/zenodo.24431232))
 * **Files:**
  * English Version: `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.pdf`
+ * Japanese Version: `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.ja.pdf`
 * **Summary:** Extends the framework from intra-field dynamics (Papers 1–2) to structural transformations across distinct schemas (Fields of Sense) and aspects. Formalizes the exact boundary conditions required for cross-field transformations via bridges, as well as the laws of structural preservation and information loss.
 
 ### [Paper 4] Emergence and Cosmological Scope: Holographic Boundary Conditions *(Conceptual)*

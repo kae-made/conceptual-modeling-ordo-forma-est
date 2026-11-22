@@ -49,7 +49,7 @@
 * **DOI:** [`10.5281/zenodo.24430915`](https://doi.org/10.5281/zenodo.24430915) (英語版 v1.0.0: [`10.5281/zenodo.24430915`](https://doi.org/10.5281/zenodo.24430915))
 * **ファイル:**
  * 英語版: `papers/CategoryTheoriticFondationsOfDynamicModeling.pdf`
- * 日本語版: `作成中 - papers/draft/paper2.md`
+ * 日本語版: `papers/CategoryTheoriticFondationsOfDynamicModeling.ja.pdf`
 * **概要：** 外部エンティティとの接点である「境界条件（事前・事後条件）」と、Paper 1 で定義したデータ型上の「演算子（データフロー）」を導入し、状態モデル（状態ごとのアスペクト的意味の場）とアクションモデル（状態遷移）を統合する。厳密な境界条件のもとで状態と変化の全体が「モノイド圏（Monoidal Category）」を形成することを保証し、離散的な状態遷移モデルでありながら、閾値（境界条件）を介した相転移と内部パラメータ軌道によって連続的な変化を矛盾なく描写できることを示す。
 
 ### 【Paper 3】構造変換論：異なる意味の場とアスペクト間の Transformation（予定 / Planned）
@@ -58,7 +58,7 @@
 * **DOI:** [`10.5281/zenodo.24431232`](https://doi.org/10.5281/zenodo.24431232) (英語版 v1.0.0: [`10.5281/zenodo.24431232`](https://doi.org/10.5281/zenodo.24431232))
 * **ファイル:**
  * 英語版: `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.pdf`
- * 日本語版: `作成中 - papers/draft/paper3.md`
+ * 日本語版: `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.ja.pdf`
 * **概要：** 単一の意味の場の内部（Paper 1・2）から、異なるスキーマ（意味の場）およびアスペクト間の構造変換（Transformation）へと議論を拡張する。ブリッジを介した変換が成立するための厳密な境界条件と、変換に伴う情報保存・情報損失のメカニズムを圏論的に定式化する。
 
 ### 【Paper 4】創発と宇宙論的射程：ホログラフィー原理との相関（構想中 / Conceptual）

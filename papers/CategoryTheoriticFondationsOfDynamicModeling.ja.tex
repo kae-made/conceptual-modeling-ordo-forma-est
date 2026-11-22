@@ -1,0 +1,738 @@
+\documentclass[11pt,a4paper]{ltjsarticle}
+
+\usepackage{luatexja-fontspec}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{stmaryrd}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, positioning, arrows.meta, calc}
+\usepackage{tikz-cd}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={動的モデリングの圏論的基礎：状態遷移、データフロー型アクション、普遍的実行セマンティクス、および物理理論との同型性},
+    pdfauthor={太田 寛 (Hiroshi Ota)}
+}
+
+% 定理環境（英語版 Paper 2 と完全対応）
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[section]
+\newtheorem{axiom}{公理}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{proposition}{命題}[section]
+\newtheorem{lemma}{補題}[section]
+\newtheorem{corollary}{系}[section]
+
+\theoremstyle{remark}
+\newtheorem{remark}{注記}[section]
+
+% 証明環境名の日本語化
+\renewcommand{\proofname}{\textbf{証明の概略}}
+
+% カスタムマクロ
+\newcommand{\Ob}{\mathrm{Ob}}
+\newcommand{\Mor}{\mathrm{Mor}}
+\newcommand{\Valid}{\mathrm{Valid}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\colim}{\operatorname{colim}}
+\newcommand{\TwoSet}{\mathbf{2\text{-}Set}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\DF}{\mathcal{DF}}
+\newcommand{\Cform}{\mathcal{C}_{\mathrm{FORM}}}
+\newcommand{\Dstatic}{\mathcal{D}_{\mathrm{static}}}
+\newcommand{\Dref}{\mathcal{D}_{\mathrm{REF}}}
+
+\title{\textbf{動的モデリングの圏論的基礎：\\
+状態遷移、データフロー型アクション、普遍的実行セマンティクス、および物理理論との同型性}}
+
+\author{太田 寛（Hiroshi Ota）\thanks{10.5281/zenodo.24430915: \url{https://doi.org/10.5281/zenodo.24430915} \\ Homepage: \url{https://www.kae-made.jp}, Research Notes: \url{https://note.com/kae_made/membership}} \\
+\small Independent Researcher / Knowledge \& Experience \\
+\small \texttt{master@kae-made.jp}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+前二稿（Paper 0 および Paper 1）\cite{ota2026paper0,ota2026paper1} において、著者は関係を実在の基底とする存在論と複数の「意味の場（Fields of Sense）」および「ブリッジ」からなるユニバースを定式化し、単一の意味の場における静的な意味構造（概念情報モデル）を有限完備・余完備な商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ として確立した。概念情報モデルが静的な存在の形式として必要十分である以上、その上で生起する状態変化（状態モデルおよびアクションモデル）もまた、概念情報モデルを基盤として記述可能である。しかし、状態遷移とアクションを単に記述しただけでは「絵に描いた餅」に過ぎず、それらがいかにして矛盾なく因果的に遷移（実行）するかを規定する制約――すなわち\textbf{実行セマンティクス（Execution Semantics）}――が不可欠となる。
+
+本稿（Paper 2）は、静的スキーマ圏 $\mathcal{C}$ の上で生起する動的振る舞い（Dynamics）を圏論的に定式化し、次の4つの根源的命題を証明することを目的とする。第一に、\textbf{実行セマンティクスは個々の意味の場（ドメイン）の具体的な業務・物理内容に一切立ち入ることなく、概念情報モデルの「形式そのもの（$\Cform$）」に対して普遍的かつ一意に定義可能である}（普遍的実行セマンティクス定理）。第二に、基本プロセス部品から組み立てられる非循環有向グラフ（DAG）としてのアクションモデルおよびその\textbf{厳密なテキスト記述形式（Action Language）}は、外部境界インターフェースである\textbf{ドメインファンクション}を含め、直列合成と並列合成を備えた\textbf{ホモトピー的に閉じた対称モノイド圏（$\DF$）}を構成し、特異点（\texttt{Can't Happen} やゼロ除算＝始対象 $0$）を踏まない正規稼働軌道においては静的制約（不変条件）を常に保存する。第三に、静的領域（Paper 1）と対称に、この動的記述形式によってあらゆる時間変化を過不足なく記述でき（動的表現的完備性）、表現や記法の差異を超えて圏同値（同型）に帰着し、有限の人間もアブダクションによって真の動的モデルへと漸近的に収束できるとともに、境界条件の射影極限と層の張り合わせを通じて「連続的な変化」を情報損失なく離散的に表現できる。第四に、\textbf{「概念情報モデル＋状態モデル＋アクションモデル＋ドメインファンクション＋実行セマンティクス」からなる本体系全体は、状態空間・運動方程式・境界条件・時間発展原理からなる物理学の理論記述と数学的に完全に同型である}ことを証明する。
+\end{abstract}
+
+\section{序論（Introduction）}
+
+\subsection{背景と問題設定：静的構造の骨格から状態遷移と普遍的実行セマンティクスへ}
+前二稿において、著者は対象（モノ）ではなく関係（スパン構造）を実在の基底とする存在論を出発点とし、世界が複数の「意味の場（Fields of Sense）」\cite{gabriel2015} と「ブリッジ」からなるユニバース $\mathcal{U}$ として分節化されていること（Paper 0）\cite{ota2026paper0}、ならびに単一の意味の場の静的な意味構造（概念情報モデル）が厳密な制約を備えた商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ として実在し、表現的完備性・存在・同型性・漸近的接近可能性を満たすこと（Paper 1）\cite{ota2026paper1} を証明した。
+
+Paper 1 によって、単一の意味の場における「静的な存在の形式（構造の骨格）」は確立された。概念情報モデルが意味を伴う存在の形式として必要十分である以上、その上で生起する状態変化を記述するモデル（状態モデルおよびデータフロー型アクションモデル）もまた、当然ながら概念情報モデル（スキーマ圏 $\mathcal{C}$）を基盤として記述されなければならない。事象（イベント）の生起を契機として新たな個体（インスタンス）が生成され、既存の個体が状態を遷移させ、関係を結び直し、やがて消滅していく状態変化の連鎖は、関手意味論の言葉で言えば \cite{lawvere1963,maclane1998}、静的スキーマ圏 $\mathcal{C}$ を充足するインスタンス関手 $\mathcal{F}_n \in \Valid(\mathcal{C})$ から次のステップのインスタンス関手 $\mathcal{F}_{n+1} \in \Valid(\mathcal{C})$ への構造保存遷移にほかならない。
+
+\begin{remark}[概念モデルにおける「時空間」の排除と用語規定]\label{rem:no-spacetime}
+純粋な数理形式としての概念情報モデル・状態モデル・アクションモデルの内部には、物理的な「時間」や「空間」というアプリオリな座標系は一切存在しない。そこに実在するのは、あくまで「関係（スパン）による構造的結合」と「事象の因果的連鎖によって生じる状態遷移の半順序（$\mathcal{F}_n \to \mathcal{F}_{n+1}$）」のみである。したがって、本稿の第2章〜第4章においては概念モデルの記述から時空間的概念を排除して定式化を行い、説明の便宜上、因果的遷移の前後順序を指す場合に限り「遷移ステップ」または便宜的な「時系列・時間発展」という語を用いることとする（物理的時間の経過そのものは外部実体 $\mathcal{EE}_{\mathrm{Time}}$ からの「時間事象」としてモデル外部から供給され、第\ref{sec:continuous}節および第\ref{sec:phys-iso}節において現実の時空間・物理理論との同型性を論じる際に初めて物理的時空間と対応づけられる）。
+\end{remark}
+
+しかし、状態遷移とアクションをモデルとして記述しただけでは、そのモデルは無意味である。記述された静的・動的モデルが現実のシステムや自然現象としてどのように振る舞い、いかなる因果順序と規則に従って時間発展（＝実行）するのかを規定する制約――すなわち\textbf{実行セマンティクス（Execution Semantics）}――が与えられなければ、モデルの振る舞いは一意に定まらない。実行セマンティクスが無ければ、記述されたモデルは「絵に描いた餅」に過ぎない。ここで決定的に重要なのは、\textbf{実行セマンティクスは個々の意味の場（ビジネス領域であれ物理領域であれ）の具体的な意味内容に立ち入る必要はなく、概念情報モデル・状態モデル・アクションモデルの「形式そのもの（$\Cform$）」に対して普遍的に定義できる}という点である。
+
+さらに、現実世界を記述する理論としてもう一つ不可欠な視点は、モデル内部に\textbf{\texttt{Can't Happen}（発生不可能遷移）やゼロ除算・定義域外演算といった「始対象 $0$（空空間）への特異点（破綻境界）」を含むモデルもまた、正当なモデル記述として許容されなければならない}という事実である。現実の社会やビジネスの現場では、モデラー（記述者）の思考の有限性ゆえに「たまたまその事象が起きていないだけで、発生した瞬間に業務やシステムが破綻する構造的欠陥（特異点）」を内包したまま稼働しているモデルが無数に存在すると考えるのが妥当であろう。また、物理法則が支配する意味の場においても、定義域の限界への到達（特異点）は、その意味の場が崩壊して別の意味の場（新たな相）へと移行する\textbf{相転移（Phase Transition）}の境界として立ち現れる。特異点（始対象 $0$ への射）を排除せず正当な構成要素として組み込むことで初めて、本体系は理想化された玩具モデルではなく、破綻や相転移を含めた現実世界そのものを過不足なく記述できる。
+
+\subsection{動的モデリングにおける4つの根源的問い}
+以上の問題設定に基づき、本稿（Paper 2）では次の4つの根源的問いに肯定的な数学的解答を与える。
+
+\begin{enumerate}
+    \item \textbf{状態モデルとデータフロー型アクションの表現的完備性・同型性・漸近的接近、および連続性の離散的表現の問い：} Paper 1 の静的領域と対称に、概念クラスに随伴する\textbf{状態モデル（存続・消滅状態および \texttt{Ignore}・\texttt{Can't Happen} の特異点を含む）}と、基本プロセス部品からなる\textbf{データフロー型アクションモデル}の記述形式によって、あらゆる計算可能・現実的な状態変化と並行プロセスを過不足なく記述できるか（動的表現的完備性）。また、表現の差異を超えて圏同値（同型）に帰着し、有限の人間もアブダクション \cite{peirce1903} によって真の動的モデルへと漸近的に収束できるか。さらに、境界条件の射影極限と層の張り合わせ \cite{maclane1992} を通じて「連続的な変化」を情報損失なく離散的に表現できるか。
+    \item \textbf{厳密なテキスト記述形式と図式表現の同型性の問い：} データフロー型アクションモデルは、視覚的なストリング図としてだけでなく、厳密な文脈自由文法（テキスト記述形式）によっても記述可能であり、両者は圏論的に同型（構文・意味論同型）であるか。
+    \item \textbf{普遍的実行セマンティクスとホモトピー的モノイド閉包の問い：} 個々のドメイン内容に立ち入らず概念情報モデル・状態モデル・アクションモデルの形式（$\Cform$）に対して普遍的実行セマンティクスを定義することで、状態遷移・データフロー型アクション・ドメインファンクションの全体は、直列合成（$\circ$）と並列合成（$\otimes$）を備えた\textbf{ホモトピー的に閉じた対称モノイド圏（$\DF$）}として無矛盾に閉じ、特異点を踏まない正規稼働軌道においては静的制約（不変条件）が常に保存されるか。
+    \item \textbf{物理学の理論記述との同型性の問い：} 「概念情報モデル（配位空間）＋状態モデル（相空間・特異点）＋アクションモデル（運動方程式）＋ドメインファンクション（境界条件・外力）＋実行セマンティクス（時間発展原理・因果律）」からなる本体系全体は、物理学における運動方程式を含む理論の記述形式と数学的に完全に同型であるか。
+\end{enumerate}
+
+\subsection{パラダイム転換と本稿の構成}
+従来のオブジェクト指向プログラミング（OOP）においては、オブジェクトの「データ」と「振る舞い（メソッド）」をカプセル化し、同期メソッド呼び出しの連鎖によって処理を記述する設計が主流であった。しかし、関係（スパン）を実在の基底とする存在論（Paper 0・Paper 1）に立つとき、多重度や参照整合性などの不変条件は単一インスタンスの内部ではなく「意味の場全体（$\mathcal{F} \in \Valid(\mathcal{C})$）」に対して課される。そのため、状態遷移の遷移先状態に紐づくアクションが単一インスタンスに閉じず、意味の場全体の状態を整合的に更新する写像（$\mathcal{F}_n \to \mathcal{F}_{n+1}$）として組織化されることは、関係構造の整合性を保つための数学的必然である（Shlaer--Mellor 法および Executable UML の圏論的昇華 \cite{shlaer1992,mellor2002,starr2001}）。
+
+本稿の構成は以下の通りである。
+\begin{itemize}
+    \item \textbf{第2章（状態モデルとライフサイクルの圏論的定式化）：} 静的スキーマ圏 $\mathcal{C}$ を基盤とする型付き事象（生成事象・既存個体事象・時間事象）、全インスタンスの状態機械保持と存続・消滅状態、\texttt{Ignore}（恒等射）と特異点（\texttt{Can't Happen}）、ムーア標準形アクション、および時間事象の紐づきと自己イベント優先が規定する「局所慣性系（固有時と光円錐的因果構造）」との同型性を定式化する。
+    \item \textbf{第3章（データフロー型アクションモデル、テキスト記述形式、および対称モノイド圏 $\DF$）：} Paper 1 から一意に導出される基本プロセス部品、厳密なテキスト記述形式（Action Text Syntax）と図式（ストリング図）の同型性、非循環性（DAG）による停止性保証、および外部境界インターフェースである\textbf{ドメインファンクション}（Paper 0 のブリッジおよび Paper 3 の構造変換への接続ポート）を定式化する。
+    \item \textbf{第4章（普遍的実行セマンティクスと境界条件のアスペクト）：} ドメイン内容に依存しない形式（$\Cform$）に対する実行セマンティクスの定義と定理、および正規稼働軌道における不変条件保存と特異点における崩壊・相転移を証明する。
+    \item \textbf{第5章（動的領域の諸定理・連続性の離散的表現・物理理論との同型性）：} 動的4大定理（完備性・存在・同型・漸近的接近）、連続ダイナミクスの離散的表現定理（射影極限と層）、および物理学の理論記述との同型定理を証明する。
+    \item \textbf{第6章（実践的意義と結論）：} 実行可能モデリングの数学的完成を総括し、次稿（Paper 3）で扱う「構造変換論とグリーン関数同型」および最終稿（Paper 4）の「ホログラフィー原理との同型性」への接続を示す。
+\end{itemize}
+\section{状態モデルとライフサイクルの圏論的定式化（State Models and Object Lifecycles）}
+
+\subsection{静的スキーマ圏 $\mathcal{C}$ を基盤とする型付き事象（イベント）}
+前稿（Paper 1）\cite{ota2026paper1} において、単一の意味の場の静的な意味構造（存在の形式）は、概念クラス、厳密に閉じられた7種のデータ型、識別子（モニック射）、4種の多重度と意味的フレーズを持つ双方向リレーションシップ、排他直和分解としての \texttt{Is-a}、および関連クラスを備えた商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ として必要十分に規定されることを証明した。意味構造が概念情報モデルによって規定される以上、その上で生起する「変化（Dynamics）」もまた、概念情報モデルを基盤として記述されなければならない。
+
+状態変化のきっかけとなる入力は、概念クラスに帰属する\textbf{事象（Event）}として定義される。
+
+\begin{definition}[概念クラスに帰属する型付き事象空間と事象付随データ]\label{def:events}
+スキーマ圏 $\mathcal{C}$ の各概念クラス $A \in \mathcal{K}$ に対し、クラス $A$ の個体に状態変化を引き起こす有限個の事象ラベルの集合 $\mathcal{E}_A$ が定義される。各事象 $e \in \mathcal{E}_A$ は、対象個体の存在状態に応じて以下の2種類に排他的に分類される。
+\begin{equation}
+\mathcal{E}_A = \mathcal{E}_A^{\mathrm{create}} \sqcup \mathcal{E}_A^{\mathrm{inst}}
+\end{equation}
+\begin{enumerate}
+    \item \textbf{生成事象（Creation Events：$e \in \mathcal{E}_A^{\mathrm{create}}$）：} まだ意味の場に存在しない新たなインスタンスの生成を伴う事象である。宛先となる既存個体がまだ存在しないため、個体指定用の識別子を持たず、初期状態への遷移と初期特徴値の確定に必要な付随データのみを伴う。
+    \item \textbf{既存個体事象（Instance Events：$e \in \mathcal{E}_A^{\mathrm{inst}}$）：} すでに意味の場に実在する特定の個体 $a \in \mathcal{F}_n(A)$ を宛先とする事象である。宛先個体を一意に特定するための識別子値 $\mathcal{F}_n(\alpha_I)(a)$（Paper 1 公理 C-1）と、事象固有の付随データを伴う。
+\end{enumerate}
+\end{definition}
+
+\paragraph{事象付随データ（Supplemental Data）とアクションモデルへの入力接続：}
+上記のいずれの事象 $e \in \mathcal{E}_A$ においても、事象が運ぶ引数タプル $\mathbf{d} \in \prod_{j=1}^m \mathcal{F}(T_j)$ は、概念情報モデル（Paper 1 第2.5節）とまったく同一の厳密な静的データ型空間 $\Dstatic$ によって型付けられた\textbf{事象付随データ（Supplemental Data）}として定義される（付随データを持たない純粋な信号事象は空積 $m=0$、すなわちモノイド単位対象 $I$ に対応する）。事象 $e$ によって遷移先状態 $s' \in \Sigma_A$ が確定した瞬間、この事象付随データ $\mathbf{d}$ は、状態 $s'$ に随伴するデータフロー型アクションモデル $\mathcal{A}_{s'}$（第3章）の\textbf{初期入力データフローワイヤー（境界入力資源）}へとそのまま直結して供給される（なお、同一の状態 $s'$ へ複数の異なる事象が遷移してくる場合、アクションモデル $\mathcal{A}_{s'}$ が入力として受け取れる付随データの型シグネチャは、それらすべての流入事象に共通する型タプルによって一意に拘束される）。
+
+さらに、時間の経過そのものもまた、外部から一様に個体を強制駆動する絶対時間ではなく、外部実体 $\mathcal{EE}_{\mathrm{Time}}$ から供給される\textbf{時間事象（Timer Event：$e_{\mathrm{time}} \in \mathcal{E}_A^{\mathrm{inst}}$）}として、他のビジネス事象や物理事象とまったく対等に個々のインスタンスへと紐づいて到着する。
+
+\subsection{全インスタンスが保持する状態機械とライフサイクル（存続と消滅）}
+Paper 1（命題 2.1：要素の圏 $\int \mathcal{F}$）において、概念クラス $A \in \mathcal{K}$ は個々のインスタンス $a \in \mathcal{F}(A)$ の存在形式（ひな型）であると定式化された。この型とインスタンスの対応関係から、概念クラス $A$ に対して状態変化の規則を規定する状態モデルが定義されるとき、$A$ をひな型として立ち現れる\textbf{すべてのインスタンスがそれぞれ独立した状態機械を保持する}ことが論理的帰結として導かれる。
+
+\begin{definition}[概念クラスの状態モデルと排他直和状態空間]\label{def:state-model}
+各概念クラス $A \in \mathcal{K}$ には、その状態変化の振る舞いのひな型となる決定性状態モデル
+\begin{equation}
+M_A = \left(\Sigma_A,\, \mathcal{E}_A,\, \delta_A,\, \{\mathcal{A}_s\}_{s \in \Sigma_A}\right)
+\end{equation}
+が随伴する。ここで有限の状態集合 $\Sigma_A$ は、遷移後のインスタンスの帰結に応じて以下の2つの互いに素な部分集合の非交和に分解される。
+\begin{equation}
+\Sigma_A = \Sigma_A^{\mathrm{active}} \sqcup \Sigma_A^{\mathrm{final}}
+\end{equation}
+\begin{enumerate}
+    \item \textbf{存続状態（Active / Persistent States：$s \in \Sigma_A^{\mathrm{active}}$）：} 遷移および随伴アクションの完了後も、インスタンス $a$ が意味の場 $\mathcal{F}_{n+1}(A)$ に存在し続け、後続の事象を受容できる状態。
+    \item \textbf{消滅状態（Final / Deletion States：$s \in \Sigma_A^{\mathrm{final}}$）：} 遷移および随伴アクション（最終処理）の完了をもって、インスタンス $a$ が意味の場から消滅する（$\mathcal{F}_{n+1}(A) = \mathcal{F}_n(A) \setminus \{a\}$）最終状態。
+\end{enumerate}
+\emph{（注：ライフサイクルを通じて状態変化を持たない静的クラスは、単一の存続状態 $\Sigma_A = \Sigma_A^{\mathrm{active}} = \{\star\}$ のみを持つ自明な状態モデルとして統一的に扱われる。）}
+\end{definition}
+
+\begin{proposition}[全インスタンスの状態機械保持と状態遷移の因果連鎖における排他直和性]\label{prop:instance-fsm}
+概念クラス $A \in \mathcal{K}$ をひな型として意味の場に立ち現れるすべてのインスタンス $a \in \mathcal{F}_n(A)$ は、それぞれが $M_A$ をひな型とする独立したインスタンス状態機械を保持する。Paper 1 における \texttt{Is-a} 関係が空間的な排他直和分解（$S \cong \coprod C_i$）を規定したのと双対に、任意の局所的段階においてインスタンス $a$ は複数の状態に分裂することなく、厳密にただ一つの現在状態 $\sigma(a) \in \Sigma_A^{\mathrm{active}}$ を占有する。また、生成事象 $e \in \mathcal{E}_A^{\mathrm{create}}$ によって誕生した個体は初期状態 $s_0 \in \Sigma_A$ へと入り、もし $s_0 \in \Sigma_A^{\mathrm{final}}$ であれば生成アクションの完了と同時に消滅する（瞬間的事象インスタンスの表現）。
+\end{proposition}
+\subsection{状態遷移表（STT）の代数的構造：\texttt{Ignore} と特異点（\texttt{Can't Happen}）}
+各状態において各事象が到着したときの振る舞いは、状態遷移関数（状態遷移表：State Transition Table, STT）によって網羅的に規定される。
+
+\begin{definition}[状態遷移関数と \texttt{Ignore}・\texttt{Can't Happen} の圏論的定義]\label{def:stt}
+概念クラス $A \in \mathcal{K}$ の状態遷移関数 $\delta_A$ は、生成遷移 $\delta_A^{\mathrm{create}} : \mathcal{E}_A^{\mathrm{create}} \to \Sigma_A \sqcup \{\mathrm{Can't\ Happen}\}$ および既存個体遷移
+\begin{equation}
+\delta_A : \Sigma_A^{\mathrm{active}} \times \mathcal{E}_A^{\mathrm{inst}} \longrightarrow \Sigma_A \sqcup \{\mathrm{Ignore},\; \mathrm{Can't\ Happen}\}
+\end{equation}
+として定義される。ここで通常の状態遷移 $s \to s' \in \Sigma_A$ に加え、以下の2つの特殊な写像先が代数的・トポス論的に厳密に定義される。
+\begin{enumerate}
+    \item \textbf{\texttt{Ignore}（事象無視 ＝ 恒等射 $\id$）：} 状態 $s$ にある個体 $a$ に事象 $e$ が到着しても、状態変更もアクション実行も行わず、意味の場全体の状態をそのまま維持する操作である。圏論的には、状態空間上の\textbf{恒等射（Identity Morphism：$\id_{\mathcal{F}}$）}に写像される。
+    \item \textbf{\texttt{Can't Happen}（発生不可能 ＝ 始対象 $0$ への崩壊点・特異点）：} モデルの論理構造上、状態 $s$ にある個体に事象 $e$ が到着することは本来あり得ないという構造的禁止条件を表す。圏論的には、Paper 1 における「無意味（ナンセンス）」や「ゼロ除算・値域外演算」とまったく同様に、\textbf{トポス内部論理の始対象 $0$（空空間・矛盾状態）への崩壊射}として定義される \cite{maclane1992}。
+\end{enumerate}
+\end{definition}
+
+\begin{remark}[現実世界のモデルにおける特異点・破綻境界の正当な包含]\label{rem:singularities}
+現実世界を記述する理論として極めて重要なのは、\textbf{モデル内部に \texttt{Can't Happen} やゼロ除算といった「始対象 $0$ への特異点（破綻境界）」を含むモデルもまた、正当なモデル記述として許容されなければならない}という点である。現実の社会やビジネスの現場では、モデラー（記述者）の思考の有限性ゆえに「たまたまその事象が起きていないだけで、発生した瞬間に業務やシステムが破綻する構造的欠陥（特異点）」を内包したまま稼働しているビジネスモデルが無数に存在する。また、物理法則が支配する意味の場においても、状態方程式の定義域の限界への到達（特異点）は、その意味の場が崩壊して別の意味の場（新たな相）へと移行する\textbf{相転移（Phase Transition）}の臨界境界として立ち現れる。したがって、特異点（始対象 $0$ への射）を排除せずモデルの正当な構成要素として組み込むことで初めて、本体系は理想化された閉鎖系ではなく、破綻や相転移を含めた現実世界そのものを過不足なく記述できる。
+\end{remark}
+
+\subsection{ムーア標準形アクションによる場全体の更新と局所慣性系との同型性}
+事象 $e$ の生起によってインスタンス $a$ の遷移先状態 $s' \in \Sigma_A$ が確定すると、その状態 $s'$ に紐づいたデータフロー型アクションモデル $\mathcal{A}_{s'}$（第3章で定式化）が起動される。
+
+\begin{definition}[ムーア標準形アクションによる意味の場全体の更新]\label{def:moore-action}
+状態遷移 $s \xrightarrow{e(\mathbf{d})} s'$ に伴うアクション $\mathcal{A}_{s'}$ は、到着した事象が運ぶ事象付随データ（Supplemental Data）$\mathbf{d} \in \prod_{j=1}^m \mathcal{F}_n(T_j)$ を初期入力データフローワイヤーとして受け取り、単一インスタンス $a$ の内部変数のみを書き換える局所操作ではなく、\textbf{意味の場全体のインスタンス関手 $\mathcal{F}_n \in \Valid(\mathcal{C})$ を次の状態 $\mathcal{F}_{n+1} \in \Valid(\mathcal{C})$ へとアトミック（不可分）に更新する射}
+\begin{equation}
+\llbracket \mathcal{A}_{s'} \rrbracket : \Valid(\mathcal{C}) \times \prod_{j=1}^m \mathcal{F}_n(T_j) \longrightarrow \Valid(\mathcal{C})
+\end{equation}
+として定義される（付随データを持たない事象の場合は $\prod_{j=1}^m \mathcal{F}_n(T_j) \cong \mathbf{1}$ となり、$\llbracket \mathcal{A}_{s'} \rrbracket : \Valid(\mathcal{C}) \to \Valid(\mathcal{C})$ に帰着する）。アクション $\mathcal{A}_{s'}$ の完了をもって、意味の場全体の状態 $\mathcal{F}_{n+1}$ が確定し、同時に個体 $a$ の現在状態が $s'$ として確定する（$s' \in \Sigma_A^{\mathrm{final}}$ の場合は $\mathcal{F}_{n+1}(A)$ から除去される）。
+\end{definition}
+
+\begin{remark}[OOP のカプセル化との対比およびムーア型・ミーリー型の同型性]\label{rem:moore-mealy}
+従来のオブジェクト指向プログラミング（OOP）に慣れた技術者には、アクションが単一インスタンスに閉じず「意味の場全体」を操作する点が異質に映ることがある。しかし、関係（スパン）を実在の基底とする存在論（Paper 0・Paper 1）においては、多重度や参照整合性などの不変条件は常に意味の場全体に対して課されるため、場全体を整合的に更新することは構造上の必然である。また、遷移矢印にアクションを付与するミーリー型（Mealy Machine）など他の動的記述形式を選択したとしても、状態空間の適切な直和分割を行えば、遷移先状態にアクションを紐づける本体系の\textbf{ムーア標準形（Moore Normal Form）と完全に圏同値（同型）}となる（第5章 定理~\ref{thm:dyn-iso}）。
+\end{remark}
+
+さらに、並列稼働する無数のインスタンス状態機械の間で事象が伝達される際の因果構造は、物理学における\textbf{局所慣性系（Local Inertial Frame）}と完全に同型な幾何学的構造を持つ。
+
+\begin{proposition}[局所慣性系および相対論的因果構造との同型性]\label{prop:inertial-frame}
+意味の場における並列インスタンス状態機械の集合は、以下の3点において相対論的物理学の局所慣性系と同型である。
+\begin{enumerate}
+    \item \textbf{固有時（Proper Time）としての状態遷移：} 宇宙全体に共通する単一の絶対時間ではなく、時間事象（$e_{\mathrm{time}}$）を含む事象が個々のインスタンス $a$ に到着して処理されるステップの連鎖こそが、その個体固有の時間軸（固有時 $\tau_a$）を刻む。
+    \item \textbf{局所因果律の保存（自己イベント優先）：} アクション $\mathcal{A}_{s'}$ の内部で発行された事象のうち、自分自身宛ての事象（Self-Event）は他インスタンス宛ての外部事象よりも必ず先に処理される（自己イベント優先公理）。これは、個体の世界線に沿った局所的な因果律が最優先で保存されることを意味する。
+    \item \textbf{空間的分離と交換不変性：} 互いに事象をやり取りしていない独立したインスタンス同士の状態遷移は空間的に分離（Spacelike-separated）されており、どちらが先に実行されても対称モノイド圏の交換法則（並列合成 $\otimes$）によって場全体の到達状態は完全に不変に保たれる。
+\end{enumerate}
+\end{proposition}
+\section{データフロー型アクションモデル、テキスト記述形式、および対称モノイド圏 $\DF$}
+
+\subsection{アクションモデルの4大スコープと基本プロセス部品の「ひな型性」}
+第2章において、状態遷移に伴うアクションが意味の場全体のインスタンス関手 $\mathcal{F}_n \in \Valid(\mathcal{C})$ を次の状態 $\mathcal{F}_{n+1}$ へと更新することを定式化した。本モデリング体系において、データフローアクションモデル（基本プロセス部品とデータフローワイヤーの合成）は手続き的な命令列（Doing）ではなく、線形論理の資源フローに基づく\textbf{等式論理（Being）}として定式化される \cite{girard1987}。
+
+空間のスコープとカプセル化の規則に基づき、アクションモデルが記述される領域は以下の\textbf{4種類のみ}に厳密に限定される。
+\begin{enumerate}
+    \item \textbf{エントリアクション（Entry Action）：} 状態モデルの遷移先状態に紐づき、インスタンスの生成・消滅、特徴値更新、リンクの張替えなど、意味の場全体の状態そのものを変形させる射（$\mathcal{F}_n \to \mathcal{F}_{n+1}$）。
+    \item \textbf{数理特徴値（Mathematical Property）：} 概念クラスの特徴値に紐づき、その特徴値が参照された瞬間に自動計算して値を返す副作用なしの導出射（$\mathcal{F}_n(A) \to \mathcal{F}_n(T)$）である。この導出データフローにおいては、\textbf{入力は「その時点の意味の場の全状態（$\mathcal{F}_n$ からの読み出し・空間探索）および外部実体関数からの出力データフロー」に厳密に限定され}（インスタンスの生成・消滅・更新や事象発行などの状態変更操作は構文・意味論上禁止される）、\textbf{出力は必然的に「自分自身（\texttt{SELF}）の当該数理特徴値への等式固定（後述 (15)(b)）」のみによって一意に閉じる}。
+    \item \textbf{概念クラス関数（Class Function）：} 概念クラスのソートに紐づくドメイン内部の共通純粋計算パーツである（他ドメインからの直接呼び出しは禁止）。このデータフローにおいては、\textbf{入力は「明示的に渡される引数データフロー（$\bigotimes_{i=1}^p T_{\mathrm{in}, i}$）、概念情報モデル（CIM）の不変のスキーマ構造（型値域・列挙束などの形式）、および外部実体関数からの出力」のみに厳密に限定される}。現在の意味の場のインスタンス状態（$\mathcal{F}_n$ の個体集合やリンク構造）をデータフローの入力として参照したり書き換えたりすること（および事象発行）は一切禁止され、出力は必ず関数の戻り値データフロー（\texttt{return}：後述 (15)(a)）によって閉じる純粋射として定義される。
+    \item \textbf{ドメインファンクション（Domain Function）：} 意味の場全体の外部境界に紐づき、異なる意味の場同士を結ぶブリッジ（Paper 0・Paper 3）や外部シミュレータと対話する外部公開窓口（自ドメイン内部からの再帰的呼び出しは禁止）。
+\end{enumerate}
+
+ここで極めて重要なのは、データフロー内に配置されるすべての基本プロセス部品（バブル）が単なる汎用プログラムコードではなく、\textbf{「概念情報モデルと状態モデルというスキーマ（型システム）が確定した瞬間に、その意味の場の中に一意に立ち上がる固有の関数記号（射）」}であるという点である。すべての部品は、入力ワイヤー上に線形論理テンソル積（$\otimes$）として必要なデータ資源が100\%揃った瞬間にのみ評価（駆動）される。
+
+\begin{table}[htbp]
+\centering
+\caption{アクションモデルの4大スコープと入出力境界の比較}
+\label{tab:action-scopes}
+\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{3.7cm} >{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{3.0cm}}
+\toprule
+\textbf{アクションモデルのスコープ} & \textbf{入力データフロー源} & \textbf{インスタンス状態 $\mathcal{F}_n$ の読み取り} & \textbf{インスタンス状態 $\mathcal{F}_n$ の更新・事象発行} & \textbf{出力の閉じ方} \\
+\midrule
+\textbf{1. エントリアクション}（Entry Action） & 事象付随データ（Supplemental Data）＋ 状態 $\mathcal{F}_n$ ＋ $\mathcal{EE}$ & \textbf{可}（Read / Select） & \textbf{可}（場全体を $\mathcal{F}_n \to \mathcal{F}_{n+1}$ へ更新） & 意味の場全体の確定状態 $\mathcal{F}_{n+1}$（戻り値なし） \\
+\addlinespace
+\textbf{2. 数理特徴値}（Mathematical Property） & その時点の意味の場の全状態 $\mathcal{F}_n$ ＋ $\mathcal{EE}$（引数なし） & \textbf{可}（Read / Select） & \textbf{禁止}（副作用ゼロ） & 自分自身（\texttt{SELF}）の当該特徴値への等式固定 \\
+\addlinespace
+\textbf{3. 概念クラス関数}（Class Function） & 関数入力引数（データ型）＋ \textbf{CIM のスキーマ構造（形式）} ＋ $\mathcal{EE}$ & \textbf{禁止}（状態データ不可） & \textbf{禁止}（純粋計算のみ） & 関数の戻り値データフロー（\texttt{return}） \\
+\addlinespace
+\textbf{4. ドメインファンクション}（Domain Function） & 境界入力パラメータ（静的データ型）＋ 状態 $\mathcal{F}_n$ ＋ $\mathcal{EE}$ & \textbf{可}（Read / Select） & \textbf{可}（場全体の更新・事象発行） & 境界出力データフロー（状態の内包の射影） \\
+\bottomrule
+\end{tabular}
+\end{table}
+\subsection{網羅的・基本プロセス部品カタログ（1〜16）と New OAL 構文}
+Paper 1 で確立した概念情報モデルおよび第2章の状態モデルのプリミティブから、データフローを構成する基本プロセス部品は以下の\textbf{16種類の直交する幾何学的作用素（射）}として一意かつ網羅的に確定し、\textbf{New OAL}（BridgePoint xtUML の Object Action Language を参照した等式形式化 \cite{mellor2002,xtumlorg}）によってテキスト表現される。
+
+\begin{enumerate}[label=\textbf{(\arabic*)}, leftmargin=*]
+    \item \textbf{実体の顕現（Create Object Instance）：}
+    概念クラス $A \in \mathcal{K}$ の識別種別記号と任意の初期特徴値データ（$v_i \in \mathcal{F}(T_i)$）を入力とし、新たに顕現した単一のインスタンス参照型 $\mathrm{Ref}(A)$ を出力する（New OAL: \texttt{CREATE INSTANCE uniqueRef OF ClassKL [PropA: valueA, ...];}）。
+    圏論的には、始対象 $0$ からの押し出し（Pushout）により、現在のインスタンス関手 $\mathcal{F}$ の台集合に新元 $a_{\mathrm{new}}$ を直和追加した暫定関手 $\mathcal{F}'(A) = \mathcal{F}(A) \sqcup \{a_{\mathrm{new}}\}$ を生成し、指定特徴値 $\mathcal{F}'(\mathrm{attr}_i)(a_{\mathrm{new}}) = v_i$（省略時はトポス内部論理の基底値）と永続的識別子 $\mathcal{F}'(\alpha_I) : \mathcal{F}'(A) \hookrightarrow \prod_{i \in I} \mathcal{F}'(T_i)$（単射）を同時に固定する。
+
+    \item \textbf{実体の消滅（Delete Object Instance）：}
+    消滅させる単一のインスタンス参照型 $\mathrm{Ref}(A)$ を入力とし、出力は終対象 $1$ へ脱落する（\texttt{DELETE INSTANCE uniqueRef;}）。
+    圏論的には、対象元 $a \in \mathcal{F}(A)$ を集合の台から除外する局所的余押し出し $\mathcal{F}'(A) = \mathcal{F}(A) \setminus \{a\}$ を実行し、$a$ に紐づいていた既存の意味的リンク射 $r$ の像を補集合写像によって空空間へ押し流す（$\mathcal{F}'(r)(a) = \emptyset$）。削除直後に一時的に生じるリンクの不整合は、アクション完了時（状態確定時）までに他部品（\texttt{unrelate} 等）で解消されていればよく、部品レベルでの事前拒絶は行わない。
+
+    \item \textbf{特徴値の参照（Read Property）：}
+    インスタンス参照型 $\mathrm{Ref}(A)$ と特徴射 $\mathrm{attr} : A \to T$（$T \in \Dstatic$）を入力とし、台集合 $\mathcal{F}(T)$ の単一の元を出力する（\texttt{valueContainer = uniqueRef.PropA;}）。
+    圏論的には、場全体の状態を変形させない静的な空間射影 $\mathrm{read} : \mathcal{F}(A) \to \mathcal{F}(T)$（$a \mapsto \mathcal{F}(\mathrm{attr})(a)$）として評価され、型一致が関手の定義により保証される。
+
+    \item \textbf{特徴値の更新（Update Property / Assign）：}
+    インスタンス参照型 $\mathrm{Ref}(A)$、書き換え対象の特徴射 $\mathrm{attr} : A \to T$、および新しい値 $v_{\mathrm{new}} \in \mathcal{F}(T)$ を入力とし、出力は終対象 $1$ へ脱落する（\texttt{ASSIGN uniqueRef.PropA = valueExpression;}）。なお、参照特徴値（$\Dref$）への直接代入は構文レベルで禁止される。
+    圏論的には、書き換えモナド $\mathcal{T}_P$ \cite{moggi1991} により特定の元 $a$ の特徴射の像のみを更新した暫定関手 $\mathcal{F}'(\mathrm{attr})(a) = v_{\mathrm{new}}$ を構成する。もし $v_{\mathrm{new}}$ が部分対象 $m : T_{\mathrm{sub}} \hookrightarrow T$ の境界（値域制限や列挙束）を超過した場合、型ガードにより即座に始対象 $0$（空空間）へと崩壊する。
+
+    \item \textbf{意味的リンクの結合（Relate）：}
+    接続する2つのインスタンス参照型 $\mathrm{Ref}(A),\, \mathrm{Ref}(B)$（関連クラスを媒介する場合は $\mathrm{Ref}(R)$ を含む）とリレーションシップ射を入力とし、出力は終対象 $1$ へ脱落する（\texttt{relate a to b across R1.'phrase';} / \texttt{using assocInst;}）。
+    圏論的には、トポロジー種別に応じて集合圏内で幾何学的拘束を強制する。(i) \textbf{Binary：} $\mathcal{F}'(r^{\rightarrow})(a) = b \iff \mathcal{F}'(r^{\leftarrow})(b) = a$、(ii) \textbf{\texttt{Is-a}：} 余積包含射の等式拘束 $\mathcal{F}'(\iota_i)(c) = s$、(iii) \textbf{Associative：} スパン媒介射の単射性 $\mathcal{F}'(\langle p_A, p_B \rangle) : \mathcal{F}'(R) \hookrightarrow \mathcal{F}'(A) \times \mathcal{F}'(B)$。ソート不整合や媒介単射違反は即座に始対象 $0$ へ崩壊し、多重度違反は状態確定時に検証される。
+
+    \item \textbf{意味的リンクの分離（Unrelate）：}
+    切断する2つのインスタンス参照型 $\mathrm{Ref}(A),\, \mathrm{Ref}(B)$（および必要に応じて $\mathrm{Ref}(R)$）を入力とし、出力は終対象 $1$ へ脱落する（\texttt{unrelate a from b across R1.'phrase';}）。
+    圏論的には、成立していた射の像を補集合の空空間へと排出する（$b \notin \mathcal{F}'(r^{\rightarrow})(a) \iff a \notin \mathcal{F}'(r^{\leftarrow})(b)$）。関連クラスインスタンス自体の削除（\texttt{delete}）とは完全に直交して分離される。
+
+    \item \textbf{全域空間探索（Select From Instances Of）：}
+    概念クラス $A \in \mathcal{K}$ と任意の \texttt{WHERE} 述語を入力とし、\texttt{ANY} の場合は $\mathrm{Ref}(A)$、\texttt{MANY} の場合は順序を持たない集合 $\mathrm{Set}(A)$ を出力する（\texttt{select any dest from ClassKL where condition;} / \texttt{select many destSet ...}）。
+    圏論的には、特性写像 $\chi : \mathcal{F}(A) \to \Omega$ による幾何学的引き戻し（Pullback）$A_{\mathrm{sub}} = \{a \in \mathcal{F}(A) \mid \chi(a) = \mathrm{True}\}$ を切り出す。\texttt{MANY} は $A_{\mathrm{sub}}$ 全体（該当なしは空集合 $\emptyset$）を出力し、\texttt{ANY} は選択公理により任意の1元を出力する（$A_{\mathrm{sub}} = \emptyset$ の場合、テキスト上は \texttt{NULL} を保持するが、データフロー幾何学上は出力ワイヤーそのものが消滅して終対象 $1$ へ脱落し、後続の依存実行線を遮断する）。
+
+    \item \textbf{トポロジー空間探索（Select Related By）：}
+    起点インスタンス参照 $\mathrm{Ref}(S)$ と、各ホップに局所 \texttt{WHERE} 制約（対向インスタンスを指す特権記号 \texttt{TARGET} を使用）および不動点修飾キーワード（\texttt{flux} / \texttt{root} / \texttt{leaf}）を付与可能なフレーズ付きリレーション合成パスを入力とし、\texttt{ONE} / \texttt{ANY}（$\mathrm{Ref}(A)$）または \texttt{MANY}（$\mathrm{Set}(A)$）を出力する。
+    圏論的には、各ホップの制限付き関係射を合成した大域的引き戻し合成射
+    \begin{equation}
+    \mathrm{navigate}_{\mathrm{multi}} = \mathcal{F}(r_n \ \text{restricted by} \ \chi_n) \circ \dots \circ \mathcal{F}(r_1 \ \text{restricted by} \ \chi_1)
+    \end{equation}
+    として一意に定式化される。さらに反射推移閉包における最小不動点・余極限修飾子として、\textbf{\texttt{flux}}（順方向極限の極大元1つを抽出）、\textbf{\texttt{root}}（逆方向極限の極小元1つを抽出）、\textbf{\texttt{leaf}}（ツリー全分枝の余極限として子アローを持たない全末端葉ノード集合 $\mathrm{Set}(A)$ を一括抽出）を備える。出力において \texttt{ONE} は多重度 \texttt{1} に基づく実在を要請し、対象不在の場合は空間憲法破綻として即座に始対象 $0$ へ崩壊する。
+    \item \textbf{データフローの作成（Variable Assignment）：}
+    右辺の評価で創発された許容型（$\Dstatic$ または $\mathrm{Ref}(A),\, \mathrm{Set}(A)$）の資源を入力とし、左辺の変数名を持つ実線データフローワイヤーを空間に敷設する（\texttt{assign varName = expr;}）。
+    圏論的には、手続き型言語における破壊的メモリ書き込みではなく、プロセス出力を後続入力へ中継する実線ワイヤーに静的単一代入（SSA）の一意な識別名を束縛する操作である。左辺と右辺のソート（型）不一致は型ガードにより即座に始対象 $0$ へと消滅する。
+
+    \item \textbf{算術代数演算（Arithmetic Operation）：}
+    二項演算（\texttt{+}, \texttt{-}, \texttt{*}, \texttt{/}, \texttt{\%}）または単項演算（\texttt{cardinality}, 単項 \texttt{-}）として、テンソル積 $\otimes$ で結ばれたデータ資源から単一の演算結果ワイヤーを出力する。
+    圏論的には：(i) 整数 $\mathbb{Z}$ と実数 $\mathbb{R}$ の混在演算は包含随伴射により稠密な実数型 $\mathbb{R}$ へ引き上げられる。(ii) \textbf{ゼロ除算（右辺 $0$）}は実行時例外ではなく、代数射の引き戻し破綻として即座に始対象 $0$ へ自己崩壊する（アクション記述自体の不正性の証明）。(iii) 剰余算（\texttt{\%}）は整数限定であり、ユークリッド除法 $a = b \times q + r$（$0 \le r < \lvert b \rvert$）により非負整数空間へ一意に引き戻される。(iv) 文字列の連結（\texttt{+}）および日時（\texttt{DateTime}）・日時間隔（\texttt{TimeSpan}）のアフィン時間代数（$\mathrm{DateTime} - \mathrm{DateTime} \to \mathrm{TimeSpan}$、$\mathrm{DateTime} \pm \mathrm{TimeSpan} \to \mathrm{DateTime}$、$\mathrm{TimeSpan} \pm \mathrm{TimeSpan} \to \mathrm{TimeSpan}$）は外部実体関数への代替マッピングとして厳密に拘束され、日時同士の加算など不正な組み合わせは即座に始対象 $0$ へ脱落する。
+
+    \item \textbf{論理比較演算（Logical Evaluation）：}
+    同一ソートに属する2つの資源の比較（\texttt{==}, \texttt{!=}, \texttt{<}, \texttt{<=}, \texttt{>}, \texttt{>=}）または真偽値演算（\texttt{and}, \texttt{or}, \texttt{not}）から、部分対象分類子 $\Omega = \{\mathrm{True}, \mathrm{False}\}$ の元を出力する。
+    圏論的には、文字列の辞書順トポロジーおよび日時の時間軸順序トポロジーは外部実体関数へ写像され、真偽値演算は完備ブール代数の交わり（$\wedge$）・結び（$\vee$）・直交補元（$\neg$）として評価される。異なるソート同士の比較（型不整合）はゼロ除算と同等に即座に始対象 $0$ へ自己崩壊する。
+
+    \item \textbf{内部論理選択（\texttt{If / Else If / Else}）：}
+    判定基準となる真偽値資源（$\Omega$）と入力データ資源 $X$ を受け取り、各分岐ブロック内の射（$f, g, h$）を経由して合流状態空間 $Y$ へ単一のワイヤーを出力する。
+    圏論的には、制御フローによる強制ジャンプではなく、入力空間 $X$ を条件位相に応じて排他的部分空間へ分裂させる余積分解 $X \to X_{\mathrm{cond0}} \amalg X_{\mathrm{cond1}} \amalg X_{\mathrm{else}}$ と、合流点における普遍射 $[f, g, h] : X_{\mathrm{cond0}} \amalg X_{\mathrm{cond1}} \amalg X_{\mathrm{else}} \to Y$ の評価である。非選択ブロックのワイヤーには線形論理の制約により流れる資源量が物理的にゼロ（始対象 $0$）となるため、該当ブロック内のバブルは実行拒絶ではなく「入力エネルギー $0$ による幾何学的減衰消滅」として処理される。
+
+    \item \textbf{集合全域並行評価（\texttt{For Each Loop}）：}
+    インスタンスセット $\mathrm{Set}(A)$ と内部ブロックのアクション射 $f$ を受け取り、全要素に対する並行評価を実行する（\texttt{for each elem in setVar ... end for;}）。
+    圏論的には、インデックスをインクリメントする直列時間ループではなく、集合の現在状態 $A_{\mathrm{set}} = \{a_1, \dots, a_n\}$ の要素数に応じた余極限展開 $X_{\mathrm{total}} \cong \coprod_{i=1}^n \mathrm{Ref}(a_i)$ により、同一形状の独立したデータフロー宇宙を $n$ 個同時に並列創発させる直和射 $\coprod_{i=1}^n f_i$ である。入力が空集合（$n=0$）の場合は総資源量がゼロ（始対象 $0$）となり、幾何学的減衰によって静かに閉じる。
+
+    \item \textbf{事象の生起（Event Generation）：}
+    事象ラベル、引数テンソル積 $\bigotimes T_{\mathrm{args}}$、および宛先（既存インスタンス $\mathrm{Ref}(B)$、自分自身 \texttt{SELF}、生成用クラス記号 \texttt{creator}、および遅延指定時の \texttt{TimeSpan} または \texttt{DateTime}）を入力とする（\texttt{generate ... to ... [delay ... | at ...];}）。
+    圏論的には、同期関数呼び出しではなく、宛先インスタンス $b$ が保持する固有時キュー半順序集合 $\mathcal{E}_b = \langle E_b, \le_b \rangle$ \cite{milner1989} への事象パルス射影である。\texttt{creator} 宛ては概念クラス $B$ の未顕現始点空間へ打ち込まれて (1)~\texttt{CREATE} を自動起動し、遅延指定（\texttt{delay} / \texttt{at}）は外部実体 $\mathcal{EE}_{\mathrm{Time}}$ の時間軸境界条件への到達時に引き戻しの反転パルスとして $\mathcal{E}_b$ 上に顕現する。
+
+    \item \textbf{出力フローの終端と等式固定（\texttt{Return / Property Assignment}）：}
+    圏論的には：(a) 概念クラス関数およびドメインファンクションのシグネチャ出力型へ収束値を引き渡す終端射（\texttt{return expr;}）、および (b) 数理特徴値（Mathematical Property）の参照時評価において、\texttt{SELF.[数理特徴値名] = expr;} の形式で自分自身の属性値を宣言的に等式固定する自己代入終端射である。
+
+    \item \textbf{外部実体関数の実行（External Entity Function）：}
+    明示された静的データ型入力のテンソル積 $\bigotimes_{i=1}^n T_{\mathrm{in}, i}$ から、最大1つの静的データ型 $T_{\mathrm{out}}$（または終対象 $1$）を出力する（\texttt{EE\_KL::funcName(...);}）。
+    圏論的には、自ドメインの外側に実在する自律宇宙との間を結ぶ\textbf{非透過（ブラックボックス）対称モノイド射} $f_{\mathcal{EE}} : \bigotimes_{i=1}^n T_{\mathrm{in}, i} \to T_{\mathrm{out}}$ である。自ドメインからは内部実装に一切触れず、かつ $f_{\mathcal{EE}}$ 自体は自ドメインのインスタンス関手 $\mathcal{F}$ を直接書き換えない（状態不変の原則）。出力資源ワイヤーが後続の自ドメイン内操作部品へ流れ込むことで、間接的に状態変化およびブリッジを介した随伴共鳴を引き起こす。
+\end{enumerate}
+% TikZ ストリング図式スタイル
+\tikzset{
+    sdbox/.style={draw, rectangle, minimum width=1.45cm, minimum height=0.58cm, font=\scriptsize\ttfamily, inner sep=2pt},
+    sdstate/.style={draw, isosceles triangle, isosceles triangle apex angle=60, shape border rotate=90, minimum width=0.8cm, inner sep=1pt, font=\tiny\ttfamily},
+    sdterm/.style={draw, isosceles triangle, isosceles triangle apex angle=60, shape border rotate=-90, minimum width=0.55cm, inner sep=0.5pt, font=\tiny},
+    sdwire/.style={->, >=Stealth, semithick},
+    sdlbl/.style={font=\tiny\itshape}
+}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.95, transform shape]
+% 1行目: (1) 〜 (4)
+% (1) Create
+\node[sdstate] (c1) at (0, 0) {CREATE};
+\draw[sdwire] (0, 0.95) -- node[right, sdlbl] {$T_{\mathrm{init}}$} (c1.north);
+\draw[sdwire] (c1.south) -- node[right, sdlbl] {$\mathrm{Ref}(A)$} (0, -0.95);
+\node[font=\scriptsize] at (0, -1.3) {\textbf{(1) Create}};
+
+% (2) Delete
+\node[sdbox] (c2) at (3.7, 0.1) {DELETE};
+\draw[sdwire] (3.7, 0.95) -- node[right, sdlbl] {$\mathrm{Ref}(A)$} (c2.north);
+\node[sdterm] (t2) at (3.7, -0.65) {$1$};
+\draw[sdwire] (c2.south) -- (t2.north);
+\node[font=\scriptsize] at (3.7, -1.3) {\textbf{(2) Delete}};
+
+% (3) ReadAttr
+\node[sdbox] (c3) at (7.4, 0) {READ};
+\draw[sdwire] (7.4, 0.95) -- node[right, sdlbl] {$\mathrm{Ref}(A)$} (c3.north);
+\draw[sdwire] (c3.south) -- node[right, sdlbl] {$T$} (7.4, -0.95);
+\node[font=\scriptsize] at (7.4, -1.3) {\textbf{(3) ReadAttr}};
+
+% (4) Assign
+\node[sdbox] (c4) at (11.3, 0.1) {ASSIGN};
+\draw[sdwire] (10.9, 0.95) -- node[left, sdlbl] {$\mathrm{Ref}(A)$} (10.9, 0.39);
+\draw[sdwire] (11.7, 0.95) -- node[right, sdlbl] {$T$} (11.7, 0.39);
+\node[sdterm] (t4) at (11.3, -0.65) {$1$};
+\draw[sdwire] (c4.south) -- (t4.north);
+\node[font=\scriptsize] at (11.3, -1.3) {\textbf{(4) Assign}};
+
+% 2行目: (5) 〜 (8)
+% (5) Relate
+\node[sdbox] (c5) at (0, -2.7) {RELATE};
+\draw[sdwire] (-0.4, -1.85) -- node[left, sdlbl] {$\mathrm{Ref}(A)$} (-0.4, -2.41);
+\draw[sdwire] (0.4, -1.85) -- node[right, sdlbl] {$\mathrm{Ref}(B)$} (0.4, -2.41);
+\node[sdterm] (t5) at (0, -3.45) {$1$};
+\draw[sdwire] (c5.south) -- (t5.north);
+\node[font=\scriptsize] at (0, -4.1) {\textbf{(5) Relate}};
+
+% (6) Unrelate
+\node[sdbox] (c6) at (3.7, -2.7) {UNRELATE};
+\draw[sdwire] (3.3, -1.85) -- node[left, sdlbl] {$\mathrm{Ref}(A)$} (3.3, -2.41);
+\draw[sdwire] (4.1, -1.85) -- node[right, sdlbl] {$\mathrm{Ref}(B)$} (4.1, -2.41);
+\node[sdterm] (t6) at (3.7, -3.45) {$1$};
+\draw[sdwire] (c6.south) -- (t6.north);
+\node[font=\scriptsize] at (3.7, -4.1) {\textbf{(6) Unrelate}};
+
+% (7) Select From
+\node[sdbox] (c7) at (7.4, -2.8) {SELECT};
+\draw[sdwire] (7.4, -1.85) -- node[right, sdlbl] {$\mathcal{F}'(A)$} (c7.north);
+\draw[sdwire] (c7.south) -- node[right, sdlbl] {$\mathrm{Set}(A)$} (7.4, -3.75);
+\node[font=\scriptsize] at (7.4, -4.1) {\textbf{(7) SelectInst}};
+
+% (8) Select Related
+\node[sdbox] (c8) at (11.3, -2.8) {TRAVERSE};
+\draw[sdwire] (11.3, -1.85) -- node[right, sdlbl] {$\mathrm{Ref}(S)$} (c8.north);
+\draw[sdwire] (c8.south) -- node[right, sdlbl] {$\mathrm{Set}(A)$} (11.3, -3.75);
+\node[font=\scriptsize] at (11.3, -4.1) {\textbf{(8) Traverse}};
+\end{tikzpicture}
+\caption{対称モノイド圏 $\DF$ における基本プロセス部品 (1)〜(8) のストリング図表現（資源ワイヤー、生成三角形、および終対象 $1$ への脱落を示す）。}
+\label{fig:primitives-1-8}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.95, transform shape]
+% 1行目: (9) 〜 (12)
+% (9) Wire / SSA
+\node[sdbox] (c9) at (0, 0) {BIND};
+\draw[sdwire] (0, 0.95) -- node[right, sdlbl] {$X$} (c9.north);
+\draw[sdwire] (c9.south) -- node[right, sdlbl] {$X_{\mathrm{var}}$} (0, -0.95);
+\node[font=\scriptsize] at (0, -1.3) {\textbf{(9) AssignWire}};
+
+% (10) Arithmetic
+\node[sdbox] (c10) at (3.7, 0) {ARITH};
+\draw[sdwire] (3.3, 0.95) -- node[left, sdlbl] {$T_1$} (3.3, 0.29);
+\draw[sdwire] (4.1, 0.95) -- node[right, sdlbl] {$T_2$} (4.1, 0.29);
+\draw[sdwire] (c10.south) -- node[right, sdlbl] {$T_{\mathrm{out}}$} (3.7, -0.95);
+\node[font=\scriptsize] at (3.7, -1.3) {\textbf{(10) Arithmetic}};
+
+% (11) Logic Eval
+\node[sdbox] (c11) at (7.4, 0) {EVAL};
+\draw[sdwire] (7.0, 0.95) -- node[left, sdlbl] {$T_1$} (7.0, 0.29);
+\draw[sdwire] (7.8, 0.95) -- node[right, sdlbl] {$T_2$} (7.8, 0.29);
+\draw[sdwire] (c11.south) -- node[right, sdlbl] {$\Omega$} (7.4, -0.95);
+\node[font=\scriptsize] at (7.4, -1.3) {\textbf{(11) LogicEval}};
+
+% (12) Branch / Coproduct
+\node[sdbox] (c12) at (11.3, 0) {BRANCH};
+\draw[sdwire] (10.9, 0.95) -- node[left, sdlbl] {$\Omega$} (10.9, 0.29);
+\draw[sdwire] (11.7, 0.95) -- node[right, sdlbl] {$X$} (11.7, 0.29);
+\draw[sdwire] (10.9, -0.29) -- node[left, sdlbl] {$X_{\mathrm{T}}$} (10.9, -0.95);
+\draw[sdwire] (11.7, -0.29) -- node[right, sdlbl] {$X_{\mathrm{F}}$} (11.7, -0.95);
+\node[font=\scriptsize] at (11.3, -1.3) {\textbf{(12) If-Else ($\amalg$)}};
+
+% 2行目: (13) 〜 (16)
+% (13) For Each
+\node[sdbox] (c13) at (0, -2.7) {MAP $\coprod f_i$};
+\draw[sdwire] (0, -1.85) -- node[right, sdlbl] {$\mathrm{Set}(A)$} (c13.north);
+\node[sdterm] (t13) at (0, -3.45) {$1$};
+\draw[sdwire] (c13.south) -- (t13.north);
+\node[font=\scriptsize] at (0, -4.1) {\textbf{(13) ForEach}};
+
+% (14) Event Gen
+\node[sdbox] (c14) at (3.7, -2.7) {GENERATE};
+\draw[sdwire] (3.3, -1.85) -- node[left, sdlbl] {$\mathbf{d}$} (3.3, -2.41);
+\draw[sdwire] (4.1, -1.85) -- node[right, sdlbl] {$\mathrm{Ref}(B)$} (4.1, -2.41);
+\node[sdterm] (t14) at (3.7, -3.45) {$1$};
+\draw[sdwire] (c14.south) -- (t14.north);
+\node[font=\scriptsize] at (3.7, -4.1) {\textbf{(14) EventGen}};
+
+% (15) Return / Prop
+\node[sdbox] (c15) at (7.4, -2.8) {RETURN};
+\draw[sdwire] (7.4, -1.85) -- node[right, sdlbl] {$T_{\mathrm{out}}$} (c15.north);
+\draw[sdwire] (c15.south) -- node[right, sdlbl] {$\partial_{\mathrm{out}}$} (7.4, -3.75);
+\node[font=\scriptsize] at (7.4, -4.1) {\textbf{(15) Return/Eq}};
+
+% (16) External Entity
+\node[sdbox, fill=gray!12] (c16) at (11.3, -2.8) {EE\_FUNC};
+\draw[sdwire] (11.3, -1.85) -- node[right, sdlbl] {$\bigotimes T_{\mathrm{in}}$} (c16.north);
+\draw[sdwire] (c16.south) -- node[right, sdlbl] {$T_{\mathrm{out}}$} (11.3, -3.75);
+\node[font=\scriptsize] at (11.3, -4.1) {\textbf{(16) ExtEntity}};
+\end{tikzpicture}
+\caption{対称モノイド圏 $\DF$ における基本プロセス部品 (9)〜(16) のストリング図表現（余積分岐 $\amalg$、余極限展開 $\coprod$、および網掛けで示した非透過な外部実体射を含む）。}
+\label{fig:primitives-9-16}
+\end{figure}
+\subsection{標準外部実体（\texttt{STR}, \texttt{TIM}）および二段階整合性検証の原則}
+あらゆる意味の場で普遍的に利用される文字列と日時については、標準外部実体として以下の2つがアクション言語の基底に組み込まれる。
+\begin{enumerate}
+    \item \textbf{文字列外部実体（\texttt{STR}：$\mathcal{EE}_{\mathrm{String}}$）：} 自由モノイド $\Sigma^*$ 上の等価比較（\texttt{equal}, \texttt{not\_equal}）、辞書順順序比較（\texttt{compare}）、連結（\texttt{concat}）、部分抽出（\texttt{substring}）、位置検索（\texttt{index\_of}）、置換（\texttt{replace}）、長さ計量（\texttt{length}）を提供する。
+    \item \textbf{日時外部実体（\texttt{TIM}：$\mathcal{EE}_{\mathrm{Time}}$）：} 時間点 \texttt{DATETIME} と時間ベクトル \texttt{TIMESPAN} のアフィン時間代数（\texttt{duration}, \texttt{add\_span}, \texttt{subtract\_span}, \texttt{combine\_span}）、時間軸順序比較（\texttt{compare}）、および暦要素からの合成・抽出（\texttt{create\_datetime}, \texttt{get\_year}〜\texttt{get\_microsecond}）を提供する（存在しない暦日や範囲外引数はゼロ除算と同等に始対象 $0$ へ崩壊する）。
+\end{enumerate}
+
+\begin{axiom}[部品の直交独立性・過渡状態の評価・二段階整合性検証]\label{ax:transient}
+上記16種の基本プロセス部品は相互に直交する独立した幾何学的作用素であり、部品内部に個別の事前バリデーションを持たない。エントリアクション（およびドメインファンクション）の実行は、初期状態関手 $\mathcal{F}_n$ から最終状態関手 $\mathcal{F}_{n+1}$ へと至る\textbf{過渡的状態関手の連鎖（$\mathcal{F}_n \to \mathcal{F}' \to \mathcal{F}'' \to \cdots \to \mathcal{F}_{n+1}$）}として進行し、以下の3つの空間トポロジー規則によって全域的に規律される。
+\begin{enumerate}
+    \item \textbf{実行時点の過渡的状態関手 $\mathcal{F}'$ の参照：} 基本プロセス部品のうち、意味の場の状態を入力データフローとして使用する部品（(3)~\texttt{ReadAttr}、(7)~\texttt{Select From Instances}、(8)~\texttt{Select Related By} 等）は、アクション開始前の凍結された初期状態 $\mathcal{F}_n$ ではなく、\textbf{当該部品が駆動されるまさにその時点における過渡的状態関手 $\mathcal{F}'$ の値}をそのまま入力として評価する。したがって、まさに遷移中のエントリアクションの途上では、概念情報モデル（CIM）の静的制約が一時的に破られている過渡状態（たとえば \texttt{DELETE} や \texttt{UNRELATE} 直後の宙ぶらりん状態や多重度の一時的不充足）がそのまま観測・利用される。
+    \item \textbf{即時型ガード崩壊（局所特異点）：} ゼロ除算、制限データ型の境界超過、型不整合比較、多重度 \texttt{1} ナビゲーション（\texttt{select one}）の不在、および関連クラスの媒介モノ射二重結合違反は、発生した瞬間に合成射が組成不可能となり、始対象 $0$（空空間）へと即時崩壊する。
+    \item \textbf{状態確定時の大域的整合性保証：} 過渡状態 $\mathcal{F}'$ における一時的な CIM 制約違反は実行途上では正当に許容され、エントリアクション全体の完了時（状態確定時）に最終関手 $\mathcal{F}_{n+1} \in \Valid(\mathcal{C})$ が満たされていること（および Paper 3 で扱う要求仕様の制限ノルム内に収まっていること）をもって正当な遷移として確定する。
+\end{enumerate}
+\end{axiom}
+
+\begin{remark}[過渡的不整合および資源競合・デッドロックの記述可能性]\label{rem:deadlocks}
+従来の一般的なソフトウェア工学の技法は、カプセル化や理想化されたトランザクション抽象によって、処理途上の一時的な不整合や資源競合によるデッドロックを「隠蔽すべき異常」として覆い隠そうとする。しかし、実際の現実世界（人間社会の業務プロセスであれ物理的相互作用であれ）においては、操作の途上で一時的に構造制約が破れている過渡状態や、複数の因果連鎖が資源を競合してデッドロックに陥る状況こそがむしろ日常的な常態である。本体系が過渡的状態関手 $\mathcal{F}'$ の逐次評価と特異点（始対象 $0$）を排除せずモデル空間内に明示的に位置づけているのは、まさに\textbf{現実世界で生起する過渡的不整合や資源競合・デッドロックのメカニズムそのものを隠蔽することなく厳密に記述・検証可能にするため}である。
+
+さらに、このように過渡的不整合や資源競合・デッドロックが発生し得る構造をモデルとして明示的に記述できるからこそ、モデラーはその記述を基点として特異点到達条件やデッドロック経路を特定し、状態分割や境界条件アスペクト（排他・調停規則）の付与によって\textbf{それらの破綻・競合要因を構造的に排除した健全なモデルを同一の形式体系内で記述・構築すること}が可能となる。
+\end{remark}
+
+\subsection{対称モノイド圏 $\DF$ のホモトピー閉包とドメインファンクション}
+
+\begin{theorem}[構文・意味論同型およびホモトピー的対称モノイド閉包]\label{thm:monoidal-closure}
+New OAL のテキスト構文（$\alpha$同値および独立文の交換同値で割った商空間）と、上記16種の基本プロセス部品を直列合成（$\circ$）および線形論理テンソル積（$\otimes$）で結んだ非循環ストリング図（DAG）の間には自然な圏同値（構文・意味論同型）が存在する \cite{joyal1991,coecke2017}。さらに、Joyal--Street のコヒーレンス定理により、データの因果依存トポロジーを保つ任意の連続変形（イソトピー／ホモトピー）は同一の同値類に閉じ、1回のアクション実行は必ず有限ステップで停止して一意の最終状態 $\mathcal{F}_{n+1}$ を確定させる。
+\end{theorem}
+
+\begin{definition}[境界合成射としてのドメインファンクションとブリッジ接続]\label{def:domain-function}
+アクションモデルの4大スコープの第4領域である\textbf{ドメインファンクション（Domain Function）}は、特定の状態遷移には帰属せず、上記16種の基本プロセス部品のみから対称モノイド圏 $\DF$ の DAG 規則に従って構成される境界合成射
+\begin{equation}
+F_{\mathrm{dom}} : \bigotimes_{i=1}^p T_{\mathrm{in}, i} \longrightarrow \bigotimes_{j=1}^q T_{\mathrm{out}, j} \qquad (T_{\mathrm{in}, i},\, T_{\mathrm{out}, j} \in \Dstatic)
+\end{equation}
+である（入力データフローを持たない起動専用ポートは $p=0$ すなわちモノイド単位対象 $I$ からの射 $I \to \bigotimes_{j=1}^q T_{\mathrm{out}, j}$ となり、戻り値を持たない状態更新専用ポートは $q=0$ すなわち単位対象 $I$ への射 $\bigotimes_{i=1}^p T_{\mathrm{in}, i} \to I$ となる）。本質的には対称モノイド圏における純粋な入出力データフローワイヤーの束であり、これをテキスト形式（New OAL）で記述する際の構文表現として従来の慣用に従い「入力パラメータ（引数）」および「戻り値」と表記する。意味の場の独立性（内部論理の閉包性）を保つため、異なる意味の場（他ドメイン）は互いの内部クラスを直接操作できず、外部に公開される\textbf{公開事象}とこの\textbf{ドメインファンクション}のみを接続ポート（インターフェース）として、Paper 0 のブリッジ関手および次稿 Paper 3 の構造変換による連動を実現する。
+\end{definition}
+
+\begin{remark}[ドメインファンクションの出力と「状態の内包（Intension）」の形式的定式化]\label{rem:dom-intension}
+Paper 0 \cite{ota2026paper0} で確立した通り、世界にはすべての意味の場を上から包摂する特権的な「外部空間」は存在せず、複数の意味の場が対等に並立しているのみである。したがって、ドメインファンクション $F_{\mathrm{dom}}$ の出力データフロー（$\bigotimes_{j=1}^q T_{\mathrm{out}, j}$）は、何らかの超越的観測者が意味の場の「外」から覗き見た結果ではなく、\textbf{当該意味の場の現在状態 $\mathcal{F}_n \in \Valid(\mathcal{C})$ から、内部の概念クラスや関係構造を忘却して静的データ型空間へと射影した形式的な像――すなわち、Paper 0 で定式化した状態の「内包（Intension）」そのもの}として定義される。並立する他の意味の場は互いの内部スキーマを直接参照できないため、ブリッジを介した接続関係においては、このドメインファンクションの出力データフロー（および公開事象）という形式的な「内包の射影」のみが接点として機能し、かつ Paper 0 の認識論的限界定理と同様、この射影された形式のみから元のインスタンス状態全体を一般には一意に逆算することはできない。
+\end{remark}
+\section{普遍的実行セマンティクスと境界条件のアスペクト（Universal Execution Semantics）}
+
+\subsection{ドメイン内容に依存しない「形式への言及（$\Cform$）」による実行セマンティクス}
+Paper 1 によって静的な意味構造（概念情報モデル）の記述形式が確定し、本稿の第2章および第3章によって状態変化のスキーマ（状態モデルとデータフロー型アクションモデル）の記述形式が確定した。しかし、どれだけ精密に静的・動的モデルを書き上げたとしても、それらのモデルが時間軸上でいかなる因果順序・優先規則・境界条件のもとで振る舞う（＝実行される）のかを規定する制約がなければ、モデルは単なる「絵に描いた餅」に留まる。
+
+ここで本体系が導出する極めて重要な原理は、\textbf{「実行セマンティクス（Execution Semantics）は、個々の意味の場（会計・物流・制御・物理現象など）の具体的な意味内容に一切立ち入ることなく、概念情報モデル・状態モデル・アクションモデルの『形式そのもの（Meta-Form）』に対して普遍的かつ一意に定義できる」}という事実である。
+
+\begin{definition}[形式への言及圏 $\Cform$ と普遍的実行セマンティクスの4公理]\label{def:exec-sem}
+任意のドメインモデル $\mathcal{M} = (\mathcal{C}, \{M_A\}_{A \in \mathcal{K}}, \DF)$ が共有する構造的メタ形式（概念クラス・識別子・多重度・状態遷移表・DAG アクション・固有時キューという枠組みそのもの）を表す基準圏を\textbf{形式圏 $\Cform$} とする。個々のドメイン内容に依存しない\textbf{普遍的実行セマンティクス（Universal Execution Semantics）}は、$\Cform$ 上の自然な状態遷移関手 $\mathcal{E}_{\mathrm{exec}}$ として、以下の4つの公理により一意に規定される。
+\begin{enumerate}
+    \item \textbf{公理 E-1（Run-to-Completion 原子性公理）：}
+    あるインスタンス $a \in \mathcal{F}_n(A)$ の固有時キューから1つの事象 $e$ が取り出されて遷移 $s \xrightarrow{e} s'$ が起動したとき、遷移先状態 $s'$ に紐づくエントリアクション $\mathcal{A}_{s'}$（および内部で参照される数理特徴値・概念クラス関数）の DAG 評価全体は、外部からの割り込みを受けない\textbf{分割不可能な単一の原子ステップ（Atomic Step）}として完結する。実行途上の暫定関手 $\mathcal{F}'$（\texttt{delete} や \texttt{unrelate} 直後の過渡状態）は外部から観測されず、アクション完了時の最終関手 $\mathcal{F}_{n+1}$ のみが正当な状態として確定する。
+    \item \textbf{公理 E-2（自己イベント優先公理：局所固有時の保存）：}
+    エントリアクション $\mathcal{A}_{s'}$ の実行中に複数の事象が発行（\texttt{generate}）された場合、当該インスタンス $a$ が\textbf{自分自身宛てに発行した事象（\texttt{to SELF}）}は、他のインスタンス宛てに発行された外部事象（\texttt{to uniqueRef} / \texttt{to creator}）よりも必ず優先して処理される。これにより、単一個体のライフサイクルにおける局所的因果律（世界線の連続性）が最優先で保存される。
+    \item \textbf{公理 E-3（非同期事象の FIFO 順序と並列交換性）：}
+    異なるインスタンス間で伝達される外部事象は、同一送信元インスタンスから同一宛先インスタンスへ向かう経路においては発行順序（FIFO 半順序 $\le_b$）を厳密に保存する。一方、互いに事象のやり取りを持たない独立したインスタンス同士のイベント処理順序は空間的に分離されており、対称モノイド圏 $\DF$ の交換法則（並列合成 $\otimes$）のもとで任意の並列・インターリーブ実行が等価とみなされる。
+    \item \textbf{公理 E-4（時間境界条件アスペクトの引き戻し結合）：}
+    外部実体 $\mathcal{EE}_{\mathrm{Time}}$ からの時間事象（タイマー満了・周期駆動）や、非機能要件（同期・排他ロック・トランザクション境界・実行精度）といった外部実行環境からの制約は、第1級ドメインの概念クラスを汚染することなく、形式圏 $\Cform$ を介したアスペクト圏 $\mathcal{V}$ との\textbf{引き戻し（ファイバー積）}
+    \begin{equation}
+    \mathcal{M}_{\mathrm{exec}} \equiv \mathcal{M} \times_{\Cform} \mathcal{V}
+    \end{equation}
+    によって、モデルの形式構造（全クラス・全状態遷移）へ一括して直交適用される。
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[普遍的実行セマンティクス定理：Universal Execution Semantics Theorem]\label{thm:univ-exec}
+Paper 1 の公理系（商 2-圏 $\mathcal{C}$）および本稿第2章・第3章の仕様に従う任意の意味の場のモデル $\mathcal{M}$ に対し、定義~\ref{def:exec-sem} の4公理によって規定される実行セマンティクス $\mathcal{E}_{\mathrm{exec}}$ は、ドメイン固有の業務意味論や物理法則の具体的内容を一切参照することなく、\textbf{モデル形式のみから一意かつ決定論的（並列交換同値を除いて一意）な状態遷移系（遷移システム $\Valid(\mathcal{C}) \Rightarrow \Valid(\mathcal{C}) \sqcup \{0\}$）を誘導する}。
+\end{theorem}
+
+\begin{proof}
+モデルの静的構造は識別子（モニック射）と7種の閉じたデータ型によって完全に型付けられており、動的構造は有限状態遷移表（STT）と非循環ストリング図（DAG）に還元されている。公理 E-1 により各遷移ステップの入出力境界が確定し、定理~\ref{thm:monoidal-closure} の DAG 非循環性により各ステップが有限時間で必ず停止する。さらに公理 E-2・E-3 により事象キューの半順序構造が一意に定まり、公理 E-4 のファイバー積 $\mathcal{M} \times_{\Cform} \mathcal{V}$ が外部境界条件を関手的に合成するため、ドメインの具体的意味内容に依存しない普遍的な実行意味論が一意に構成される。
+\end{proof}
+
+\subsection{不変条件の動的保存定理と特異点における崩壊・相転移}
+普遍的実行セマンティクス $\mathcal{E}_{\mathrm{exec}}$ のもとでモデルが状態変化していくとき、その実行軌跡（Trajectory）は、静的スキーマ圏 $\mathcal{C}$ の整合性制約を保ち続ける「正規稼働軌道」と、特異点（始対象 $0$）へ到達する「破綻・相転移軌道」の二つに厳密に二分される。
+
+\begin{definition}[正規稼働軌道と特異点到達軌道]\label{def:trajectories}
+初期状態 $\mathcal{F}_0 \in \Valid(\mathcal{C})$ から出発する事象駆動の実行系列 $\mathcal{F}_0 \xrightarrow{e_1} \mathcal{F}_1 \xrightarrow{e_2} \cdots \xrightarrow{e_n} \mathcal{F}_n$ において：
+\begin{itemize}
+    \item \textbf{正規稼働軌道（Safe / Regular Trajectory）：} すべてのステップ $k$ において、\texttt{Can't Happen} 遷移、即時型ガード崩壊（ゼロ除算・値域境界超過・媒介モノ射違反）、および状態確定時の大域的整合性違反のいずれも一切発生しない軌道。
+    \item \textbf{特異点到達軌道（Singular / Breakdown Trajectory）：} あるステップ $k$ において上記のいずれかの禁止条件に衝突し、状態関手がトポス内部論理の始対象 $0$（空空間）へと脱落する軌道。
+\end{itemize}
+\end{definition}
+
+\begin{theorem}[不変条件の動的保存定理：Dynamic Preservation of Invariants]\label{thm:inv-pres}
+任意の正規稼働軌道において、遷移前の状態 $\mathcal{F}_n$ が静的スキーマ圏 $\mathcal{C}$ のすべての公理・制約を充足している（$\mathcal{F}_n \in \Valid(\mathcal{C})$）ならば、任意の事象到着とそれに続くエントリアクション $\mathcal{A}_{s'}$ の完了後に確定する遷移後の状態 $\mathcal{F}_{n+1}$ もまた、\textbf{必ず静的スキーマ圏 $\mathcal{C}$ のすべての不変条件（識別子の一意性、4種多重度、参照整合性の可換図式、\texttt{Is-a} の排他直和性、関連クラスのスパン単射性、および対角線埋没の排除）を100\%保存する}。すなわち、
+\begin{equation}
+\mathcal{F}_n \in \Valid(\mathcal{C}) \quad \Longrightarrow \quad \mathcal{F}_{n+1} \in \Valid(\mathcal{C})
+\end{equation}
+が成り立つ。
+\end{theorem}
+
+\begin{proof}
+エントリアクション $\mathcal{A}_{s'}$ は第3章で定義された16種の基本プロセス部品の有限 DAG 合成である。\texttt{CREATE}（(1)）および \texttt{ASSIGN}（(4)）は公理 C-1 の単射性と部分対象値域を型ガードとして強制し、\texttt{RELATE}（(5)）は公理 C-2 の媒介モノ射および公理 C-3 の余積包含を強制する。一方、\texttt{DELETE}（(2)）や \texttt{UNRELATE}（(6)）によって実行途上に一時的に生じ得る多重度 \texttt{1} や \texttt{1..*} の未充足、あるいは対角線埋没（自己ループ）の発生については、公理 E-1（Run-to-Completion）および公理~\ref{ax:transient}（二段階整合性検証）により、アクション完了時の確定関手 $\mathcal{F}_{n+1}$ に対して商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ の引き戻し条件が一括評価される。正規稼働軌道とは定義によりこの大域的引き戻しが始対象 $0$ へ崩壊しない軌道であるため、$\mathcal{F}_{n+1}$ は $\Valid(\mathcal{C})$ のすべての構造保存条件を自動的に充足する。
+\end{proof}
+
+\begin{corollary}[特異点におけるビジネス破綻と物理的相転移の統一的説明]\label{cor:singularities}
+逆に、実行軌道が特異点（始対象 $0$）へ到達した場合、それはモデルの実行エンジンが異常停止したのではなく、\textbf{「当該スキーマ圏 $\mathcal{C}$ と状態モデルが規定する『意味の場の憲法（成立条件）』の限界境界に到達し、その意味の場がもはや無矛盾に存続できなくなったこと」}の数学的顕現である。
+\begin{itemize}
+    \item \textbf{人文・ビジネス領域における帰結：} 記述上の見落とし（\texttt{Can't Happen} の未処理や想定外の零除算・必須リンク欠損）を内包したまま現実世界で稼働していた業務システムやビジネスモデルが、特定の事象の連鎖によって特異点を踏んだ瞬間、その業務秩序は整合性を失って破綻（システムダウン・業務停止）する。
+    \item \textbf{自然・物理領域における帰結：} 物理法則が支配する意味の場において、状態変数が定義域の特異点（臨界温度・臨界圧力・事象の地平面など）に到達すると、従来の状態方程式とスキーマ圏 $\mathcal{C}_1$ による記述は始対象 $0$ へと崩壊し、系は別のスキーマ圏 $\mathcal{C}_2$ が支配する新たな意味の場（液体から気体への沸騰、常伝導から超伝導への転移などの\textbf{相転移}）へと移行する。
+\end{itemize}
+\end{corollary}
+\section{動的領域の諸定理・連続性の離散的表現・物理理論との同型性}
+
+第2章から第4章にかけて、著者は静的スキーマ圏 $\mathcal{C}$ 上で生起する因果的状態遷移と動的振る舞いを、型付き事象（事象付随データを含む）と全インスタンスの状態機械保持、存続・消滅状態と特異点（\texttt{Can't Happen}）、16種の基本プロセス部品からなる非循環ストリング図（対称モノイド圏 $\DF$）および New OAL テキスト構文、境界合成射としてのドメインファンクション、そして形式圏 $\Cform$ に対して定義される普遍的実行セマンティクスとして厳密に定式化した。
+
+本章では、まず Paper 1 の静的4大定理と完全に対称な\textbf{動的4大定理（動的表現的完備性・無矛盾存在性・動的同型性・動的漸近的接近）}を証明し、続いて\textbf{連続ダイナミクスの離散的表現定理}、そして本稿の集大成である\textbf{物理理論同型定理}を証明する。
+
+\subsection{動的表現的完備性定理（Dynamic Expressive Completeness）}
+
+\begin{theorem}[動的モデリング形式の表現的完備性]\label{thm:dyn-comp}
+静的スキーマ圏 $\mathcal{C}$ 上の状態空間 $\Valid(\mathcal{C})$ において定義される任意の計算可能（チューリング完全）かつ因果的な動的状態遷移系は、本稿の最小プリミティブ群――すなわち、(1) 概念クラスに随伴する有限状態機械（STT）、(2) 静的データ型 $\Dstatic$ で型付けされた生成・既存・時間事象（事象付随データを含む）、(3) 16種の基本プロセス部品から構成される非循環ストリング図（対称モノイド圏 $\DF$）、および (4) 普遍的実行セマンティクス――のみによって過不足なく記述可能である。
+\end{theorem}
+
+\begin{proof}
+任意のアルゴリズムおよび離散事象シミュレーションの計算可能性は、(a) 有限状態の記憶と分岐、(b) 任意サイズの構造的データ領域の動的確保・解放、および (c) 条件付き反復（ループ）の3要素によって完全に張られる（チャーチ＝チューリングのテーゼおよび Minsky レジスタ機械の等価性）。本体系においては、(a) が状態モデルの排他直和空間 $\Sigma_A$ と論理選択~(12) によって、(b) が概念クラスのインスタンス生成~(1)・消滅~(2)・リンク結合~(5)・分離~(6) によってそれぞれ無制限の表現力を持ち、(c) の任意回数の反復・再帰は、非循環 DAG アクションからの自己事象発行~(14)（\texttt{generate ... to SELF}）による状態モデルの遷移閉路として完全に実現される。したがって、追加の制御プリミティブを一切導入することなく、あらゆる計算可能・現実的な動的振る舞いが表現される。
+\end{proof}
+
+\subsection{動的無矛盾性・存在定理（Dynamic Consistency and Homotopical Monoidal Closure）}
+
+\begin{theorem}[動的モデルの構成的存在保証とホモトピー的モノイド閉包]\label{thm:dyn-exist}
+第2章〜第4章のすべての公理を満足する任意の動的モデル $\mathcal{M} = (\mathcal{C}, \{M_A\}, \DF, \mathcal{E}_{\mathrm{exec}})$ に対し、空でない正規稼働軌道（特異点である始対象 $0$ を踏まない状態遷移列 $\mathcal{F}_0 \to \mathcal{F}_1 \to \cdots$）が構成的に存在し、すべての正規遷移ステップにおいて静的制約が保存される（$\mathcal{F}_n \in \Valid(\mathcal{C}) \implies \mathcal{F}_{n+1} \in \Valid(\mathcal{C})$）。さらに、動的振る舞いの全体空間は、ストリング図の連続変形（イソトピー）および並列因果経路の交換性に関して\textbf{ホモトピー的に閉じた対称モノイド圏}をなす。
+\end{theorem}
+
+\begin{proof}
+Paper 1（定理~5.2）により初期の非自明な健全状態 $\mathcal{F}_0 \in \Valid(\mathcal{C})$ が構成的に存在する。各インスタンスの初期状態を $\Sigma_A^{\mathrm{active}}$ に配置し、事象到着ごとに全状態を自己維持させる恒等射（\texttt{Ignore}）または静的制約を保存する \texttt{WriteAttr} / \texttt{Relate} の DAG 射を割り当てれば、$\mathcal{F}_0 \to \mathcal{F}_0 \to \cdots$ という自明でない正規稼働軌道が常に構成可能である。また、定理~\ref{thm:monoidal-closure} および公理 E-3（並列交換性）により、因果依存関係を持たない並列インスタンス間の事象処理順序の入れ替えはダイヤモンド可換図式（ホモトピー同値）を形成し、到達状態 $\mathcal{F}_{n+1}$ を一意に確定させる。
+\end{proof}
+
+\subsection{動的同型定理（Dynamic Isomorphism Theorem）}
+
+\begin{definition}[動的振る舞いの充足性と観測的等価性]\label{def:dyn-adeq}
+対象となる意味の場 $\mathcal{SYS}$ の正当な状態遷移軌道の空間を $\mathcal{T}_{\mathcal{SYS}}$ とする。動的モデル $\mathcal{M}$ が $\mathcal{SYS}$ のダイナミクスを\textbf{過不足なく厳密に記述している（Dynamically Adequate）}とは、普遍的実行セマンティクス $\mathcal{E}_{\mathrm{exec}}$ のもとで $\mathcal{M}$ が生成する正規稼働軌道（および特異点破綻境界）の空間と $\mathcal{T}_{\mathcal{SYS}}$ の間に自然な双射対応が存在し、各遷移ステップにおける有意味命題の真偽推移を完全に再現することをいう。
+\end{definition}
+
+\begin{theorem}[動的モデルの同型定理：Uniqueness up to Monoidal Equivalence]\label{thm:dyn-iso}
+同一の意味の場 $\mathcal{SYS}$ の動的振る舞いを過不足なく厳密に記述する任意の二つの動的モデル $\mathcal{M}_1$ と $\mathcal{M}_2$ は、表現形式（例：ミーリー型遷移アクションかムーア標準形か、状態分割の粒度、視覚的ストリング図か New OAL テキスト形式か、あるいは言語ラベルの違い）に関わらず、状態空間とアクション圏の対として\textbf{対称モノイド圏同値（$\mathcal{M}_1 \simeq \mathcal{M}_2$）}となる。
+\end{theorem}
+
+\begin{proof}
+Paper 1（定理~5.3）により、両者の静的スキーマ圏は圏同値 $\mathcal{C}_1 \simeq \mathcal{C}_2$ であり、状態空間 $\Valid(\mathcal{C}_1) \simeq \Valid(\mathcal{C}_2)$ も自然同型となる。さらに、任意の遷移矢印にアクションを付与するミーリー型記述は、入力事象と到達状態の直積による状態空間の余積分割（ムーア標準形への正規化）によって入出力因果律を完全に保存したまま同型変換でき、また図式とテキストの等価性は定理~\ref{thm:monoidal-closure}（構文・意味論同型）により保証される。したがって、同一の観測的状態遷移系を誘導する最小実現（Minimal Realization）の普遍性により、両者の動的モデル圏は対称モノイド関手によって圏同値となる。
+\end{proof}
+
+\subsection{動的漸近的接近定理（Dynamic Asymptotic Convergence under Cognitive Finitude）}
+
+\begin{theorem}[動的漸近的接近定理：Asymptotic Convergence of Dynamics]\label{thm:dyn-conv}
+対象となる意味の場 $\mathcal{SYS}$ の真の動的モデルを $\mathcal{M}^*$ とし、有限のモデラーが観測された事象連鎖や特異点（予期せぬ \texttt{Can't Happen} や業務破綻、資源競合・デッドロック）からのアブダクションを通じて、(1) 未分化な状態の排他的状態分割（状態空間 $\Sigma_A$ の細分化）、および (2) 複雑な条件分岐を含むアクションの純粋関数・状態操作 DAG への分解と調停アスペクトの適用、を反復して生成する近似動的モデル列を $\mathcal{M}^{(0)} \to \mathcal{M}^{(1)} \to \cdots \to \mathcal{M}^{(n)} \to \cdots$ とする。このとき、誤った状態遷移や過剰な特異点領域は単調に縮小し、帰納的極限において近似列は真の動的モデル $\mathcal{M}^*$ と対称モノイド圏同値（$\varinjlim \mathcal{M}^{(n)} \simeq \mathcal{M}^*$）に収束する。
+\end{theorem}
+
+\begin{proof}
+状態の排他的細分化は、静的モデリングにおけるサブクラス化演算 $\mathcal{R}_{\mathrm{sub}}$（Paper 1 定理~5.4）の時間軸上の双対操作であり、未分化な状態が許容していた偽の遷移パス（バグ軌道）を単調に排除する。また、各アクション射は有限個のプリミティブ射の DAG 合成として表現されるため、観測軌道の増大に伴う米田表現関手の余極限展開（密度の定理）により、有限ステップごとの射影近似は極限において真の遷移関手およびモノイド圏 $\DF^*$ を一意に復元する。
+\end{proof}
+
+\begin{remark}[意味の場の完全再現とシミュレーションによるアブダクションモデルの妥当性検証]\label{rem:simulation}
+Paper 1（第1.1節）で論じた通り、有限の人間によるモデリングの本質は、観測された現象（内包）から背後の構造を仮説形成する\textbf{アブダクション（仮説形成）}と、その仮説から導かれる帰結を現実と照合する\textbf{演繹的検証（Deductive Verification）}の往復運動にある。本稿で確立した概念情報モデル・状態モデル・データフロー型アクションモデル・普遍的実行セマンティクスの統合体系は、対象とする意味の場の在り様（正常な因果連鎖のみならず、過渡的不整合や資源競合・デッドロックの発生メカニズムまでを含めたダイナミクス）を過不足なく再現する能力を持つ。したがって、構築されたモデルに対して普遍的実行セマンティクスを適用して\textbf{有意味なシミュレーション（Executable Simulation）}を実行することは、単なる動作確認にとどまらず、\textbf{「アブダクションによって推論された仮説モデルが現実の意味の場の法則を正しく捉えているか」を客観的・反証可能に検証する厳密な科学的実験装置}として機能する。
+\end{remark}
+\subsection{連続ダイナミクスの離散的表現定理（Discrete Representation of Continuous Dynamics）}\label{sec:continuous}
+現実の物理世界や多くの実務領域では、物体の移動、温度・圧力の変化、資産の連続的評価など、連続時間 $t \in \mathbb{R}_{\ge 0}$ に沿って滑らかに変化する連続的ダイナミクス（微分方程式や連続フロー）が観察される。これに対し、イベント駆動の有限状態機械とデータフローからなる本体系は離散的な遷移系である。ここで「離散的な状態遷移による表現は、連続的な現実に対する単なる粗い近似や妥協に過ぎないのか？」という問いが生じる。我々は、第4章で導入した「境界条件アスペクトの引き戻し（公理 E-4）」に射影極限（$\varprojlim$）と層の張り合わせ条件を適用することで、離散的表現が連続的ダイナミクスを情報損失なく（同型に）記述できることを証明する。
+
+\begin{theorem}[連続ダイナミクスの離散的表現定理：Sheaf and Projective Limit Isomorphism]\label{thm:continuous}
+連続時間軸 $T = [0, \infty)$ 上の位相空間（または多様体）における連続的状態発展系 $\Phi : T \times X \to X$ に対し、時間刻み幅および空間・数値精度を規定する境界条件アスペクト圏 $\mathcal{V}_{\varepsilon}$（$\varepsilon > 0$）のフィルタ付き射影系 $\{\mathcal{M}_{\varepsilon} \equiv \mathcal{M} \times_{\Cform} \mathcal{V}_{\varepsilon}\}_{\varepsilon > 0}$ を構成する。各 $\mathcal{M}_{\varepsilon}$ が $\varepsilon$-格子上の時間事象（\texttt{TIM}）とスカラー演算によって決定される離散的状態遷移系であるとき、以下が成り立つ。
+\begin{enumerate}
+    \item \textbf{層の張り合わせ条件（Sheaf Gluing Condition）：} 任意の時間区間カバー $\{U_i\}$ 上で局所的に定義された離散遷移軌跡の族は、重複区間における境界値の一致のもとで一意の大域的軌跡へと張り合わされる（時間軸上の層 $\mathcal{F}_{\mathrm{Sheaf}}$ の構成 \cite{maclane1992}）。
+    \item \textbf{射影極限における同型収束：} 精度パラメータ $\varepsilon \to 0$ に関する射影極限（Projective Limit）
+    \begin{equation}
+    \mathcal{M}_{\mathrm{cont}} \equiv \varprojlim_{\varepsilon \to 0} \left(\mathcal{M} \times_{\Cform} \mathcal{V}_{\varepsilon}\right)
+    \end{equation}
+    において誘導される状態発展系は、元の連続時間力学系 $\Phi$ と圏同値（位相的・構造的に同型）となる。すなわち、連続的な振る舞いは本体系とは別の異質なモデル形式を必要とせず、同一の離散的状態遷移・データフロー形式の極限構造として完全に内包される。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+時間外部実体 $\mathcal{EE}_{\mathrm{Time}}$ からの時間事象間隔 $\Delta t = \varepsilon$ をアスペクト圏 $\mathcal{V}_{\varepsilon}$ のパラメータとして引き戻すとき、各離散ステップ $\mathcal{F}_{k\varepsilon} \to \mathcal{F}_{(k+1)\varepsilon}$ は $\varepsilon$ 刻みのオイラー／ルンゲ＝クッタ的な離散時間発展作用素を誘導する。$\varepsilon' < \varepsilon$ に対する自然な粗視化射影 $\pi_{\varepsilon', \varepsilon} : \mathcal{M}_{\varepsilon'} \to \mathcal{M}_{\varepsilon}$ は射影系をなし、実数直線 $\mathbb{R}$ が有理数・二進小数格子点の射影極限（完備化）として構成されるのと同型に、層条件を満たす離散軌跡の射影極限 $\varprojlim_{\varepsilon \to 0} \mathcal{M}_{\varepsilon}$ は連続時間上の解軌道空間と自然な双射（圏同値）を張る。
+\end{proof}
+
+\subsection{物理理論同型定理（Isomorphism with Physical Field Theories）}\label{sec:phys-iso}
+最後に、本稿の集大成として、Paper 1 および本稿（Paper 2）で確立した概念モデリングの全体系が、物理学における基礎理論（古典力学・電磁気学・相対論・場の量子論など、運動方程式と時間発展原理からなる理論記述）と数学的に完全に同型であることを証明する。
+
+\begin{definition}[物理理論の圏論的記述形式 $\mathcal{P}_{\mathrm{Phys}}$]\label{def:phys-theory}
+任意の物理的場の理論（または力学系）の標準的記述形式 $\mathcal{P}_{\mathrm{Phys}}$ は、以下の5つの数理構造の組として定義される。
+\begin{enumerate}
+    \item \textbf{配位空間・場の多様体（Configuration / Field Space $\mathcal{Q}$）：} 対象領域に存在する実体（粒子・場）の自由度、物理量の値域、および空間的結合関係を規定する静的構造。
+    \item \textbf{状態空間・相図と特異点（Phase Space \& Singularities $\mathcal{P}$）：} 系がとり得る状態の排他的分類、および方程式の定義域が破綻して相転移や発散が生じる特異点境界（臨界多様体）。
+    \item \textbf{運動方程式・局所作用素（Equations of Motion / Operators $\mathcal{L}_{\mathrm{eq}}$）：} ある状態から次の状態への局所的な変化則を記述する微分・代数作用素（ハミルトニアンやラグランジアン密度から導かれる時間発展則）。
+    \item \textbf{外力項・境界条件・散乱行列（External Forces / Boundary Conditions / S-Matrix $\mathcal{B}_{\mathrm{ext}}$）：} 閉じた系の外部にある環境や他の場と相互作用し、エネルギーや信号を入出力する境界条件・散乱インターフェース。
+    \item \textbf{普遍的時間発展原理と因果律（Universal Time-Evolution \& Causality $\mathcal{U}_{\mathrm{dyn}}$）：} 個々の物質や相互作用の種類に依存せず、配位空間と運動方程式の「形式そのもの」に対して普遍的に適用される時間発展のルール（最小作用の原理、光円錐による局所因果律の保存、および保存則）。
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[概念モデリング体系と物理理論記述の同型定理：Isomorphism with Physical Field Theories]\label{thm:phys-iso}
+単一の意味の場における概念モデリングの全体系
+\begin{equation}
+\mathfrak{M}_{\mathrm{CM}} \equiv \left(\mathcal{C},\; \{M_A\}_{A \in \mathcal{K}},\; \DF,\; \{F_{\mathrm{dom}}, \mathcal{E}^{\mathrm{public}}\},\; \mathcal{E}_{\mathrm{exec}}\right)
+\end{equation}
+と、定義~\ref{def:phys-theory} に規定される物理学の理論記述形式 $\mathcal{P}_{\mathrm{Phys}} = (\mathcal{Q}, \mathcal{P}, \mathcal{L}_{\mathrm{eq}}, \mathcal{B}_{\mathrm{ext}}, \mathcal{U}_{\mathrm{dyn}})$ の間には、以下の5つの構成要素とそれらの動的振る舞いを1対1に保存する自然な圏同値（構造同型対応）が存在する（表~\ref{tab:phys-iso}）。
+\end{theorem}
+
+\begin{table}[htbp]
+\centering
+\caption{概念モデリング体系（$\mathfrak{M}_{\mathrm{CM}}$）と物理学の理論体系（$\mathcal{P}_{\mathrm{Phys}}$）の構造的同型対応}
+\label{tab:phys-iso}
+\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{4.3cm} >{\raggedright\arraybackslash}p{4.1cm} >{\raggedright\arraybackslash}p{6.0cm}}
+\toprule
+\textbf{概念モデリング体系 $\mathfrak{M}_{\mathrm{CM}}$（Paper 1 \& 2）} & \textbf{物理学の理論体系 $\mathcal{P}_{\mathrm{Phys}}$} & \textbf{数学的・存在論的同型構造} \\
+\midrule
+\textbf{1. 概念情報モデル}（スキーマ圏 $\mathcal{C}$） & \textbf{配位空間・場の構造}（$\mathcal{Q}$） & 存在し得る実体（クラス）、物理量（7種データ型）、および関係（スパン）の静的幾何学 \\
+\addlinespace
+\textbf{2. 状態モデル}（STT・\texttt{Can't Happen}） & \textbf{状態空間・相図・特異点}（$\mathcal{P}$） & 排他直和による状態分割（$\Sigma_A$）と、意味の場が崩壊・相転移する特異点境界（始対象 $0$） \\
+\addlinespace
+\textbf{3. アクションモデル}（DAG・New OAL） & \textbf{運動方程式・局所作用素}（$\mathcal{L}_{\mathrm{eq}}$） & 状態を $\mathcal{F}_n \to \mathcal{F}_{n+1}$ へ写像する決定論的変化則（連続極限において微分方程式と同型） \\
+\addlinespace
+\textbf{4. ドメインファンクション・公開事象} & \textbf{外力項・境界条件・S行列}（$\mathcal{B}_{\mathrm{ext}}$） & 外部の場（他ドメイン・$\mathcal{EE}$）と静的データ型のみを介して相互作用する非透過境界ポート \\
+\addlinespace
+\textbf{5. 普遍的実行セマンティクス}（$\mathcal{E}_{\mathrm{exec}}$ on $\Cform$） & \textbf{時間発展の普遍原理・因果律}（$\mathcal{U}_{\mathrm{dyn}}$） & 個別内容に依存せず「形式そのもの」に適用される時間発展規則（固有時・局所慣性系・不変条件保存） \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{proof}
+定理~\ref{thm:continuous} により、概念モデリング体系 $\mathfrak{M}_{\mathrm{CM}}$ における離散的時間発展 $\mathcal{F}_n \to \mathcal{F}_{n+1}$ は時間刻み $\varepsilon \to 0$ の射影極限において連続時間上の状態発展軌道と同型となる。この対応のもとで、(1) 概念情報モデル $\mathcal{C}$ の個体集合と特徴値・関係スパンは物理系の配位空間・テンソル場 $\mathcal{Q}$ と 1対1 に対応し、(2) 状態モデルの排他直和空間 $\Sigma_A$ と特異点（始対象 $0$）は相空間と相転移臨界境界 $\mathcal{P}$ に一致する。(3) 各状態遷移に随伴する DAG アクション $\mathcal{A}_{s'}$ は局所状態変分 $\Delta \mathcal{F} / \Delta t$ を与える時間発展作用素 $\mathcal{L}_{\mathrm{eq}}$ であり、(4) 境界合成射であるドメインファンクション $F_{\mathrm{dom}}$ と公開事象は外部系との散乱・境界条件 $\mathcal{B}_{\mathrm{ext}}$ を張る。そして決定的なことに、(5) 物理法則における最小作用の原理や光円錐因果律が「物質の種類に立ち入らず理論形式そのものに普遍的に課される時間発展原理 $\mathcal{U}_{\mathrm{dyn}}$」であるのと同様に、本体系の普遍的実行セマンティクス $\mathcal{E}_{\mathrm{exec}}$ もまたドメイン内容に一切依存せず形式圏 $\Cform$ に対して定義される（定理~\ref{thm:univ-exec}）。以上より、両者は静的構造・局所変化則・境界相互作用・時間発展原理のすべてにおいて完全に圏同値（同型）である。
+\end{proof}
+
+\begin{corollary}[情報システムと物理現象の統一的理解、およびホログラフィー原理への架け橋]\label{cor:unified}
+定理~\ref{thm:phys-iso} により、「人間が認識・記述する業務・制御システムの概念モデル」と「自然界を記述する物理学の理論体系」は、本質的に異なる別種の知識体系ではなく、\textbf{「意味の場という境界スクリーン上に記述された形式と普遍的実行セマンティクスによって時間発展する同一の数学的構造」}であることが証明された。この帰結は、次稿（Paper 3）で論じる異なる意味の場同士の構造変換（グリーン関数同型）を経て、最終稿（Paper 4）におけるホログラフィー原理との同型性（境界上の離散情報・形式から高次元バルクのダイナミクスが再構成される原理）へと直接接続される。
+\end{corollary}
+\section{実践的意義と結論（Practical Implications and Conclusion）}
+
+\subsection{実行可能モデリング（Executable Modeling）の数学的完成と工学設計への帰結}
+Paper 1 で確立した静的モデリング論（概念情報モデル）と、本稿（Paper 2）で定式化した動的モデリング論（状態モデル・データフロー型アクションモデル・ドメインファンクション・普遍的実行セマンティクス）の統合は、この世界の妥当な記述形式であることに留まらず、ソフトウェア工学およびシステム設計の現場に対しても、決定的な設計原理を与える。
+\begin{enumerate}
+    \item \textbf{「描いた図」から「直接実行可能な数理モデル」への昇華：}
+    従来のモデリング実務においては、分析・設計モデル（UML 図など）は人間同士のコミュニケーション用の「参考図面」に過ぎず、最終的にプログラムコード（手続き型言語や OOP）へ翻訳・実装して初めて動くものになると考えられてきた。しかし、本稿（定理~\ref{thm:monoidal-closure} および定理~\ref{thm:univ-exec}）が証明した通り、厳密な概念情報モデルと状態遷移表（STT）の上に、16種の基本プロセス部品からなる非循環ストリング図（または等価な New OAL テキスト構文）と普遍的実行セマンティクス $\mathcal{E}_{\mathrm{exec}}$ を与えることで、ソフトウェアで実現するべき問題領域について、\textbf{モデルはそれ自体として曖昧さなく時間発展（実行・シミュレーション）可能な完全な数理体系（Executable Model）となる}。
+    \item \textbf{「制御のスパゲッティ化」からの解放（状態機械 $\times$ DAG ストリング図の分離）：}
+    従来の手続き型・オブジェクト指向設計が複雑性の爆発を招いた最大の原因は、システム全体のマクロな状態依存性（ライフサイクル）と、ミクロなデータ計算・更新処理を「同期メソッド呼び出しの連鎖」という単一の次元に混在させた点にある。本体系のように、マクロな因果制御を「全インスタンスが保持する状態機械と非同期イベント（局所慣性系）」へと分離し、各遷移の内部処理を「非循環（DAG）の対称モノイド圏 $\DF$ 内のストリング図」へと閉じ込めることで、無限ループや中間状態の不整合が構造的に排除される。
+    \item \textbf{「バグや破綻」の幾何学的可視化（特異点理論の工学的応用）：}
+    従来のテスト駆動開発や実行時例外処理が「エラーが起きてから事後的に対処する」アプローチであるのに対し、本体系では \texttt{Can't Happen}、ゼロ除算、値域制限超過、および媒介モノ射違反を「始対象 $0$ への崩壊点（特異点）」としてモデル空間の境界上に明示的に位置づける（注記~\ref{rem:singularities}・系~\ref{cor:singularities}）。これにより、モデル記述段階での静的トポロジー検証（特異点到達可能性の解析）によって、システムが破綻する境界条件を数学的に特定・制御することが可能となる。また、この可視化により、生成系 AI が生成するコードの妥当性検証も可能となる。
+\end{enumerate}
+
+\subsection{結論と次稿（Paper 3 および Paper 4）への展望}
+本稿（Paper 2）では、Paper 1 で確立した静的スキーマ圏 $\mathcal{C} \equiv CG/\mathcal{R}$ を基盤として、単一の意味の場における時間発展と動的振る舞いを圏論的に定式化し、以下の4つの根源的成果を証明した。
+\begin{enumerate}
+    \item \textbf{普遍的実行セマンティクスとホモトピー的モノイド閉包の証明（定理~\ref{thm:monoidal-closure}, \ref{thm:univ-exec}, \ref{thm:inv-pres}）：} 実行セマンティクスは個々のドメイン内容に一切立ち入ることなく概念情報モデルの形式（$\Cform$）に対して普遍的かつ一意に定義可能であり、16種の基本プロセス部品からなる非循環ストリング図（および同型な SSA テキスト構文）はホモトピー的に閉じた対称モノイド圏 $\DF$ を構成するとともに、特異点（始対象 $0$）を踏まない正規稼働軌道においては静的スキーマ圏 $\mathcal{C}$ のすべての不変条件を常に保存する。
+    \item \textbf{動的領域の4大定理の確立（定理~\ref{thm:dyn-comp}〜\ref{thm:dyn-conv}）：} 静的領域（Paper 1）と完全に対称に、本体系の動的記述形式はあらゆる計算可能・現実的な時間変化を過不足なく記述でき（動的表現的完備性）、表現形式（ムーア型・ミーリー型・図式・テキスト）の差異を超えて対称モノイド圏同値（同型）に帰着し（動的同型性）、有限の人間も観測とアブダクションを通じて真の動的モデルへと漸近的に収束できる（動的漸近的接近）。
+    \item \textbf{連続ダイナミクスの離散的表現定理の証明（定理~\ref{thm:continuous}）：} 時間刻み・精度を規定する境界条件アスペクトの射影極限（$\varprojlim_{\varepsilon \to 0}$）および層の張り合わせ条件により、離散的なイベント駆動・有限状態遷移の体系は、連続時間上の滑らかな物理的・実務的ダイナミクスを情報損失なく（同型に）表現できる。
+    \item \textbf{物理理論との構造的同型性の証明（定理~\ref{thm:phys-iso}）：} 「概念情報モデル（配位空間）＋状態モデル（相空間・特異点）＋アクションモデル（運動方程式）＋ドメインファンクション（外力・境界条件）＋普遍的実行セマンティクス（時間発展原理・因果律）」からなる概念モデリングの全体系は、物理学における基礎理論の記述形式と数学的に完全に同型である。
+\end{enumerate}
+
+本稿によって、単一の意味の場における「静的構造（Paper 1）と動的状態遷移・運動方程式（Paper 2）の閉じたダイナミクス」が確立された。次稿（\textbf{Paper 3}）では、視座を「単一の意味の場」から「複数の意味の場同士の相互作用と構造変換」へと広げる。具体的には、アプリケーション領域（要求ドメイン）のモデルを非機能要件という境界条件アスペクトのもとで実行プラットフォーム領域（実装ドメイン）へと一方向に写像する\textbf{構造変換論（Model Transformation）}、および異なる意味の場同士を連動させる高次ブリッジ演算子（\texttt{=>}, \texttt{<=>}, \texttt{REQUIRE}）を定式化し、この境界値問題としての構造変換が数理物理学における\textbf{グリーン関数（Green's Function）による伝播作用素と完全に同型である}ことを証明する。そして最終稿（\textbf{Paper 4}）において、これらすべてを統合することで、\textbf{概念モデリングが（人間によるシステム設計の道具に留まらず）この世界そのものを記述する普遍的な存在論的・数理的形式であることを論証し、その自然な構造的帰結として、境界スクリーン上の離散的情報・形式から高次元バルクの連続的ダイナミクスが創発する現代物理学のホログラフィー原理（Holographic Principle）をも同型な特殊ケースとして内包すること（\emph{Ordo Forma Est}）}へと到達する。
+
+\begin{thebibliography}{99}
+
+\bibitem{ota2026paper0}
+H.~Ota, \emph{Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe} (Version 1.0.1), Zenodo, 2026. \url{https://doi.org/10.5281/zenodo.24267213}
+
+\bibitem{ota2026paper1}
+H.~Ota, \emph{Category-Theoretic Foundations of Conceptual Information Modeling: Rigorous Schema Representation, Isomorphism, and Asymptotic Refinement under Cognitive Finitude} (Version 1.0.1), Zenodo, 2026. \url{https://doi.org/10.5281/zenodo.24359112}
+
+\bibitem{maclane1998}
+S.~Mac Lane, \emph{Categories for the Working Mathematician}, 2nd ed., Springer, 1998.
+
+\bibitem{joyal1991}
+A.~Joyal and R.~Street, ``The Geometry of Tensor Calculus, I,'' \emph{Advances in Mathematics}, vol.~88, no.~1, pp.~55--112, 1991.
+
+\bibitem{coecke2017}
+B.~Coecke and A.~Kissinger, \emph{Picturing Quantum Processes: A First Course in Quantum Theory and Diagrammatic Reasoning}, Cambridge University Press, 2017.
+
+\bibitem{lawvere1963}
+F.~W. Lawvere, ``Functorial Semantics of Algebraic Theories,'' \emph{Proceedings of the National Academy of Sciences of the United States of America}, vol.~50, no.~5, pp.~869--872, 1963.
+
+\bibitem{maclane1992}
+S.~Mac Lane and I.~Moerdijk, \emph{Sheaves in Geometry and Logic: A First Introduction to Topos Theory}, Springer, 1992.
+
+\bibitem{girard1987}
+J.-Y. Girard, ``Linear Logic,'' \emph{Theoretical Computer Science}, vol.~50, no.~1, pp.~1--101, 1987.
+
+\bibitem{moggi1991}
+E.~Moggi, ``Notions of Computation and Monads,'' \emph{Information and Computation}, vol.~93, no.~1, pp.~55--92, 1991.
+
+\bibitem{shlaer1992}
+S.~Shlaer and S.~J. Mellor, \emph{Object Lifecycles: Modeling the World in States}, Yourdon Press, 1992.
+
+\bibitem{mellor2002}
+S.~J. Mellor and M.~J. Balcer, \emph{Executable UML: A Foundation for Model-Driven Architecture}, Addison-Wesley, 2002.
+
+\bibitem{milner1989}
+R.~Milner, \emph{Communication and Concurrency}, Prentice Hall, 1989.
+
+\bibitem{peirce1903}
+C.~S. Peirce, ``Pragmatism as the Logic of Abduction,'' in \emph{The Essential Peirce: Selected Philosophical Writings}, Vol.~2 (1893--1913), Indiana University Press, 1903/1998.
+
+\bibitem{gabriel2015}
+M.~Gabriel, \emph{Fields of Sense: A New Realist Ontology}, Edinburgh University Press, 2015.
+
+\bibitem{xtumlorg}
+xtUML Project / One Fact Inc., \emph{BridgePoint xtUML Object Action Language (OAL) Reference}, Open Source xtUML Project. Available at: \url{https://xtuml.org}
+
+\bibitem{starr2001}
+L.~Starr, \emph{Executable UML: How to Build Class Models}, Prentice Hall, 2001.
+
+\end{thebibliography}
+
+\end{document}
