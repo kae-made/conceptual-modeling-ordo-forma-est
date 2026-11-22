@@ -1,0 +1,540 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={Category-Theoretic Foundations of Structural Transformation},
+    pdfauthor={Hiroshi Ota}
+}
+
+% Theorem environments
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}{Axiom}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+
+% Custom macros
+\newcommand{\Ob}{\mathrm{Ob}}
+\newcommand{\Valid}{\mathrm{Valid}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\colim}{\operatorname{colim}}
+\newcommand{\TwoSet}{\mathbf{2\text{-}Set}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\CFORM}{\mathcal{C}_{\mathrm{FORM}}}
+\newcommand{\CSUB}{\mathcal{C}_{\mathrm{SUB}}}
+\newcommand{\CBridge}{\mathcal{C}_{\mathrm{Bridge}}}
+\newcommand{\CAspect}{\mathcal{C}_{\mathrm{Aspect}}}
+\newcommand{\CSrc}{\mathcal{C}_{\mathrm{Src}}}
+\newcommand{\CTarg}{\mathcal{C}_{\mathrm{Targ}}}
+\newcommand{\MSrc}{\mathcal{M}_{\mathrm{Src}}}
+\newcommand{\MTarg}{\mathcal{M}_{\mathrm{Targ}}}
+\newcommand{\MAspect}{\mathcal{M}_{\mathrm{Aspect}}}
+\newcommand{\MSub}{\mathcal{M}_{\mathrm{Sub}}}
+\newcommand{\BTrans}{\mathcal{B}_{\mathrm{Trans}}}
+\newcommand{\BAspect}{\mathcal{B}_{\mathrm{Aspect}}}
+\newcommand{\Eexec}{\mathcal{E}_{\mathrm{exec}}}
+
+\title{\textbf{Category-Theoretic Foundations of Structural Transformation:\\
+Bridges as Fields of Sense, Boundary Conditions via Aspectual Fields of Sense, and Isomorphism with Green's Functions}}
+
+\author{Hiroshi Ota\thanks{Homepage: \url{https://www.kae-made.jp}, Research Notes: \url{https://note.com/kae_made/membership}}\\
+\small Independent Researcher / Knowledge \& Experience\\
+\small \texttt{master@kae-made.jp}}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+In the preceding three papers (Paper~0 \cite{ota2026paper0}, Paper~1 \cite{ota2026paper1}, and Paper~2 \cite{ota2026paper2}), the author formulated an ontology grounded in relations as the basis of reality and a universe composed of multiple ``Fields of Sense,'' proving that both static semantic structures within a single Field of Sense (conceptual information models: quotient 2-categories $\mathcal{C} \equiv CG/\mathcal{R}$) and dynamic behaviors (state models, symmetric monoidal categories $\mathcal{DF}$ formed by acyclic data-flow action models, and universal execution semantics $\Eexec$ based on reference to form $\CFORM$) constitute a closed mathematical system completely isomorphic to theoretical descriptions in physics. However, real-world phenomena as well as intellectual and engineering endeavors are never self-contained within a single isolated Field of Sense; rather, they emerge through interactions among multiple juxtaposed Fields of Sense and through ``dimensional shifts in which the schema (form) of one Field of Sense is instantiated as a concrete state (instance model) conforming to the schema constraints of another Field of Sense.''
+
+This paper (Paper~3) shifts the perspective from a single Field of Sense to ``correspondences and boundary-value transformations across multiple Fields of Sense,'' aiming to prove four foundational propositions. First, we prove that \textbf{a Bridge connecting Fields of Sense is not a privileged external apparatus, but can itself be described within the conceptual modeling framework as an independent ``Field of Sense'' equipped with its own conceptual information model, state model, action model, and execution semantics} (self-closure and self-similarity), formalizing \textbf{Projection Classes} that reflect classes of opposing domains and \textbf{Functors} as pure structural correspondence morphisms devoid of semantic phrases. Second, we introduce \textbf{Aspectual Fields of Sense}---Fields of Sense that treat the ``form itself'' of conceptual modeling ($\CFORM$) as individuals (instances)---and demonstrate that boundary conditions based on formal structures can be purely specified and composed as restricted products (fiber products) without ever intruding upon the substantive domain-specific content of any substantive Field of Sense. Third, we prove that from the pullback ($\MSrc \times_{\CFORM} \MAspect$) of the source Field of Sense's form and the boundary conditions given by an Aspectual Field of Sense, a unidirectional and irreversible structural transformation functor (\textbf{Transformation}) that constructs a state (instance model) satisfying the target Field of Sense's schema necessarily exists uniquely up to isomorphism once the boundary conditions and target schema are given (\textbf{Uniqueness Theorem of Boundary-Conditioned Transformation}), and we show that this boundary-value transformation is \textbf{completely isomorphic to propagation operators via Green's Functions} in mathematical physics. Fourth, we distinguish the \textbf{dual structure of being}---namely, ``semantic relations within a single Field of Sense (meaningful being)'' versus ``underlying functorial relations connecting juxtaposed Fields of Sense (real actuality in the physical and social world)''---and argue that this formalist turn provides a unified foundation for the natural sciences, humanities, and social sciences, bringing Kant's transcendental philosophy and Kitaro Nishida's ``logic of place (\emph{Basho}) and universality of thought'' to rigorous mathematical completion.
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{Background and Problem Statement: From Closed Dynamics of a Single Field of Sense to Inter-Field Synchronization and Dimensional Shifts}
+In the preceding three papers \cite{ota2026paper0,ota2026paper1,ota2026paper2}, the author formalized an ontology grounded in relations as the basis of reality and a universe $\mathcal{U}$ composed of multiple Fields of Sense, proving that static semantic structures within a single Field of Sense and dynamic systems governed by universal execution semantics $\Eexec$ are isomorphic to theoretical descriptions in physics.
+
+However, actual natural phenomena and engineering endeavors are not self-contained within a single isolated Field of Sense; as seen in aircraft autopilot systems and economic activities, multiple Fields of Sense stand side by side, giving rise to forced synchronization and causal propagation. Furthermore, there is a pressing need for a formal system that guarantees the necessity and uniqueness of ``dimensional shift operators''---such as translation into spoken language or compilation into program code---that construct the schema of one Field of Sense into an instance conforming to the constraints of another Field of Sense.
+
+\subsection{Four Foundational Questions in Structural Transformation and Inter-Field Correspondence}
+This paper (Paper~3) provides affirmative mathematical answers to the following four foundational questions:
+
+\begin{enumerate}
+    \item \textbf{The Question of Self-Closure and Self-Similarity of Bridges:} Is a ``Bridge'' connecting juxtaposed Fields of Sense itself an independent Field of Sense that can be fully described by the framework of Papers~1 and~2 \cite{ota2026paper1,ota2026paper2}?
+    \item \textbf{The Question of Reference to Form and ``Aspectual Fields of Sense'':} Can we introduce an Aspectual Field of Sense that treats the form itself of conceptual modeling ($\CFORM$) as individuals, thereby specifying and composing boundary conditions without intruding upon the individual substantive content of substantive Fields of Sense?
+    \item \textbf{The Question of Unique Boundary-Conditioned Structural Transformation and Green's Function Isomorphism:} Does a unidirectional and irreversible structural transformation functor---which constructs an instance satisfying a target schema under a pullback---necessarily exist uniquely, and is it isomorphic to a Green's Function while mathematically rigorizing the Shlaer--Mellor method \cite{shlaer1992,mellor2002}?
+    \item \textbf{The Question of the Dual Structure of Being and a Unified Foundation for the Humanities and Natural Sciences:} Can we strictly distinguish semantic relations within a single field from functorial relations connecting juxtaposed fields, thereby completing a unified foundation for the natural sciences, the humanities and social sciences, and the philosophies of Kant \cite{kant1781} and Kitaro Nishida \cite{nishida1911,nishida1927}?
+\end{enumerate}
+
+\subsection{Structure of This Paper}
+This paper is organized into seven sections:
+
+\begin{itemize}
+    \item \textbf{Section~2 (Correspondence Between Fields of Sense and ``Bridges as Fields of Sense''):} Formalization of a Bridge as an independent ``Field of Sense'' with its own schema category; introduction of Projection Classes, Functors, and Associative Correspondence Classes; consistency verification and collapse under schema constraints; forced synchronization; and proofs of the Isomorphism Theorem and Asymptotic Approximation Theorem for Bridges themselves.
+    \item \textbf{Section~3 (Reference to Form and ``Aspectual Fields of Sense''):} Strict separation between the category of substantive Fields of Sense $\CSUB$ and the category of form $\CFORM$; establishment of Aspectual Fields of Sense that operate on ``form itself'' and Aspect-Coupling Bridges (restricted products).
+    \item \textbf{Section~4 (Unique Structural Transformation Based on Boundary Conditions: Transformation):} Proof of the unique existence of the irreversible structural transformation functor $\mathcal{T}$ induced from pullback composition (Uniqueness Theorem of Boundary-Conditioned Transformation and Irreversibility/Non-Invertibility); logic of media selection; and in Section~4.4, mathematical rigorization and discussion of the limits of Recursive Design and model compilers (the Archetype language, T4 Templates, MC-3020, C\#/Azure compilers, etc.) in the Shlaer--Mellor method.
+    \item \textbf{Section~5 (Theorems in the Transformation Domain and the Green's Function Isomorphism Theorem):} Proofs of the four fundamental structural theorems of structural transformation, and proof of the isomorphism between the structural transformation operator and the reconstruction of solutions via point-source response kernels using Green's Functions in mathematical physics.
+    \item \textbf{Section~6 (The Dual Structure of Being and a Unified Foundation for the Humanities and Natural Sciences):} Distinction between semantic relations and real actuality; symmetry between the natural sciences and the humanities; and presentation of a formalist radicalization of Kantian philosophy alongside a category-theoretic grounding of Kitaro Nishida's ``logic of place (\emph{Basho}) and universality of thought.''
+    \item \textbf{Section~7 (Practical Significance and Conclusion: Outlook for Paper~4):} Synthesis of engineering implications for domain-independent model compilers, orthogonal separation of non-functional requirements, and verification of generative AI, followed by an outlook toward the final paper (Paper~4).
+\end{itemize}
+
+\section{Correspondence Between Fields of Sense and ``Bridges as Fields of Sense''}
+
+\subsection{Juxtaposed Fields of Sense and the Necessity of ``Structural Correspondence Devoid of Semantic Phrases''}
+In Paper~0 \cite{ota2026paper0}, the universe $\mathcal{U}$ was formalized not as being governed from above by a single privileged formal space, but as a structure in which multiple ``Fields of Sense'' $\mathcal{M}_1, \mathcal{M}_2, \dots$---each equipped with its own static schema category $\mathcal{C}_i$ (Paper~1 \cite{ota2026paper1}) and dynamic behavior (Paper~2 \cite{ota2026paper2})---stand side by side on equal footing.
+
+When attempting to rigorously describe the mechanism (Bridge) through which two juxtaposed Fields of Sense $\mathcal{M}_1$ (schema category $\mathcal{C}_1$) and $\mathcal{M}_2$ (schema category $\mathcal{C}_2$) interact, it is fundamentally impossible to extend the ``semantic relationships (semantic phrases + four types of multiplicity)'' used inside a single Field of Sense directly across different Fields of Sense. As proved in Paper~0 (the Structural Collapse Theorem), while ordinary-language or domain-specific ``semantic phrases'' generate meaning within a single Field of Sense, spanning them across distinct Fields of Sense induces \textbf{structural collapse (degeneration into trivial identity morphisms) due to linguistic polysemy}.
+
+Therefore, in establishing correspondences between distinct Fields of Sense, natural-language predicates (semantic phrases) must be completely eliminated in favor of \textbf{pure structural correspondence morphisms defined solely by an identification index and endpoint multiplicities}.
+
+\subsection{Self-Similarity of Bridges: ``Bridges as Fields of Sense'' and Extended Primitives}
+The first core proposition established in this paper is self-closure (self-similarity): \textbf{a Bridge $\mathcal{B}$ connecting two Fields of Sense $\mathcal{M}_1$ and $\mathcal{M}_2$ is not a privileged external mechanism imported from outside the conceptual modeling framework, but can itself be constructed as an independent third ``Field of Sense'' equipped with its own conceptual information model, state model, action model, and universal execution semantics.}
+
+\begin{definition}[Three Boundary-Extension Primitives in the Conceptual Information Model of a Bridge]\label{def:bridge-primitives}
+The conceptual information model $\CBridge$ of a Bridge $\mathcal{B}$ connecting two juxtaposed Fields of Sense $\mathcal{M}_1 = (\mathcal{C}_1, \dots)$ and $\mathcal{M}_2 = (\mathcal{C}_2, \dots)$ is constructed from the basic primitives of Paper~1 (conceptual classes, seven data types, identifiers, and associative classes) augmented by the following three boundary-extension elements:
+
+\begin{enumerate}
+    \item \textbf{Projection Class ($P_A, P_B$):}
+    A proxy class that projects into the interior of the Bridge \textbf{only the public boundary (identifiers and the intension of states exposed via domain functions and public events)} of a conceptual class $A \in \mathcal{K}_1$ in the opposing Field of Sense $\mathcal{M}_1$ (and similarly for $B \in \mathcal{K}_2$ in $\mathcal{M}_2$). A Projection Class $P_A$ cannot inspect any internal attributes or private relational structures of the opposing domain (non-transparency, as established in Paper~0 and Paper~2, Remark~3.1); from within the Bridge, it behaves as the projection of the instance set $\mathcal{F}_1(A)$ manifesting at the public boundary of the external domain.
+    \item \textbf{Functor ($F_k : P_A \leftrightarrow P_B$):}
+    A structural correspondence line connecting two Projection Classes $P_A$ and $P_B$ inside the Bridge. To distinguish it clearly from relationships within a single Field of Sense, we term this a \textbf{Functor} after category-theoretic functors. A Functor $F_k$ is defined as a pure structural correspondence relation that \textbf{possesses only a unique index number (identification label $F_k$) and endpoint multiplicities (\texttt{1}, \texttt{0..1}, \texttt{1..*}, \texttt{0..*}), carrying no semantic phrases whatsoever}.
+    \item \textbf{Associative Correspondence Class ($R_{AB}$):}
+    An associative class (the span structure $\langle p_A, p_B \rangle : R_{AB} \hookrightarrow P_A \times P_B$ of Paper~1, Axiom~C-2) that reifies pairs of $P_A$ and $P_B$ linked by the Functor $F_k$. The Associative Correspondence Class $R_{AB}$ can directly carry Bridge-specific characteristic values---such as correspondence weights, transformation parameters, and synchronization histories---as well as \textbf{state models and action models (Paper~2)} that manage synchronization states (e.g., unsynchronized, synchronized, or in conflict).
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[Intra-System Closure of Bridges and Applicability of Execution Semantics]\label{thm:bridge-closure}
+The conceptual information model $\CBridge$ of a Bridge equipped with the above Projection Classes, Functors, and Associative Correspondence Classes satisfies all axioms of the quotient 2-category of Paper~1 (finite completeness, finite cocompleteness, span monicity, and multiplicity constraints). Moreover, its state models and data-flow action models can be \textbf{driven and executed directly by the universal execution semantics $\Eexec$ (formal category $\CFORM$) of Paper~2 without adding any special exceptional rules}.
+\end{theorem}
+
+\subsection{Permissibility of Arbitrary Correspondences, Bilateral Schema Conservation, and Forced Synchronization (\texttt{=>}, \texttt{<=>}, \texttt{REQUIRE})}
+When describing the real world or designing a system, human modelers are \textbf{formally permitted to specify any arbitrary correspondence (Bridge) between two Fields of Sense $\mathcal{M}_1$ and $\mathcal{M}_2$} (completely isomorphic to how model descriptions containing \texttt{Can't Happen} transitions or division by zero are syntactically permitted in Paper~2). However, when that Bridge actually operates and is evaluated as a Field of Sense, strict consistency verification takes effect against the schema constraints of both connected sides.
+
+\begin{axiom}[Bilateral Schema Conservation Law and Collapse to the Initial Object $0$ upon Inconsistency]\label{ax:bilateral-conservation}
+In a composite system $\mathcal{M}_1 \bowtie_{\mathcal{B}} \mathcal{M}_2$ where a Bridge $\mathcal{B}$ couples two Fields of Sense $\mathcal{M}_1$ and $\mathcal{M}_2$, the state tuple $(\mathcal{F}_1, \mathcal{F}_{\mathcal{B}}, \mathcal{F}_2)$ at any valid operational step must simultaneously satisfy the static and dynamic constraints of both connected Fields of Sense as well as the constraints of the Bridge itself:
+\begin{equation}
+\mathcal{F}_1 \in \Valid(\mathcal{C}_1) \quad \wedge \quad \mathcal{F}_{\mathcal{B}} \in \Valid(\CBridge) \quad \wedge \quad \mathcal{F}_2 \in \Valid(\mathcal{C}_2).
+\end{equation}
+If an arbitrary correspondence or action within the Bridge induces a multiplicity violation, a domain/range overflow, or a \texttt{Can't Happen} transition in either Field of Sense, that correspondence \textbf{immediately collapses as a logical consequence into the initial object $0$ (empty space / structural breakdown) of the internal topos logic}.
+\end{axiom}
+
+Furthermore, mechanisms observed in the real world where a state change in one Field of Sense \textbf{forcibly induces} a state change in another Field of Sense (a correspondence that holds by structural necessity)---such as the forced synchronization between aircraft flight control and Newtonian mechanics, or the forced coupling between contract execution and accounting journal entries---are rigorously specified by Bridge CIM multiplicities together with the following three higher-order Bridge operators.
+
+\begin{definition}[Higher-Order Bridge Operators: \texttt{=>}, \texttt{<=>}, \texttt{REQUIRE}]\label{def:bridge-operators}
+In the state models, action models, and functor specifications of a Bridge $\mathcal{B}$, three higher-order Bridge operators are defined in addition to standard intra-domain specifications to declare causal propagation and constraints between juxtaposed Fields of Sense (corresponding category-theoretically to profunctors, adjoint functors, and pullback limits):
+
+\begin{enumerate}
+    \item \textbf{Unidirectional Causal Propagation Operator (\texttt{=>}: Causal Propagation):}
+    A morphism triggered by the occurrence of a public event or arrival at a state on the $\mathcal{M}_1$ side that causally drives a public event or domain function on the $\mathcal{M}_2$ side linked via Functor $F_k$ ($\mathcal{E}_1^{\mathrm{public}} \Rightarrow \mathcal{E}_2^{\mathrm{public}} / F_{\mathrm{dom}, 2}$).
+    \item \textbf{Bidirectional Forced Synchronization Operator (\texttt{<=>}: Forced Bidirectional Synchronization):}
+    An isomorphism constraint coupled with endpoint multiplicities of \texttt{1} on Functor $F_k : P_A \leftrightarrow P_B$, requiring that instance and state changes on the $\mathcal{M}_1$ side and those on the $\mathcal{M}_2$ side \textbf{forcibly coincide bidirectionally within the same atomic causal step (Run-to-Completion)}. If an update on one side cannot be executed due to violating the schema constraints of the other side, the entire system collapses into the initial object $0$ (e.g., forced synchronization between aircraft pilot control inputs and physical airframe attitude).
+    \item \textbf{Boundary Invariant Constraint Operator (\texttt{REQUIRE}: Cross-Field Invariant Constraint):}
+    A pullback constraint declaring preconditions, postconditions, or invariant logical formulas that must hold between the state intensions (attribute values or state phases) projected from the domain functions of both sides for every pair $(a, b) \in \mathcal{F}_{\mathcal{B}}(R_{AB})$ associated via Functor $F_k$. Any violation results in immediate collapse into the initial object $0$.
+\end{enumerate}
+\end{definition}
+
+\subsection{The Underlying Reality of Correspondences, the Bridge Isomorphism Theorem, and Asymptotic Approximation}
+A philosophical and mathematical question of paramount importance arises here. If one merely places two abstract schemas $\mathcal{C}_1$ and $\mathcal{C}_2$ side by side in isolation from the real world, infinitely many ways of constructing a Bridge between them are conceivable, and no unique Bridge is determined. However, \textbf{once a target real-world phenomenon $\mathcal{SYS}$ (such as ``an actual aircraft system flying through the atmosphere'' or ``an actual commercial institution'') is fixed, a true underlying correspondence (the true Bridge $\mathcal{B}^*$) already exists as an objective order behind the scenes in that reality, generating the observed phenomena}.
+
+Moreover, since Theorem~\ref{thm:bridge-closure} proves that ``a Bridge is itself an independent Field of Sense,'' the \textbf{Isomorphism Theorem} and \textbf{Asymptotic Approximation Theorem} established in Paper~1 (Theorems~5.3 and~5.4) and Paper~2 (Theorems~5.3 and~5.4) hold directly for Bridges themselves.
+
+\begin{theorem}[Bridge Isomorphism Theorem and Asymptotic Approximation Theorem via Abduction]\label{thm:bridge-iso-asymp}
+Any two Bridge models $\mathcal{B}_1$ and $\mathcal{B}_2$ that rigorously and completely describe the interaction between two Fields of Sense $\mathcal{M}_1$ and $\mathcal{M}_2$ in a target real-world system $\mathcal{SYS}$ are \textbf{categorically equivalent (isomorphic: $\mathcal{B}_1 \simeq \mathcal{B}_2$)}, regardless of differences in Projection Class granularity or representational notation. Furthermore, even if cognitively finite human modelers cannot foresee the hidden true Bridge $\mathcal{B}^*$ from the outset, by constructing an approximation sequence $\mathcal{B}^{(0)} \to \mathcal{B}^{(1)} \to \cdots$ through iterative \textbf{abduction} from observed inter-domain synchronization phenomena and inconsistencies (collapses to the initial object $0$)---refining Projection Class partitions, tightening Functor multiplicities, and adding \texttt{REQUIRE} constraints---the sequence converges asymptotically in the inductive limit to the true Bridge $\mathcal{B}^*$ ($\varinjlim \mathcal{B}^{(n)} \simeq \mathcal{B}^*$).
+\end{theorem}
+
+\section{Reference to Form and ``Aspectual Fields of Sense''}
+
+\subsection{Strict Separation Between the Category of Substantive Fields of Sense $\CSUB$ and the Category of Form $\CFORM$}
+A general Bridge formalized in Section~2 is a Field of Sense that links \textbf{individuals (instances) and state transitions} between two juxtaposed substantive Fields of Sense (such as a ``flight control Field of Sense'' and a ``Newtonian mechanics Field of Sense,'' or a ``commercial transaction Field of Sense'' and a ``financial accounting Field of Sense'').
+
+By contrast, in applying symmetries, conservation laws, and spacetime geometry in physical laws, or in mapping and imposing constraints onto representational spaces such as languages, diagrams, and computational substrates, what is required is not the manipulation of individual physical particles or isolated domain events, but \textbf{a mechanism that treats the ``form itself'' of conceptual modeling---namely, conceptual classes, characteristic values, identifiers, multiplicities, relationships, state transition tables (STTs), and data-flow actions (DAGs)---as individuals, and imposes formal boundary conditions upon their behavior and structure}.
+
+\begin{definition}[Separation Between the Category of Substantive Fields of Sense $\CSUB$ and the Category of Form $\CFORM$]\label{def:sub-vs-form}
+A Field of Sense $\mathcal{M} = (\mathcal{C}, \{M_A\}_{A \in \mathcal{K}}, \mathcal{DF})$ that describes the substantive semantic structure (content) of a specific domain or phenomenon is called a \textbf{Substantive Field of Sense}, and the category formed by such fields is denoted as the \textbf{Category of Substantive Fields of Sense ($\CSUB$)}. On the other hand, as introduced in Paper~2 (Definition~4.1), the reference category whose objects and morphisms are the structural framework shared by all Substantive Fields of Sense (the form itself: conceptual classes, characteristic values, identifiers, multiplicities, states, events, transitions, primitive process components, and wires) is called the \textbf{Category of Form ($\CFORM$)}. The schema structure of any Field of Sense $\mathcal{M} \in \CSUB$ is uniquely represented as an instance functor $\Phi_{\mathcal{M}} \in \Valid(\CFORM)$ over the Category of Form $\CFORM$ (structural reflection).
+\end{definition}
+
+\subsection{Formalization of Aspectual Fields of Sense}
+Grounded in this Category of Form $\CFORM$, we define an \textbf{Aspectual Field of Sense} as a Field of Sense that operates on a distinct object dimension from the Fields of Sense in $\CSUB$ that handle substantive content.
+
+\begin{definition}[Aspectual Field of Sense $\MAspect$]\label{def:aspectual-field}
+An \textbf{Aspectual Field of Sense $\MAspect = (\CAspect, \{M_{\alpha}\}, \mathcal{DF}_{\mathrm{Aspect}}, \Eexec)$} is a Field of Sense operating on the ``dimension of form'' that satisfies the following three conditions:
+
+\begin{enumerate}
+    \item \textbf{Individuation of Form (Form as Projection Target):} Within $\MAspect$, the \textbf{formal elements ($\CFORM$ elements) themselves} of a Substantive Field of Sense---such as its ``conceptual classes,'' ``characteristic values,'' ``relationships,'' ``states,'' ``events,'' and ``action components''---manifest as ``individuals (instances)'' via Projection Classes.
+    \item \textbf{Specification of Boundary Conditions Based on Formal Structure:} $\MAspect$ specifies \textbf{boundary conditions based on formal structure}---such as time-discretization step sizes $\Delta t$, numerical precision, conservation laws and symmetry constraints, or spatial layouts, mutual-exclusion arbitration, and memory structures---as its own conceptual information model, state model, and action model.
+    \item \textbf{Complete Independence from Substantive Semantic Content (Substantive-Content Independence):} $\MAspect$ references and constrains solely the ``form ($\CFORM$)'' of individual fields belonging to the Category of Substantive Fields of Sense $\CSUB$, \textbf{never intruding upon the domain-specific substantive semantic content} of whether the target Substantive Field of Sense represents a mechanical phenomenon, an economic transaction, or a biological process.
+\end{enumerate}
+\end{definition}
+
+\subsection{State Construction as Aspect-Coupling Bridges and Restricted Products (Fiber Products)}
+In conventional descriptive frameworks, boundary conditions such as time step sizes, mutual-exclusion arbitration, and spatial layouts were mixed directly into the description of substantive phenomena or the essential structure of a target domain, compromising the purity and universality of models.
+
+By introducing an Aspectual Field of Sense $\MAspect$, a Substantive Field of Sense $\MSub \in \CSUB$ purely describes only the essential semantic order of its domain, while all boundary conditions imposed by the external environment or observational/execution space are completely separated and localized on the $\MAspect$ side. Moreover, while the schema $\CAspect$ of an Aspectual Field of Sense refers to the form of conceptual modeling ($\CFORM$), when its actual \textbf{state (instance model $\mathcal{F}_{\mathrm{Aspect}} \in \Valid(\CAspect)$)} is constructed, it enters into correspondence with the structure and state ($\mathcal{F}_{\mathrm{Sub}}$) of a concrete Substantive Field of Sense $\MSub$.
+
+Consequently, as a matter of logical necessity, a dedicated \textbf{Aspect-Coupling Bridge $\BAspect$} is defined between the target Substantive Field of Sense $\MSub$ and the Aspectual Field of Sense $\MAspect$ to bind them together. The structure of this Bridge follows the exact same framework as the general Bridges of Section~2 and is uniquely specified as follows.
+
+\begin{proposition}[Schema of an Aspect-Coupling Bridge and State as a Restricted Product]\label{prop:aspect-coupling}
+In an Aspect-Coupling Bridge $\BAspect$ connecting a Substantive Field of Sense $\MSub \in \CSUB$ and an Aspectual Field of Sense $\MAspect$:
+
+\begin{enumerate}
+    \item \textbf{Schema of the Bridge:} It is defined on the basis of the Category of Form $\CFORM$ (representing the formal structure of the target Substantive Field of Sense) and the schema $\CAspect$ of the Aspectual Field of Sense, constructed as an associative class that binds the Projection Classes of both sides via Functors.
+    \item \textbf{State of the Bridge (Instance Model):} It is constructed as the restricted product (fiber product / pullback) of the state $\mathcal{F}_{\mathrm{Sub}}$ of the target Substantive Field of Sense and the state $\mathcal{F}_{\mathrm{Aspect}}$ of the Aspectual Field of Sense, constrained by their shared correspondence conditions over the Category of Form $\CFORM$:
+    \begin{equation}
+    \mathcal{F}_{\mathrm{Bridge}} \cong \mathcal{F}_{\mathrm{Sub}} \times_{\CFORM} \mathcal{F}_{\mathrm{Aspect}}.
+    \end{equation}
+    \item \textbf{Orthogonal Associativity Law:} When coupling multiple orthogonal Aspectual Fields of Sense $\mathcal{M}_{\mathrm{Aspect}, 1}, \dots, \mathcal{M}_{\mathrm{Aspect}, k}$, the composite bound system is uniquely determined independently of coupling order by the associativity of fiber products:
+    \begin{equation}
+    \mathcal{M}_{\mathrm{bound}} \equiv \MSub \times_{\CFORM} \mathcal{M}_{\mathrm{Aspect}, 1} \times_{\CFORM} \cdots \times_{\CFORM} \mathcal{M}_{\mathrm{Aspect}, k}.
+    \end{equation}
+\end{enumerate}
+\end{proposition}
+
+Through this coupling, boundary conditions are orthogonally endowed onto the formal elements and states of $\MSub$ without rewriting a single line of its internal schema.
+
+\section{Unique Structural Transformation Based on Boundary Conditions (Transformation)}
+
+\subsection{Essence of Transformation: Constructing a ``State (Instance)'' of One Field of Sense from the ``Schema (Form)'' of Another}
+In the preceding sections, we formalized ``Bridges as Fields of Sense'' connecting juxtaposed Fields of Sense (Section~2) and ``Aspectual Fields of Sense'' that treat the form itself of conceptual modeling ($\CFORM$) as individuals (Section~3). In this section, we integrate these concepts to formalize the mathematical and ontological essence of \textbf{Transformation} within our framework.
+
+At first glance, Transformation might appear to be merely an automated translation from models to code (a model compiler). However, its mathematical essence is by no means confined to a specific engineering technique. \textbf{Transformation is fundamentally a dimensional-shift operator that extracts the schema structure (form) of a source Field of Sense $\MSrc$ via the Category of Form $\CFORM$ and, under the constraints of an Aspectual Field of Sense $\MAspect$ specifying boundary conditions, constructs it as ``a valid state (instance model $\mathcal{F}_{\mathrm{Targ}} \in \Valid(\CTarg)$)'' conforming to the schema constraints of another target Field of Sense $\MTarg$.}
+
+\begin{definition}[Transformation Triple and Dimensional-Shift Bridge]\label{def:transformation-triple}
+A structural transformation system consists of the following three Fields of Sense together with a Transformation Bridge $\BTrans$ connecting them:
+
+\begin{enumerate}
+    \item \textbf{Source Field of Sense ($\MSrc = (\CSrc, \dots)$):} The Field of Sense holding the essential semantic structure (schema $\CSrc$ and dynamic rules) to be represented or transformed.
+    \item \textbf{Aspectual Field of Sense (Boundary-Condition Field: $\MAspect$):} The Field of Sense specifying the boundary conditions imposed on the transformation (selection rules for representational media, non-functional requirements, and physical or environmental constraints) as constraints over the Category of Form $\CFORM$.
+    \item \textbf{Target Field of Sense ($\MTarg = (\CTarg, \dots)$):} The Field of Sense equipped with its own grammar and spatial structure (schema $\CTarg$) that receives the transformed representation or structure.
+\end{enumerate}
+
+Here, the Transformation Bridge $\BTrans$ takes as its Projection targets \textbf{the formal elements of the source (classes, characteristic values, multiplicities, spans, states, and DAG actions)} extracted via the pullback composition $\MSrc \times_{\CFORM} \MAspect$, and \textbf{unidirectionally maps (\texttt{=>}) them via a bundle of Functors with multiplicity \texttt{1} into constituent elements of an ``instance (state)'' satisfying the schema $\CTarg$ of the target Field of Sense $\MTarg$} (note that if initial state data $\mathcal{F}_{\mathrm{Src}, 0}$ accompanies the source, it is simultaneously embedded as initial values within the target instance state).
+\end{definition}
+
+\subsection{Uniqueness Theorem of Boundary-Conditioned Transformation and Application to Representational Media and Compilers}
+Between two general Substantive Fields of Sense, infinitely many non-isomorphic Bridges were permissible unless real-world constraints were imposed (Section~2). By contrast, once an Aspectual Field of Sense $\MAspect$ (boundary conditions) covering the entirety of the Category of Form $\CFORM$ and a complete covering into the target schema $\CTarg$ (via a bundle of Functors of multiplicity \texttt{1}) are given, the state (instance model) constructed in the target loses all degrees of freedom and is uniquely determined.
+
+\begin{theorem}[Uniqueness Theorem of Boundary-Conditioned Transformation]\label{thm:unique-transformation}
+For any sound source Field of Sense $\MSrc$ (whose formal representation is denoted $\Phi_{\mathrm{Src}} \in \Valid(\CFORM)$), given an Aspectual Field of Sense $\MAspect$ specifying complete boundary conditions and a target Field of Sense schema $\CTarg$, the structural transformation functor induced from the pullback $\MSrc \times_{\CFORM} \MAspect$,
+\begin{equation}
+\mathcal{T}_{\MAspect} : \Valid(\CFORM) \longrightarrow \Valid(\CTarg),
+\end{equation}
+and the instance state $\mathcal{F}_{\mathrm{Targ}}^* = \mathcal{T}_{\MAspect}(\Phi_{\mathrm{Src}}) \in \Valid(\CTarg)$ constructed in the target Field of Sense are \textbf{uniquely determined up to isomorphism (categorical equivalence)}.
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+The schema and dynamic rules of the source $\MSrc$ are represented as a colimit of finitely many generators over the Category of Form $\CFORM$ (conceptual classes, characteristic values, identifiers, spans, states, and DAGs of the 16 primitive process components). Because the Aspectual Field of Sense $\MAspect$ assigns a Functor correspondence (boundary condition) of multiplicity \texttt{1} to every generator of $\CFORM$, by the universal property of the Left Kan Extension ($\mathrm{Lan}$) and pullbacks, this assignment on generators extends uniquely to a single instance state $\mathcal{F}_{\mathrm{Targ}}^* \in \Valid(\CTarg)$ satisfying all axioms of the target schema $\CTarg$. Should any contradiction or omission exist in the boundary conditions, the system collapses into the initial object $0$ by Axiom~\ref{ax:bilateral-conservation}. Hence, under consistent boundary conditions, the target state $\mathcal{F}_{\mathrm{Targ}}^*$ emerges uniquely up to isomorphism. \qedhere
+\end{proof}
+
+\begin{corollary}[Unified Derivation of Representational Media Selection and Software Model Compilers]\label{cor:media-and-compilers}
+The structural transformation of Theorem~\ref{thm:unique-transformation} applies in the exact same mathematical form across the entire spectrum from human selection of representational media in communication to model compilers in software engineering:
+
+\begin{enumerate}
+    \item \textbf{Transformation into Representational Media (Speech, Text, Diagrams, Audio, and Video):}
+    When communicating a conceptual model ($\MSrc$) to others, ``spoken language,'' ``written text,'' ``diagrams,'' and ``video/audio'' are all target Fields of Sense possessing their own grammatical and spatial structures (schemas $\mathcal{C}_{\mathrm{Media}}$). By supplying boundary conditions (aspects $\MAspect$) such as communicative intent and cognitive constraints, the form of the original model is uniquely constructed as a ``state called text'' or a ``state called a diagram.''
+    \item \textbf{Model Compilers in Software Engineering (Form $\to$ Execution Platform State):}
+    An execution platform (a specific programming language, configuration file set, relational database, distributed middleware, etc.) is itself a Field of Sense possessing strict grammatical and structural constraints (schema $\mathcal{C}_{\mathrm{Platform}}$). Model transformation is nothing other than the operation of constructing the form of an application ($\CFORM$), under an Aspectual Field of Sense (non-functional requirements and boundary conditions), into a ``valid instance state (source code and configuration artifacts) of the platform language schema'' (where runtime initial instances are required, the original instance model is embedded as initial values of the program state). Moreover, because the origin of transformation is not the substantive content of an individual application but the universal ``form ($\CFORM$),'' once a set of transformation rules is constructed, it is \textbf{100\% reusable and applicable to applications in any problem domain whatsoever}.
+\end{enumerate}
+\end{corollary}
+
+\subsection{Composition Law for Multi-Stage Transformations and Invariant Preservation Theorem}
+In processes of representation and implementation, chains of multi-stage transformations frequently occur, wherein the form of one Field of Sense is first transformed into a state of an intermediate representational Field of Sense, and subsequently transformed into a state of yet another Field of Sense.
+
+\begin{theorem}[Composition Law of Structural Transformations and Invariant Preservation]\label{thm:transformation-composition}
+When a transformation functor $\mathcal{T}_1$ governed by a boundary-condition aspect $\mathcal{M}_{\mathrm{Aspect}, 1}$ (constructing the form of $\mathcal{M}_0$ into a state of $\mathcal{M}_1$) and a transformation functor $\mathcal{T}_2$ governed by a boundary-condition aspect $\mathcal{M}_{\mathrm{Aspect}, 2}$ (constructing the form of $\mathcal{M}_1$ into a state of $\mathcal{M}_2$) are both sound (do not collapse into the initial object $0$), their composite transformation $\mathcal{T}_2 \circ \mathcal{T}_1$ is naturally isomorphic to the unique transformation functor induced by the coupled composite aspect $\mathcal{M}_{\mathrm{Aspect}, 1} \bowtie \mathcal{M}_{\mathrm{Aspect}, 2}$. Furthermore, any valid operational trajectory $\mathcal{F}_n \to \mathcal{F}_{n+1}$ in the source faithfully preserves corresponding invariants and causal ordering in the state evolution of the target Field of Sense (commutativity of diagrams).
+\end{theorem}
+
+\begin{corollary}[Irreversibility of Structural Transformation and Non-Invertibility Theorem]\label{cor:irreversibility}
+The structural transformation functor $\mathcal{T}_{\MAspect}$ is a unidirectional (\texttt{=>}) dimensional-shift operator and is, in general, not injective (not invertible). That is, from the state $\mathcal{F}_{\mathrm{Targ}}^* \in \Valid(\CTarg)$ constructed in the target Field of Sense and the target schema $\CTarg$ alone, it is \textbf{fundamentally impossible to uniquely invert or reconstruct} the original source schema $\CSrc$ and initial instance state $\mathcal{F}_{\mathrm{Src}, 0}$ (structurally isomorphic to the Epistemic Limit Theorem of Paper~0 \cite{ota2026paper0}). This occurs because the transformation process involves structural contraction and forgetting induced by the boundary-condition aspect, while simultaneously flattening the source's ``schema'' and ``initial state'' onto a single plane as a unified instance state in the target (providing the mathematical foundation for why an original essential conceptual model cannot be uniquely reverse-engineered from generated implementation code in software engineering).
+\end{corollary}
+
+\subsection{Engineering Application: Mathematical Rigorization of Recursive Design in the Shlaer--Mellor Method}
+The most sophisticated engineering realization of Theorem~\ref{thm:unique-transformation} (Uniqueness Theorem of Boundary-Conditioned Transformation) and Corollary~\ref{cor:irreversibility} (Non-Invertibility) is \textbf{Recursive Design} and \textbf{Model Compilers} in the Shlaer--Mellor method (and Executable UML) \cite{shlaer1992,mellor2002}. Through the category-theoretic formalism of this framework, its mechanisms are elevated from empirical best practices to rigorous mathematical theorems.
+
+\begin{enumerate}
+    \item \textbf{Formalization of Domain Separation and Recursive Application (Recursive Structure):}
+    In Recursive Design, rather than depicting an entire system as a single monolithic model, the system is partitioned into multiple independent Fields of Sense (domains)---such as Application Domains ($\mathcal{M}_{\mathrm{App}}$), Service Domains ($\mathcal{M}_{\mathrm{Service}}$: logging, communication, persistence management, etc.), and Software Architecture Domains ($\mathcal{M}_{\mathrm{Arch}}$: task scheduling, memory management, distributed transaction structures, etc.)---connected via Bridges employing Functors devoid of semantic phrases. The essence of why this design is termed ``recursive'' lies in the fact that the architecture domain and service domains are not ad hoc external code, but are themselves \textbf{self-similarly modeled using the exact same Category of Form $\CFORM$ (conceptual information models, state models, and action models built from the 16 primitive process components) as the application domain (Theorem~\ref{thm:bridge-closure})}.
+
+    \item \textbf{Individuation (Population) of Form by the Architecture Domain and Implementation Format of Model Compilers:}
+    In the model compilation process, the architecture domain $\mathcal{M}_{\mathrm{Arch}}$ functions precisely as an \textbf{Aspectual Field of Sense} formalized in Section~3. Specifically, the schema structures of the application domain $\mathcal{M}_{\mathrm{App}}$ (conceptual classes, characteristic values, relationships, state transition tables, and New OAL action components) are placed into correspondence as \textbf{instance states (populations)} of formal classes (\texttt{Class}, \texttt{Attribute}, \texttt{State}, \texttt{Event}, etc.) on the architecture domain side, forming the Aspect-Coupling Bridge of Proposition~\ref{prop:aspect-coupling} (the restricted product $\mathcal{F}_{\mathrm{Bridge}} \cong \mathcal{F}_{\mathrm{App}} \times_{\CFORM} \mathcal{F}_{\mathrm{Arch}}$).
+    Then, when the \textbf{transformation action model} specified inside this Transformation Bridge (rules that traverse the populated formal instances and map them to syntactic constructs of the target language according to architecture-specific boundary conditions) is driven under the universal execution semantics $\Eexec$, source code and configuration files satisfying the target language schema $\mathcal{C}_{\mathrm{Lang}}$ (a single target state $\mathcal{F}_{\mathrm{Lang}}^*$) are uniquely constructed.
+    In practical engineering, concrete transformation rule languages and template engines used to specify and execute this transformation action model include the \textbf{Archetype language} in BridgePoint xtUML \cite{xtumlorg} and \textbf{T4 Templates (Text Template Transformation Toolkit)} in the .NET ecosystem. Furthermore, systemizations of such transformation action models tailored to specific execution environments are \textbf{model compilers}: for example, the standard model compiler \textbf{MC-3020} for embedded C/C++ environments \cite{mellor2002,xtumlorg}, as well as the \textbf{C\# model compiler} and \textbf{Microsoft Azure (cloud / IoT and Digital Twins distributed environments) model compiler} designed and built by the author \cite{ota2023azure}, are all concrete engineering realizations of Green's Function propagation kernels that map the exact same application form ($\CFORM$) into states of distinct target languages and cloud platforms under different architectural aspects (boundary conditions).
+
+    \item \textbf{Status and Limits of Reverse Engineering and Round-Trip Engineering:}
+    Many conventional development tools have attempted ``Round-Trip Engineering,'' wherein generated code (an instance state over the target language schema $\mathcal{C}_{\mathrm{Lang}}$) is directly modified and reverse-transformed back into the original model for synchronization. Of course, provided an appropriate schema in the Category of Substantive Fields of Sense $\CSUB$ (such as a requirements schema or extraction schema) and a corresponding Bridge are defined, it is certainly possible to extract ``the intension of states deemed to belong to requirements'' from generated code or artifacts; conversely, by switching the schemas and boundary conditions of representational formats (Views), one can freely derive diverse representations suited to each purpose (diagrams, structured text, specification documents, executable code, etc.) unidirectionally from the original model.
+    However, in addition to the non-invertibility of static schemas proved in Paper~1 (Section~5) \cite{ota2026paper1}, as Corollary~\ref{cor:irreversibility} (Irreversibility of Structural Transformation) demonstrates, it is \textbf{mathematically impossible to uniquely and completely reconstruct (invert)} the original essential application schema $\mathcal{C}_{\mathrm{App}}$ and its separated architectural aspect structure solely from artifacts that have undergone structural contraction, forgetting, and flattening via boundary-condition aspects. Consequently, model modifications must always be performed in the upstream Fields of Sense (the application domain or architectural aspect), re-executing unidirectional (\texttt{=>}) transformations to derive each representation---this is the sole process capable of preserving consistency indefinitely.
+\end{enumerate}
+
+\section{Theorems in the Transformation Domain and the Green's Function Isomorphism Theorem}
+
+\subsection{Four Fundamental Structural Theorems of Transformation}
+In complete symmetry with Paper~1 (static schema category $\mathcal{C}$) and Paper~2 (dynamic behavior and symmetric monoidal category $\mathcal{DF}$), the following four fundamental structural theorems also hold in the domain of structural transformation governed by Aspectual Fields of Sense and Transformation Bridges.
+
+\begin{theorem}[Transformational Expressive Completeness]\label{thm:trans-completeness}
+Any computable structure-preserving model transformation (as well as any code-generation or mapping rule onto an arbitrary execution platform) can be specified completely and without redundancy solely using an Aspectual Field of Sense $\MAspect$ over the Category of Form $\CFORM$ (comprising a conceptual information model, state model, and DAG action model built from the 16 primitive process components) together with a Transformation Bridge $\BTrans$.
+\end{theorem}
+
+\begin{theorem}[Transformation Existence and Invariant Closure Theorem]\label{thm:trans-existence}
+For any Aspectual Field of Sense $\MAspect$ specifying consistent boundary conditions and any target schema $\CTarg$, there constructively exists a structure-preserving transformation functor $\mathcal{T}_{\MAspect}$ that maps valid operational trajectories of the source Field of Sense into valid operational trajectories of the implementation domain, such that the resulting implementation model also forms a closed executable model under the symmetric monoidal category and universal execution semantics $\Eexec$.
+\end{theorem}
+
+\begin{theorem}[Transformational Isomorphism]\label{thm:trans-isomorphism}
+Given the same source Field of Sense $\MSrc$, any two transformation functors $\mathcal{T}_1, \mathcal{T}_2 : \MSrc \to \MTarg$ induced by two Aspectual Fields of Sense $\mathcal{M}_{\mathrm{Aspect}, 1} \simeq \mathcal{M}_{\mathrm{Aspect}, 2}$ that completely and faithfully express the same boundary conditions based on formal structure are \textbf{naturally isomorphic ($\mathcal{T}_1 \cong \mathcal{T}_2$)}, regardless of differences in the ordering of transformation rules or the naming of intermediate variables.
+\end{theorem}
+
+\begin{theorem}[Asymptotic Refinement of Transformations]\label{thm:trans-asymptotic}
+Even if cognitively finite engineers cannot foresee flawless execution-environment transformation rules from the outset, by iteratively composing new boundary-condition aspects (such as cache partitioning, fine-grained locking, or asynchronous queuing) onto the Aspectual Field of Sense $\MAspect^{(n)}$ via pullback ($\times_{\CFORM}$) through \textbf{abduction} from performance bottlenecks, contention deadlocks, or resource exhaustion (collapse boundaries toward the initial object $0$) observed in real-world operation, the sequence of transformation models converges asymptotically in the inductive limit to the ideal optimal implementation transformation $\mathcal{T}^*$.
+\end{theorem}
+
+\subsection{Structural Isomorphism Theorem with Green's Functions in Mathematical Physics}
+As the mathematical climax of this paper, we prove that the model transformation operator $\mathcal{T}_{\MAspect}$ mediated by an Aspectual Field of Sense (boundary conditions) is mathematically completely isomorphic to a \textbf{Green's Function (the propagation kernel of boundary-value problems)} in mathematical physics.
+
+In mathematical physics (such as electromagnetism, quantum mechanics, heat conduction, and elasticity theory), consider the problem $L u(x) = f(x)$ of finding the response $u(x)$ of a field to an arbitrary source term (external force, charge density, or initial distribution) $f(\xi)$ on a spatial domain $\Omega$ governed by a linear differential operator $L$ and boundary conditions $B(u) = 0$ on the boundary $\partial\Omega$. Once the boundary-conditioned response function $G(x, \xi)$ to a unit point source placed at $\xi$ (Dirac delta function $\delta(x - \xi)$)---that is, the \textbf{Green's Function} satisfying $L_x G(x, \xi) = \delta(x - \xi)$ and $B(G) = 0$---is obtained, the solution $u(x)$ for any arbitrary source $f(\xi)$ is uniquely reconstructed by the superposition (integral operator) of the point-source response kernel $G(x, \xi)$ and the source $f(\xi)$:
+\begin{equation}
+u(x) = \int_{\Omega} G(x, \xi)\, f(\xi)\, d\xi.
+\end{equation}
+
+The single most crucial fact here is that \textbf{the Green's Function $G(x, \xi)$ is completely independent of the specific source distribution $f(\xi)$ (the individual problem input), and is uniquely determined solely by the differential structure $L$ of the space and the boundary conditions $B$ as a universal propagation kernel (Propagator / Integral Kernel)}.
+
+\begin{definition}[Category-Theoretic Specification $\mathcal{G}_{\mathrm{Phys}}$ of Green's Function Boundary-Value Transformation]\label{def:green-spec}
+The formalism $\mathcal{G}_{\mathrm{Phys}}$ of solving boundary-value problems via Green's Functions in mathematical physics is specified by the following quadruple:
+
+\begin{enumerate}
+    \item \textbf{Source Space ($\mathcal{S}_{\mathrm{src}}$):} A representational space decomposing any input distribution $f$ as a linear combination / colimit of point sources (delta basis $\delta_\xi$).
+    \item \textbf{Boundary Conditions ($\mathcal{B}_{\mathrm{bc}}$):} Constraints that the solution must satisfy on the domain boundary $\partial\Omega$ (such as Dirichlet or Neumann boundary conditions).
+    \item \textbf{Green's Propagator Kernel ($G(x, \xi)$):} A universal integral kernel independent of the source $f$ that maps a unit point source $\delta_\xi$ into a response in the target space under boundary conditions $\mathcal{B}_{\mathrm{bc}}$ (a profunctor $G : \mathcal{S}_{\mathrm{src}}^{\mathrm{op}} \times \mathcal{T}_{\mathrm{targ}} \to \Set$).
+    \item \textbf{Superposition Reconstruction Operator ($\int^{\xi} G(x, \xi) \otimes f(\xi)$):} A coend integral operator that applies the kernel $G$ to any arbitrary source $f$ to generate a unique solution $u$.
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[Green's Function Isomorphism Theorem]\label{thm:green-isomorphism}
+The structural transformation system
+\begin{equation}
+\mathfrak{T}_{\mathrm{CM}} \equiv \left(\Phi_{\mathrm{Src}} \in \Valid(\CFORM),\; \MAspect,\; \BTrans \subset \CFORM^{\mathrm{op}} \times \CTarg,\; \mathcal{T}_{\MAspect}\right),
+\end{equation}
+which takes an Aspectual Field of Sense $\MAspect$ as boundary conditions and constructs the form of a source $\MSrc$ into an instance state of a target $\MTarg$, is \textbf{categorically equivalent (structurally completely isomorphic)} to the Green's Function boundary-value transformation $\mathcal{G}_{\mathrm{Phys}} = (\mathcal{S}_{\mathrm{src}}, \mathcal{B}_{\mathrm{bc}}, G(x, \xi), \int^\xi)$ in mathematical physics.
+\end{theorem}
+
+\begin{table}[htbp]
+\centering
+\caption{Isomorphic Correspondence Between Structural Transformation $\mathfrak{T}_{\mathrm{CM}}$ and the Green's Function Formalism $\mathcal{G}_{\mathrm{Phys}}$}
+\label{tab:green-correspondence}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.31\textwidth} >{\raggedright\arraybackslash}p{0.29\textwidth} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Structural Transformation System $\mathfrak{T}_{\mathrm{CM}}$ (This Paper)} & \textbf{Green's Function Formalism $\mathcal{G}_{\mathrm{Phys}}$ in Mathematical Physics} & \textbf{Mathematical \& Category-Theoretic Isomorphic Correspondence} \\
+\midrule
+\textbf{1. Form of the Source $\Phi_{\mathrm{Src}}$} (generator decomposition in the Category of Form $\CFORM$) & \textbf{Source Space $\mathcal{S}_{\mathrm{src}}$} (source $f(\xi)$ as a superposition of point sources $\delta_\xi$) & Expands the source schema structure as a colimit of primitive generators of the Category of Form (classes, relations, states, components = point sources) \\
+\textbf{2. Aspectual Field of Sense $\MAspect$} (boundary-condition aspect) & \textbf{Boundary Conditions $\mathcal{B}_{\mathrm{bc}}$} (Dirichlet, Neumann boundary conditions, etc.) & Specifies external boundary constraints to be obeyed during transformation without intruding upon the semantic content ($f$) of the source \\
+\textbf{3. Transformation Bridge $\BTrans$} (functor kernel from form to target state) & \textbf{Green's Function Kernel $G(x, \xi)$} (boundary-conditioned point-source response propagator) & Universal transformation kernel (profunctor) independent of the source $f$ (source domain) and uniquely determined solely by the boundary conditions $\MAspect$ \\
+\textbf{4. Constructed Target State $\mathcal{F}_{\mathrm{Targ}}^* = \mathcal{T}_{\MAspect}(\Phi_{\mathrm{Src}})$} & \textbf{Solution Reconstruction Operator $u(x) = \int G(x, \xi) f(\xi)\, d\xi$} & Composes the transformation kernel via colimit / coend integration over all formal elements to construct a valid, unique ``state (instance model)'' over the target schema \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{proof}[Proof Sketch]
+Any source model $\MSrc$ is represented as a colimit (a formal point-source expansion $\MSrc \cong \int^{\xi} \CFORM(-, \xi) \otimes \Phi_{\mathrm{Src}}(\xi)$) of primitive generators $\xi \in \CFORM$ (individual classes, characteristic values, spans, states, and primitive process components) of the Category of Form $\CFORM$. Given an Aspectual Field of Sense $\MAspect$ (boundary conditions) and a target schema $\CTarg$, the Transformation Bridge $\BTrans$ mapping each primitive formal element $\xi$ to its corresponding structure $x \in \CTarg$ on the target schema side defines a profunctor (bifunctor) $K_{\MAspect} : \CFORM^{\mathrm{op}} \times \CTarg \to \Set$. Under this construction, the generation of the target state $\MTarg^*$ by the unique transformation functor $\mathcal{T}_{\MAspect}$ of Theorem~\ref{thm:unique-transformation} is rigorously given by the \textbf{coend integral formula} in category theory:
+\begin{equation}
+\MTarg^*(x) \cong \int^{\xi \in \CFORM} K_{\MAspect}(x, \xi) \times \Phi_{\mathrm{Src}}(\xi).
+\end{equation}
+This is literally the category-theoretic definition of the solution reconstruction formula $u(x) = \int G(x, \xi) f(\xi)\, d\xi$ for a linear operator via an integral kernel (Green's Function) $G(x, \xi)$ (Mac~Lane \cite{maclane1998}). Furthermore, the property established in Corollary~\ref{cor:media-and-compilers}---that ``transformation rules are reusable independently of the problem domain $f(\xi)$ of individual applications''---is the exact same mathematical consequence as the source independence of the Green's Function $G(x, \xi)$. Hence, $\mathfrak{T}_{\mathrm{CM}} \simeq \mathcal{G}_{\mathrm{Phys}}$ holds. \qedhere
+\end{proof}
+
+\section{The Dual Structure of Being and a Unified Foundation for the Humanities and Natural Sciences}
+
+\subsection{The Dual Structure of ``Meaningful Being'' and ``Real Actuality''}
+In the preceding sections, we established ``Bridges as Fields of Sense'' connecting juxtaposed Fields of Sense (Section~2), ``Aspectual Fields of Sense'' operating on form itself (Section~3), and unique structural transformation based on boundary conditions along with its isomorphism to Green's Functions (Sections~4 and~5). Looking back across the entire framework from this vantage point, a philosophical and ontological consequence of supreme importance emerges regarding ``being'' and ``relation'' in the world.
+
+In Paper~0 \cite{ota2026paper0} and Paper~1 \cite{ota2026paper1}, the author proposed an ontology grounded not in isolated objects (things), but in ``relations (span structures)'' as the basis of reality. However, by integrating the formalizations of Papers~0--3, it becomes clear that behind what superficially appears to be simply a ``relation between something and something else,'' there actually exist \textbf{two strictly distinct kinds of ``relations'' belonging to entirely different ontological dimensions}:
+
+\begin{enumerate}
+    \item \textbf{The First Relation --- ``Semantic Relationships'' Within a Single Field of Sense (= Meaningful Being):}
+    A relation closed within the interior of a single Field of Sense (schema category $\mathcal{C}$) that holds consistently according to semantic phrases (predicates of ordinary language or a specialized domain), identifiers, and the four types of multiplicity. Satisfying the constraints of this internal schema ($\mathcal{F} \in \Valid(\mathcal{C})$) is the necessary and sufficient condition for an entity to possess \textbf{``Meaningful Being.''} For example, an intricately constructed axiomatic system of pure mathematics, a closed simulation model, or a self-consistent fictional universe satisfies this first relation completely within a single Field of Sense and therefore exists as Meaningful Being.
+    \item \textbf{The Second Relation --- Underlying ``Functorial Correspondences'' Connecting Juxtaposed Fields of Sense (= Real Actuality):}
+    However, a closed structure that is self-contained solely within a single Field of Sense cannot, on that basis alone, be said to exist in reality (\textbf{Actual / Real Existence}). \textbf{To exist in reality (Real Actuality) means nothing other than that hidden Bridges stretch behind the scenes across multiple juxtaposed Fields of Sense---such as the Field of Sense of physical observation, the Field of Sense of sensory experience, the Field of Sense of ordinary language, and the Fields of Sense of legal and economic institutions---such that these various Fields of Sense resonate and manifest phenomena simultaneously in accordance with pure structural correspondences (Functors) devoid of semantic phrases and schemas of forced synchronization (\texttt{<=>}, \texttt{REQUIRE}).}
+\end{enumerate}
+
+\begin{proposition}[The Dual Structure of Being: Distinguishing Meaningful Being from Real Actuality]\label{prop:dual-being}
+The ontological status of any phenomenon or entity within the universe $\mathcal{U}$ is governed by the structural satisfaction of the following two layers:
+\begin{itemize}
+    \item \textbf{Meaningfulness:} Satisfaction of semantic relationships within the schema category $\mathcal{C}_i$ of a single Field of Sense ($\mathcal{F}_i \in \Valid(\mathcal{C}_i)$).
+    \item \textbf{Real Actuality:} Satisfaction of Projection Class and Functor correspondences across an underlying Bridge $\mathcal{B}$ connecting multiple juxtaposed Fields of Sense ($\mathcal{F}_1 \bowtie_{\mathcal{B}} \mathcal{F}_2 \neq 0$).
+\end{itemize}
+\end{proposition}
+
+What human beings directly observe in everyday perception is solely the ``phenomena (intensions)'' projected onto the boundaries (domain functions and public events) of individual Fields of Sense; the functorial structure of the Bridge linking multiple Fields of Sense behind the scenes is not directly visible. Therefore, discovering and specifying the correspondences of the underlying Bridge via abduction from observed phenomena, and verifying them against the schema constraints of both connected sides, is \textbf{the very enterprise of distinguishing ``mere closed narratives (fictional meaning)'' from ``real actuality in the world'' and uncovering the order of reality}.
+
+\subsection{Symmetry Between the Natural Sciences and the Humanities \& Social Sciences}
+This dual structure---comprising ``semantic relationships (the first relation)'' and ``functorial relations via underlying Bridges (the second relation)''---illuminates both the fundamental difference between the two great domains of human knowledge, the \textbf{natural sciences} and the \textbf{humanities and social sciences}, and the reason why both are unified upon the exact same mathematical form:
+
+\begin{itemize}
+    \item \textbf{Givenness and Discovery of Bridges in the Natural Sciences:}
+    In the natural world, the underlying Bridges (laws of nature, physical constants, and boundary conditions) connecting juxtaposed Fields of Sense (such as a ``Field of Sense of kinematics'' and a ``Field of Sense of electromagnetism and thermodynamics,'' or a ``Field of Sense of microscopic quantum states'' and a ``Field of Sense of macroscopic measuring instruments'') exist as \textbf{``already given premises (an antecedent objective order)''} independent of human subjectivity or consensus, giving rise to phenomena. Consequently, the endeavor of the natural sciences is a process in which human beings progressively discover and asymptotically approximate that ``true underlying Bridge $\mathcal{B}^*$ and the schemas of its Fields of Sense'' through abduction from observed phenomena (intensions) and deductive verification via simulation (Theorem~\ref{thm:bridge-iso-asymp}).
+    \item \textbf{Construction and Sharing of Bridges in the Humanities and Social Sciences:}
+    By contrast, in the domains of the humanities and social sciences---such as language, legal systems, monetary economies, organizations, and culture---not only single Fields of Sense (such as ``the logical system of statutory texts'' or ``the closed system of accounting ledgers''), but also the Bridges connecting them to actual physical actions and social consensus (enforcement of contracts, exchange of money and goods, rules of translation, and institutional norms) are \textbf{realities that first come into being when human beings themselves historically and intersubjectively describe, construct, and share them}. Therefore, in the humanities and social sciences, unless this ``first relation (meaning internal to a closed discourse)'' and ``second relation (Bridge correspondences linking to other domains and reality)'' are strictly distinguished, mere wordplay (closed narratives) will be conflated with the real actuality of social institutions, rendering humanistic thought itself impossible.
+    \item \textbf{Unification Through Identity of Form:}
+    Thus, while the direction of genesis is symmetrical---``discovering an already existing Bridge (natural sciences)'' versus ``constructing and sharing a Bridge (humanities and social sciences)''---the \textbf{mathematical form itself ($\CFORM$) operating therein---namely, schemas of Fields of Sense, underlying Functor Bridges, and boundary-condition aspects---is 100\% identical across both domains}.
+\end{itemize}
+
+\subsection{Radicalization of Kant's Transcendental Philosophy and Mathematical Completion of Kitaro Nishida's ``Logic of Place (\emph{Basho}) and Universality of Thought''}
+The core stance consistently maintained throughout this framework (Papers~0--3) is a thoroughgoing formalist turn: \textbf{conceptual modeling is the fundamental and universal ``form (\emph{Forma})'' for describing the world, and precisely because it is the form of the world's very constitution and mode of being, it never intrudes upon the specific ``content (\emph{Matter})'' of which concrete Fields of Sense or correspondences exist}. This position brings decisive mathematical completion to two summits reached by modern Western philosophy and modern Japanese philosophy:
+
+\begin{enumerate}
+    \item \textbf{A Turn Advancing One Step Beyond Immanuel Kant's Transcendental Philosophy:}
+    In his \emph{Critique of Pure Reason}~\cite{kant1781}, Kant insightfully declared that ``human beings cannot directly cognize the thing-in-itself (\emph{Ding an sich}), and what we can cognize are solely \emph{phenomena},'' seeking the transcendental forms that make phenomena possible. However, because Kant entrusted the grounding of those forms to psychological and anthropocentric black boxes within human subjectivity---namely, the ``pure forms of sensible intuition (space and time)'' and the ``pure concepts of the understanding (the table of categories)''---he left unresolved how and why those forms coincide with objective reality itself.
+    By contrast, the present framework (Papers~0--3) eliminates even the \emph{a priori} status of physical spacetime from its premises (Paper~2, Remark~1.1~\cite{ota2026paper2}) and completely dismantles the ambiguous faculty Kant termed ``the understanding'' into transparent category-theoretic forms detached from human subjectivity (quotient 2-categories, symmetric monoidal categories, the Category of Form $\CFORM$, and Green's Function transformation kernels). In other words, we establish an explicit position advancing one step beyond Kant: \textbf{prior not only to the thing-in-itself, but even to directly handling phenomena themselves, what we can explicitly and consistently specify is solely the ``form'' serving as the condition of possibility for phenomena to manifest}.
+
+    \item \textbf{Mathematical Grounding of Kitaro Nishida's ``Logic of Place (\emph{Basho})'' and Universality of Thought:}
+    At the same time, this form is by no means a private framework locked inside the isolated mind (subjectivity) of an individual. Just as Kitaro Nishida intuited---from \emph{pure experience} in \emph{An Inquiry into the Good} to the \emph{logic of place (Basho)} in his later philosophy~\cite{nishida1911,nishida1927}---it is not the case that individual things (objects) exist first and relations subsequently arise between them; rather, there is first a universal \textbf{``Place (\emph{Basho} = Field of Sense / Topos),''} and through the self-determination (schema constraints) of that place, individual things as well as the subject--object dichotomy emerge.
+    What Nishida was convinced of---the ``universality of thought transcending the individual''---is by no means Eastern mysticism. Through our framework, it is grounded as a transparent and rigorous mathematical structure: \textbf{human beings share identical schemas (forms $\mathcal{C}$) of Fields of Sense and state spaces ($\Valid(\mathcal{C})$) governed by those schemas, resonating structurally with one another via underlying Bridges}.
+\end{enumerate}
+
+\begin{proposition}[Transformation as the True Nature of Phenomena: Transformation into the Field of Sense of Consciousness and Thought]\label{prop:phenomena-transformation}
+What human beings experience as ``phenomena (intensions in Paper~0~\cite{ota2026paper0})'' is the result of the forms ($\CFORM$) of various Fields of Sense undergoing a Green's Function transformation (Transformation), under the boundary-condition aspects of perception and cognition, into an instance state of the ``Field of Sense of human consciousness and thought.''
+\end{proposition}
+
+\section{Practical Significance and Conclusion (Outlook for Paper~4)}
+
+\subsection{Engineering Implications for Software Engineering and the Era of Generative AI}
+The concepts established in this paper---``Bridges as Fields of Sense,'' ``Aspectual Fields of Sense,'' and ``Unique Boundary-Conditioned Structural Transformation (Isomorphic to Green's Functions)''---provide decisive guiding principles for software engineering and Model-Driven Development (MDD):
+
+\begin{enumerate}
+    \item \textbf{Mathematical Guarantee of Problem-Domain-Independent Model Compilers (Transformation Kernels):}
+    As demonstrated by Corollary~\ref{cor:media-and-compilers} and Theorem~\ref{thm:green-isomorphism} (Green's Function Isomorphism Theorem), the direct origin of model transformation (Transformation) is not individual business logic (the source $f$), but an Aspectual Field of Sense (boundary conditions over the form $\CFORM$) that can be applied orthogonally to any problem domain. Consequently, once a Transformation Bridge (Green's Function kernel $G$) mapping ``form $\to$ a specific execution platform (such as RDBs, microservices, or embedded control systems)'' is constructed, the exact same transformation rules are 100\% reusable and applicable regardless of the application's problem domain.
+    \item \textbf{Complete Orthogonal Separation of Non-Functional Requirements (Completion of Aspect-Orientation):}
+    Because boundary conditions such as persistence, concurrency control, distributed communication, and time discretization are all localized within Aspectual Fields of Sense $\MAspect$ and composed via fiber products ($\times_{\CFORM}$), the purity and maintainability of the requirements model $\MSrc$ are preserved indefinitely.
+    \item \textbf{Rigorous Verification Criteria for Code Generation by Generative AI:}
+    When modern generative AI systems such as Large Language Models (LLMs) generate implementation code from requirements specifications, a mathematical criterion for judging whether the generated implementation consistently satisfies both requirements intent and non-functional requirements has long been absent. The Green's Function Isomorphism Theorem of this framework formalizes AI-driven code generation as an ``approximate computation of a structure-preserving transformation functor $\mathcal{T}_{\MAspect}$ under boundary-condition aspects,'' providing a theoretical foundation for rigorously verifying its validity via the Bilateral Schema Conservation Law (Axiom~\ref{ax:bilateral-conservation}) and non-reachability of the singularity (the initial object $0$).
+\end{enumerate}
+
+\subsection{Conclusion and Bridge to the Final Paper (Paper~4)}
+This paper (Paper~3) extended the static and dynamic theories of a single Field of Sense (Papers~1 and~2~\cite{ota2026paper1,ota2026paper2}) to multiple juxtaposed Fields of Sense, establishing four foundational pillars:
+
+\begin{enumerate}
+    \item \textbf{Bridges as Fields of Sense (Theorems~\ref{thm:bridge-closure} and~\ref{thm:bridge-iso-asymp}):} By introducing Projection Classes, Functors devoid of semantic phrases, and Associative Correspondence Classes, we proved that a Bridge itself is an independent Field of Sense satisfying universal execution semantics, the Isomorphism Theorem, and the Asymptotic Approximation Theorem via abduction.
+    \item \textbf{Aspectual Fields of Sense (Proposition~\ref{prop:aspect-coupling}):} By means of Fields of Sense operating on form---which treat elements of the Category of Form $\CFORM$ as individuals---we demonstrated that non-functional requirements and boundary conditions can be completely separated from the problem domain and composed via pullbacks.
+    \item \textbf{Unique Boundary-Conditioned Transformation and Green's Function Isomorphism (Theorems~\ref{thm:unique-transformation} and~\ref{thm:green-isomorphism}):} We proved that under boundary conditions given by an Aspectual Field of Sense, a transformation functor into an implementation model is uniquely derived and is categorically completely isomorphic to a Green's Function (the propagation kernel of boundary-value problems) in mathematical physics.
+    \item \textbf{The Dual Structure of Being and Philosophical Synthesis (Section~6):} By distinguishing ``meaningful being (semantic relations)'' from ``real actuality (underlying functorial relations),'' we provided a unified foundation for the natural sciences and the humanities, along with a formalist radicalization of Kantian philosophy and a mathematical grounding of Kitaro Nishida's ``logic of place (\emph{Basho}).''
+\end{enumerate}
+
+Through this tetralogy thus far (Papers~0--3), all mathematical and engineering apparatus of conceptual modeling---from the static and dynamic structures of a single Field of Sense to Bridges connecting multiple Fields of Sense and boundary-conditioned structural transformations (Green's Functions)---has been brought to completion. In the final paper, \textbf{Paper~4}, we synthesize all of these results to answer the ultimate ontological question: why mathematical form permeates every corner of phenomena in this world. Specifically, we prove an isomorphism with the \textbf{Holographic Principle} of modern physics---wherein a higher-dimensional continuous bulk world emerges from discrete ``relations and form (\emph{Ordo Forma Est})'' inscribed on a boundary---and demonstrate that precisely because our ``consciousness'' itself arises from within the world emergent from that form, it is an ontological necessity that the world obeys mathematical form.
+
+\begin{thebibliography}{99}
+
+\bibitem{ota2026paper0}
+Ota, H. (2026).
+\emph{Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe} (Version 1.0.1).
+Zenodo. \url{https://doi.org/10.5281/zenodo.24267213}
+
+\bibitem{ota2026paper1}
+Ota, H. (2026).
+\emph{Category-Theoretic Foundations of Conceptual Information Modeling: Rigorous Schema Representation, Isomorphism, and Asymptotic Refinement under Cognitive Finitude} (Version 1.0.1).
+Zenodo. \url{https://doi.org/10.5281/zenodo.24359112}
+
+\bibitem{ota2026paper2}
+Ota, H. (2026).
+\emph{Category-Theoretic Foundations of Dynamic Modeling: State Transitions, Data-Flow Action Models, Universal Execution Semantics, and Isomorphism with Physical Field Theories} (Version 1.0.0).
+Zenodo. \url{https://doi.org/10.5281/zenodo.24430915}
+
+\bibitem{maclane1998}
+Mac Lane, S. (1998).
+\emph{Categories for the Working Mathematician} (2nd ed.).
+Springer.
+
+\bibitem{kan1958}
+Kan, D. M. (1958).
+Adjoint Functors.
+\emph{Transactions of the American Mathematical Society}, 87(2), 294--329.
+
+\bibitem{benabou1973}
+B\'enabou, J. (1973).
+\emph{Les distributeurs}.
+Universit\'e Catholique de Louvain, Institut de Math\'ematique Pure et Appliqu\'ee, Rapport 33.
+
+\bibitem{lawvere1963}
+Lawvere, F. W. (1963).
+Functorial Semantics of Algebraic Theories.
+\emph{Proceedings of the National Academy of Sciences of the United States of America}, 50(5), 869--872.
+
+\bibitem{maclane1992}
+Mac Lane, S., \& Moerdijk, I. (1992).
+\emph{Sheaves in Geometry and Logic: A First Introduction to Topos Theory}.
+Springer.
+
+\bibitem{joyal1991}
+Joyal, A., \& Street, R. (1991).
+The Geometry of Tensor Calculus, I.
+\emph{Advances in Mathematics}, 88(1), 55--112.
+
+\bibitem{coecke2017}
+Coecke, B., \& Kissinger, A. (2017).
+\emph{Picturing Quantum Processes: A First Course in Quantum Theory and Diagrammatic Reasoning}.
+Cambridge University Press.
+
+\bibitem{shlaer1992}
+Shlaer, S., \& Mellor, S. J. (1992).
+\emph{Object Lifecycles: Modeling the World in States}.
+Yourdon Press.
+
+\bibitem{mellor2002}
+Mellor, S. J., \& Balcer, M. J. (2002).
+\emph{Executable UML: A Foundation for Model-Driven Architecture}.
+Addison-Wesley.
+
+\bibitem{xtumlorg}
+xtUML.org.
+\emph{BridgePoint xtUML: Executable UML Modeling and Model Compilers (MC-3020 / Archetype Language)}.
+\url{https://xtuml.org}
+
+\bibitem{gabriel2015}
+Gabriel, M. (2015).
+\emph{Fields of Sense: A New Realist Ontology}.
+Edinburgh University Press.
+
+\bibitem{kant1781}
+Kant, I. (1781/1787).
+\emph{Kritik der reinen Vernunft} (\emph{Critique of Pure Reason}).
+Cambridge University Press (1998 translation).
+
+\bibitem{nishida1911}
+Nishida, K. (1911/1990).
+\emph{Zen no Kenky\=u} (\emph{An Inquiry into the Good}).
+Translated by M. Abe \& C. Ives, Yale University Press.
+
+\bibitem{nishida1927}
+Nishida, K. (1927).
+\emph{Hataraku Mono kara Miru Mono e} (\emph{From the Acting to the Seeing}, containing ``Basho'' [Place]).
+Iwanami Shoten.
+
+\bibitem{ota2023azure}
+Ota, H. (2023).
+\emph{Tutorial: Generated Library from Conceptual Model with Microsoft Azure Services (Model Compilers for C\#, DTDL, and Azure Digital Twins / IoT)}.
+GitHub Repository. \url{https://github.com/kae-made/tutorial-generated-library-from-conceptual-model-with-azure-services}
+
+\end{thebibliography}
+
+\end{document}

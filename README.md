@@ -27,7 +27,7 @@ The series is structured into two tiers: rigorous mathematical and engineering f
 
 ### [Paper 0] Foundational Ontology and Epistemology *(Published — Nov 16, 2026)*
 * **Title:** *Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe*
-* **DOI:** [`10.5281/zenodo.24267213`](https://doi.org/10.5281/zenodo.24267213) (v1.0.0 English Version: [`10.5281/zenodo.24267213`](https://doi.org/10.5281/zenodo.24267213))
+* **DOI:** [`10.5281/zenodo.24267213`](https://doi.org/10.5281/zenodo.24267213) (v1.0.0 English Version: [`https://doi.org/10.5281/zenodo.24267213`](https://doi.org/10.5281/zenodo.24267213))
 * **Files:**
   * English Version: `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.pdf`
   * Japanese Version: `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.jp.pdf`
@@ -35,18 +35,24 @@ The series is structured into two tiers: rigorous mathematical and engineering f
 
 ### [Paper 1] Static Modeling Theory: Rigorous Schema Representation and Asymptotic Refinement *(Published - Nov 19, 2026)*
 * **Title:** *Category-Theoretic Foundations of Conceptual Information Modeling: Rigorous Schema Representation, Isomorphism, and Asymptotic Refinement under Cognitive Finitude*
-* **DOI:** [`10.5281/zenodo.24359112`](https://doi.org/10.5281/zenodo.24359112) (v1.0.1 English Version: [`10.5281/zenodo.24359112`](https://doi.org/10.5281/zenodo.24359112))
+* **DOI:** [`10.5281/zenodo.24359112`](https://doi.org/10.5281/zenodo.24359112) (v1.0.1 English Version: [`https://doi.org/10.5281/zenodo.24359112`](https://doi.org/10.5281/zenodo.24359112))
 * **Files:**
  * English Version: `papers/CategoryTheoreticFoundationsOfCIM.pdf`
  * Japanese Version: `papers/CategoryTheoreticFoundationsOfCIM.ja.pdf`
 * **Summary:** Derives the necessary conditions required for the Universe $\mathcal{U}$ in Paper 0 to exist consistently, demonstrating that these conditions correspond directly to the core constructs of conceptual information modeling: data types, single and composite identifiers (monomorphisms), referential attributes (commutative factorizations), bidirectional relations with phrases and multiplicities (spans), and associative entities (multispans). Shows that modeling is not "vagueness" but the specification of concrete and rigorous structures. Proves that adequate models of the same Field of Sense are mutually isomorphic (categorically equivalent), and formalizes how finite human cognition asymptotically approaches the true schema via subclassing (resolving `0..1` and `Nullable` ambiguities) and relational integration.
 
-### [Paper 2] Dynamic Process Theory: Monoidal Categorical Dynamics of State and Action Models *(Planned)*
-* **Tentative Title:** *Monoidal Categorical Dynamics of State and Action Models: Boundary Conditions, Data-Flow Operators, and Continuous Change via Discrete Systems*
+### [Paper 2] Dynamic Process Theory: Monoidal Categorical Dynamics of State and Action Models *(Published - Nov 22, 2026)*
+* **Title:** *Category-Theoretic Foundations of Dynamic Modeling: State Transitions, Data-Flow Action Models, Universal Execution Semantics, and Isomorphism with Physical Field Theories*
+* **DOI:** [`10.5281/zenodo.24430915`](https://doi.org/10.5281/zenodo.24430915) (v1.0.0 English Version: [`https://doi.org/10.5281/zenodo.24430915`](https://doi.org/10.5281/zenodo.24430915))
+* **Files:**
+ * English Version: `papers/CategoryTheoriticFondationsOfDynamicModeling.pdf`
 * **Summary:** Introduces boundary conditions (pre- and post-conditions), external entities as boundary interfaces, and data-flow operators over rigorously defined data types. Integrates state models (aspectual Fields of Sense per state) with action models (state transitions), proving that states and transformations form a **Monoidal Category**. Demonstrates how discrete state-action models can faithfully describe continuous change through threshold-driven phase transitions and internal parameter trajectories.
 
-### [Paper 3] Structural Transformation Theory: Transformations Across Fields of Sense *(Planned)*
-* **Tentative Title:** *Structural Transformations Across Fields of Sense: Boundary Conditions, Aspectual Schemas, and Functorial Migration*
+### [Paper 3] Structural Transformation Theory: Transformations Across Fields of Sense *(Published - Nov 22, 2026)*
+* **Title:** *Category-Theoretic Foundations of Structural Transformation: Bridges as Fields of Sense, Boundary Conditions via Aspectual Fields of Sense, and Isomorphism with Green's Functions*
+* **DOI:** [`10.5281/zenodo.24431232`](https://doi.org/10.5281/zenodo.24431232) (v1.0.0 English Version: [`https://doi.org/10.5281/zenodo.24431232`](https://doi.org/10.5281/zenodo.24431232))
+* **Files:**
+ * English Version: `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.pdf`
 * **Summary:** Extends the framework from intra-field dynamics (Papers 1–2) to structural transformations across distinct schemas (Fields of Sense) and aspects. Formalizes the exact boundary conditions required for cross-field transformations via bridges, as well as the laws of structural preservation and information loss.
 
 ### [Paper 4] Emergence and Cosmological Scope: Holographic Boundary Conditions *(Conceptual)*
