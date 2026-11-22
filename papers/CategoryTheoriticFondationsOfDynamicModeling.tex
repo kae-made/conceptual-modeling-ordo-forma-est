@@ -1,0 +1,737 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{stmaryrd}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, positioning, arrows.meta, calc}
+\usepackage{tikz-cd}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={Category-Theoretic Foundations of Dynamic Modeling: State Transitions, Data-Flow Action Models, Universal Execution Semantics, and Isomorphism with Physical Field Theories},
+    pdfauthor={Hiroshi Ota}
+}
+
+% Theorem environments (consistent with Paper 0 and Paper 1)
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}{Axiom}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+
+% Custom macros
+\newcommand{\Ob}{\mathrm{Ob}}
+\newcommand{\Mor}{\mathrm{Mor}}
+\newcommand{\Valid}{\mathrm{Valid}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\colim}{\operatorname{colim}}
+\newcommand{\TwoSet}{\mathbf{2\text{-}Set}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\DF}{\mathcal{DF}}
+\newcommand{\Cform}{\mathcal{C}_{\mathrm{FORM}}}
+\newcommand{\Dstatic}{\mathcal{D}_{\mathrm{static}}}
+\newcommand{\Dref}{\mathcal{D}_{\mathrm{REF}}}
+
+\title{\textbf{Category-Theoretic Foundations of Dynamic Modeling:\\
+State Transitions, Data-Flow Action Models, Universal Execution Semantics, and Isomorphism with Physical Field Theories}}
+
+\author{Hiroshi Ota\thanks{Homepage: \url{https://www.kae-made.jp}, Research Notes: \url{https://note.com/kae_made}} \\
+\small Independent Researcher / Knowledge \& Experience \\
+\small \texttt{master@kae-made.jp}}
+\date{November 22, 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+In my preceding papers (Paper 0 and Paper 1) \cite{ota2026paper0,ota2026paper1}, I established an ontology grounded in relations (span structures) rather than isolated objects, formalized a Universe partitioned into multiple ``Fields of Sense'' connected by ``Bridges,'' and proved that the static semantic structure of a single Field of Sense (the Conceptual Information Model) is rigorously represented as a finitely complete and finitely cocomplete quotient 2-category $\mathcal{C} \equiv CG/\mathcal{R}$. Given that the conceptual information model provides the necessary and sufficient formal conditions for static existence, state changes occurring over that domain (state models and action models) must likewise be formulated upon the conceptual information model. However, merely specifying state transitions and actions leaves them inert; rigorous constraints governing how they causally transition (execute) without contradiction---namely, \textbf{Execution Semantics}---are indispensable.
+
+The present paper (Paper 2) formalizes dynamic behavior (Dynamics) arising over a static schema category $\mathcal{C}$ in category-theoretic terms and proves four foundational propositions. First, \textbf{execution semantics can be defined universally and uniquely upon the abstract form of the conceptual information model itself ($\Cform$), without inspecting the domain-specific business or physical semantics of any individual Field of Sense} (Universal Execution Semantics Theorem). Second, data-flow action models constructed as directed acyclic graphs (DAGs) from primitive process components, together with their \textbf{formal textual syntax (Action Language)} and external boundary interfaces (\textbf{Domain Functions}), form a \textbf{homotopically closed symmetric monoidal category ($\DF$)} equipped with sequential and parallel composition, and preserve all static schema invariants along any regular execution trajectory that avoids singularities (\texttt{Can't Happen} transitions or division by zero collapsing to the initial object $0$). Third, in exact symmetry with the static domain (Paper 1), this dynamic formalism satisfies \textbf{dynamic expressive completeness, categorical isomorphism across representational variations, and asymptotic convergence under cognitive finitude via abduction}, while also capturing \textbf{continuous dynamics without information loss} through projective limits and sheaf gluing of boundary-condition aspects. Fourth, \textbf{the integrated modeling architecture---comprising the Conceptual Information Model, State Model, Action Model, Domain Functions, and Universal Execution Semantics---is mathematically isomorphic to the formal structure of physical field theories} (configuration space, phase space with singularities, equations of motion, boundary conditions/external forces, and universal principles of time evolution and causality).
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{Background and Problem Statement: From Static Structural Skeletons to State Transitions and Universal Execution Semantics}
+In my preceding papers, starting from an ontology in which relations (span structures) rather than standalone objects (``things'') serve as the primary substrate of reality, I formalized how the world is partitioned into a Universe $\mathcal{U}$ comprising multiple ``Fields of Sense'' \cite{gabriel2015} connected via ``Bridges'' (Paper 0) \cite{ota2026paper0}, and proved that the static semantic structure of a single Field of Sense (the Conceptual Information Model) exists constructively as a quotient 2-category $\mathcal{C} \equiv CG/\mathcal{R}$ satisfying expressive completeness, existence, categorical isomorphism, and asymptotic convergence (Paper 1) \cite{ota2026paper1}.
+
+Paper 1 established the ``static form of existence (structural skeleton)'' within a single Field of Sense. Since the conceptual information model provides the necessary and sufficient formal conditions for meaningful static existence, models describing state changes over that domain (state models and data-flow action models) must necessarily be formulated upon the conceptual information model (schema category $\mathcal{C}$). The causal chain in which new individual instances are created, existing instances transition across states, semantic links are reconfigured, and instances eventually terminate is formalized in functorial semantics \cite{lawvere1963,maclane1998} as a structure-preserving transition from an instance functor $\mathcal{F}_n \in \Valid(\mathcal{C})$ at step $n$ to $\mathcal{F}_{n+1} \in \Valid(\mathcal{C})$ at step $n+1$.
+
+\begin{remark}[Exclusion of Spacetime from Pure Conceptual Models and Terminological Convention]\label{rem:no-spacetime}
+Within the pure mathematical formalism of conceptual information models, state models, and action models, there exists no \emph{a priori} coordinate system of physical ``time'' or ``space.'' What exists internally is solely structural linkage via relations (spans) and the causal partial order of state transitions induced by events ($\mathcal{F}_n \to \mathcal{F}_{n+1}$). Accordingly, Sections~2--4 formulate dynamic models without presupposing physical spacetime, using terms such as ``transition step'' or (purely for expository convenience) ``chronological sequence / temporal evolution'' to denote causal ordering. Physical time enters only externally as ``timer events'' supplied by the external entity $\mathcal{EE}_{\mathrm{Time}}$, and correspondence with physical spacetime and physical field theories is established explicitly in Sections~\ref{sec:continuous} and~\ref{sec:phys-iso}.
+\end{remark}
+
+However, merely specifying state transitions and actions renders a model meaningless. Unless constraints are given governing how static and dynamic models behave---that is, in what causal order and under what execution rules they evolve---the behavior of the model remains undetermined; without execution semantics, a specified model is merely a blueprint on paper. Crucially, \textbf{execution semantics need not inspect the concrete semantic content of any individual Field of Sense (whether commercial or physical); it can be defined universally upon the formal structure of the conceptual information model, state model, and action model itself ($\Cform$)}.
+
+Furthermore, any theory purporting to describe the real world must recognize that \textbf{models containing internal singularities---such as \texttt{Can't Happen} transitions, division by zero, or out-of-bounds domain operations that collapse to the initial object $0$ (empty space)---must be admitted as valid model specifications}. In real-world business and social domains, due to the cognitive finitude of modelers (specifiers), it is reasonable to recognize that countless operational models run in production while harboring latent structural defects (singularities) that have simply not yet been triggered, but will cause organizational or system breakdown the moment the fatal event sequence occurs. Likewise, in physical Fields of Sense, reaching the boundary of an equation's domain of definition (a singularity) manifests as a \textbf{phase transition}, where the current schema category collapses and the system transitions into a distinct Field of Sense governed by a new schema. By admitting singularities (morphisms into $0$) as legitimate structural components rather than artificially banning them, this framework faithfully captures the real world---including breakdowns and phase transitions---rather than an idealized toy universe.
+
+\subsection{Four Foundational Questions in Dynamic Modeling}
+Based on this problem setting, the present paper (Paper 2) provides affirmative mathematical answers to four foundational questions:
+\begin{enumerate}
+    \item \textbf{Expressive Completeness, Isomorphism, Asymptotic Refinement, and Discrete Representation of Continuous Dynamics:} In symmetry with the static domain (Paper 1), can the formalism of \textbf{state models} (comprising active/final states and \texttt{Ignore}/\texttt{Can't Happen} singularities) coupled with \textbf{data-flow action models} built from primitive process components adequately represent every computable and realistic state evolution and concurrent process (Dynamic Expressive Completeness)? Moreover, do distinct representations reduce to categorical equivalence (Isomorphism), can finite human minds asymptotically converge to the true dynamic model via abduction \cite{peirce1903}, and can projective limits and sheaf gluing \cite{maclane1992} of boundary-condition aspects capture continuous dynamics without information loss?
+    \item \textbf{Isomorphism between Formal Textual Syntax and Diagrammatic Representation:} Can data-flow action models be expressed not only as visual string diagrams, but also via a rigorous context-free textual grammar (Action Language) that is categorically isomorphic to the diagrammatic representation (Syntax--Semantics Isomorphism)?
+    \item \textbf{Universal Execution Semantics and Homotopical Monoidal Closure:} When universal execution semantics is defined solely over the abstract form of the conceptual information model, state model, and action model ($\Cform$) without inspecting domain-specific content, do state transitions, data-flow actions, and domain functions close consistently as a \textbf{homotopically closed symmetric monoidal category ($\DF$)} equipped with sequential ($\circ$) and parallel ($\otimes$) composition, while preserving all static schema invariants along any singularity-free regular execution trajectory?
+    \item \textbf{Structural Isomorphism with Physical Field Theories:} Is the entire modeling architecture---comprising the Conceptual Information Model (configuration space), State Model (phase space and singularities), Action Model (equations of motion), Domain Functions (boundary conditions and external forces), and Universal Execution Semantics (universal laws of time evolution and causality)---mathematically isomorphic to the formal structure of physical theories containing equations of motion?
+\end{enumerate}
+
+\subsection{Paradigm Shift and Structure of This Paper}
+In conventional object-oriented programming (OOP), systems are typically designed by encapsulating data and behavior (methods) inside individual objects and chaining synchronous method calls. However, under a relation-based ontology (Paper 0 and Paper 1), invariants such as multiplicities and referential integrity are defined not locally inside a single instance, but globally across the entire Field of Sense ($\mathcal{F} \in \Valid(\mathcal{C})$). Consequently, organizing actions attached to target states as atomic transformations updating the entire Field of Sense ($\mathcal{F}_n \to \mathcal{F}_{n+1}$) is a mathematical necessity for preserving relational consistency (a category-theoretic elevation of the Shlaer--Mellor method and Executable UML \cite{shlaer1992,mellor2002,starr2001}).
+
+The remainder of this paper is organized as follows:
+\begin{itemize}
+    \item \textbf{Section~2 (Category-Theoretic Formalization of State Models and Object Lifecycles)} formalizes typed events grounded in $\mathcal{C}$ (creation events, instance events, and timer events, together with supplemental data), state machines held by every instance, active and final states, \texttt{Ignore} (identity morphisms) and \texttt{Can't Happen} singularities, Moore normal form actions, and the isomorphism between event-driven execution semantics (with timer event binding and self-event priority) and local inertial frames (proper time and light-cone causality).
+    \item \textbf{Section~3 (Data-Flow Action Models, Formal Textual Syntax, and the Symmetric Monoidal Category $\DF$)} derives the 16 orthogonal primitive process components uniquely from Paper 1, defines the formal textual syntax (New OAL / SSA grammar) and proves its isomorphism with acyclic string diagrams, establishes termination via acyclicity (DAG), and defines \textbf{Domain Functions} as external boundary interfaces connecting Bridges (Paper 0) and Transformations (Paper 3).
+    \item \textbf{Section~4 (Universal Execution Semantics and Boundary-Condition Aspects)} defines Universal Execution Semantics over the form category $\Cform$ via four axioms (including aspect pullbacks $\mathcal{M} \times_{\Cform} \mathcal{V}$), proving dynamic invariant preservation along regular trajectories and characterizing breakdown and phase transitions at singularities.
+    \item \textbf{Section~5 (Meta-Theorems of Dynamic Modeling, Discrete Representation of Continuous Dynamics, and Isomorphism with Physical Field Theories)} proves the four dynamic meta-theorems (completeness, homotopical monoidal existence, isomorphism, and asymptotic convergence), the discrete representation theorem for continuous dynamics via projective limits and sheaves, and the isomorphism theorem with physical field theories.
+    \item \textbf{Section~6 (Practical Implications and Conclusion)} discusses practical implications for executable modeling (including AI code verification) and outlines the transition to structural transformations with Green's function isomorphism (Paper 3) and the universal ontology of conceptual modeling encompassing the holographic principle (Paper 4).
+\end{itemize}
+
+\section{Category-Theoretic Formalization of State Models and Object Lifecycles}
+
+\subsection{Typed Events Grounded in the Static Schema Category $\mathcal{C}$}
+In my preceding paper (Paper 1) \cite{ota2026paper1}, I proved that the static semantic structure (the form of existence) of a single Field of Sense is adequately and necessarily governed by a quotient 2-category $\mathcal{C} \equiv CG/\mathcal{R}$ equipped with conceptual classes, seven strictly closed data types, monic identifiers, bidirectional relationships bearing four multiplicities and semantic phrases, exclusive coproduct decompositions (\texttt{Is-a}), and associative classes. Since semantic structure is governed by the conceptual information model, state changes (``Dynamics'') occurring over that domain must likewise be formulated upon the conceptual information model.
+
+Inputs that trigger state changes are defined as \textbf{Events} belonging to conceptual classes.
+
+\begin{definition}[Typed Event Spaces and Supplemental Data]\label{def:events}
+For each conceptual class $A \in \mathcal{K}$ in the schema category $\mathcal{C}$, a finite set of event labels $\mathcal{E}_A$ triggering state transitions on instances of $A$ is defined. Each event $e \in \mathcal{E}_A$ is partitioned exclusively into two disjoint subsets according to the existential status of its target entity:
+\begin{equation}
+\mathcal{E}_A = \mathcal{E}_A^{\mathrm{create}} \sqcup \mathcal{E}_A^{\mathrm{inst}}.
+\end{equation}
+\begin{enumerate}
+    \item \textbf{Creation Events ($e \in \mathcal{E}_A^{\mathrm{create}}$):} Events that instantiate a new entity not yet present in the Field of Sense. Because no target individual exists prior to execution, creation events carry no target identifier, carrying solely the supplemental data required to enter an initial state and initialize property values.
+    \item \textbf{Instance Events ($e \in \mathcal{E}_A^{\mathrm{inst}}$):} Events directed at a specific existing individual $a \in \mathcal{F}_n(A)$ already present in the Field of Sense. They carry an identifier value $\mathcal{F}_n(\alpha_I)(a)$ (Paper 1, Axiom C-1) to uniquely resolve the target individual, together with event-specific supplemental data.
+\end{enumerate}
+\end{definition}
+
+\paragraph{Supplemental Data and Input Connection to Action Models.}
+For every event $e \in \mathcal{E}_A$, the argument tuple $\mathbf{d} \in \prod_{j=1}^m \mathcal{F}(T_j)$ carried by the event is defined as \textbf{Supplemental Data} strictly typed by the exact same static data-type space $\Dstatic$ as the conceptual information model (Paper 1, Section~2.5) (a pure signal event carrying no data corresponds to the empty product $m=0$, i.e., the monoidal unit $I$). The moment event $e$ determines a target state $s' \in \Sigma_A$, this supplemental data $\mathbf{d}$ is fed directly as the \textbf{initial input data-flow wires (boundary input resources)} into the data-flow action model $\mathcal{A}_{s'}$ (Section~3) attached to state $s'$ (when multiple distinct events transition into the same target state $s'$, the input signature accepted by $\mathcal{A}_{s'}$ is uniquely constrained to the common data-type tuple shared across all incoming events).
+
+Furthermore, the passage of time itself is not an external absolute clock forcibly driving entities in lockstep; rather, it is supplied by the external entity $\mathcal{EE}_{\mathrm{Time}}$ as \textbf{Timer Events ($e_{\mathrm{time}} \in \mathcal{E}_A^{\mathrm{inst}}$)} bound to individual instances on completely equal footing with domain or physical events.
+
+\subsection{State Machines Held by Every Instance and Lifecycles (Persistence and Termination)}
+In Paper 1 (Proposition~2.1: Category of Elements $\int \mathcal{F}$), a conceptual class $A \in \mathcal{K}$ was formalized as the existential template for individual instances $a \in \mathcal{F}(A)$. From this type--instance correspondence, whenever a state model governing state-transition rules is defined for conceptual class $A$, it follows as a direct logical consequence that \textbf{every individual instance instantiated from $A$ possesses its own independent state machine}.
+
+\begin{definition}[Conceptual Class State Models and Exclusive Coproduct State Spaces]\label{def:state-model}
+Each conceptual class $A \in \mathcal{K}$ is equipped with a deterministic state model serving as the behavioral template for its instances:
+\begin{equation}
+M_A = \left(\Sigma_A,\, \mathcal{E}_A,\, \delta_A,\, \{\mathcal{A}_s\}_{s \in \Sigma_A}\right).
+\end{equation}
+The finite state set $\Sigma_A$ is partitioned as a disjoint union of two mutually exclusive subsets according to the existential outcome of the instance after transition:
+\begin{equation}
+\Sigma_A = \Sigma_A^{\mathrm{active}} \sqcup \Sigma_A^{\mathrm{final}}.
+\end{equation}
+\begin{enumerate}
+    \item \textbf{Active / Persistent States ($s \in \Sigma_A^{\mathrm{active}}$):} States in which the instance $a$ continues to exist in $\mathcal{F}_{n+1}(A)$ after transition and action completion, remaining receptive to subsequent events.
+    \item \textbf{Final / Deletion States ($s \in \Sigma_A^{\mathrm{final}}$):} Terminal states upon whose entry and accompanying action completion the instance $a$ is removed from the Field of Sense ($\mathcal{F}_{n+1}(A) = \mathcal{F}_n(A) \setminus \{a\}$).
+\end{enumerate}
+\emph{(Note: Static conceptual classes that undergo no state transitions throughout their lifecycle are uniformly treated as trivial state models possessing a single active state $\Sigma_A = \Sigma_A^{\mathrm{active}} = \{\star\}$.)}
+\end{definition}
+
+\begin{proposition}[Universal Instance State Machines and Causal Coproduct Exclusivity]\label{prop:instance-fsm}
+Every instance $a \in \mathcal{F}_n(A)$ manifesting in a Field of Sense from conceptual class $A \in \mathcal{K}$ maintains its own independent instance state machine templated by $M_A$. Dual to \texttt{Is-a} relationships in Paper 1---which enforce spatial coproduct exclusivity ($S \cong \coprod C_i$)---at any local causal stage, instance $a$ cannot split across multiple states, occupying strictly one current state $\sigma(a) \in \Sigma_A^{\mathrm{active}}$. Moreover, an entity instantiated via a creation event $e \in \mathcal{E}_A^{\mathrm{create}}$ enters an initial state $s_0 \in \Sigma_A$; if $s_0 \in \Sigma_A^{\mathrm{final}}$, it terminates immediately upon completing its creation action (modeling transient event instances).
+\end{proposition}
+
+\subsection{Algebraic Structure of State Transition Tables (STT): \texttt{Ignore} and Singularities (\texttt{Can't Happen})}
+The behavior upon event arrival in every state is exhaustively specified by the state transition function (State Transition Table, STT).
+
+\begin{definition}[State Transition Function and Category-Theoretic Definition of \texttt{Ignore} and \texttt{Can't Happen}]\label{def:stt}
+The state transition function $\delta_A$ of conceptual class $A \in \mathcal{K}$ consists of creation transitions $\delta_A^{\mathrm{create}} : \mathcal{E}_A^{\mathrm{create}} \to \Sigma_A \sqcup \{\mathrm{Can't\ Happen}\}$ and instance transitions:
+\begin{equation}
+\delta_A : \Sigma_A^{\mathrm{active}} \times \mathcal{E}_A^{\mathrm{inst}} \longrightarrow \Sigma_A \sqcup \{\mathrm{Ignore},\; \mathrm{Can't\ Happen}\}.
+\end{equation}
+In addition to standard state transitions $s \to s' \in \Sigma_A$, two special outcomes are rigorously defined in algebraic and topos-theoretic terms:
+\begin{enumerate}
+    \item \textbf{\texttt{Ignore} (Event Ignored = Identity Morphism $\id$):} When event $e$ arrives at instance $a$ in state $s$, no state change or action execution occurs, leaving the entire Field of Sense unchanged. Category-theoretically, this maps to the \textbf{identity morphism ($\id_{\mathcal{F}}$)} on the state space.
+    \item \textbf{\texttt{Can't Happen} (Impossible Transition = Collapse to Initial Object $0$ / Singularity):} Expresses a structural prohibition stating that event $e$ cannot logically arrive at instance $a$ while in state $s$. Category-theoretically---in exact analogy with ``nonsense'' and division by zero or out-of-bounds operations in Paper 1---this is defined as a \textbf{collapse morphism into the initial object $0$ (empty space / contradiction)} of the internal topos logic \cite{maclane1992}.
+\end{enumerate}
+\end{definition}
+
+\begin{remark}[Legitimate Inclusion of Singularities and Breakdown Boundaries in Real-World Models]\label{rem:singularities}
+Crucially for any theory describing the real world, \textbf{models containing internal singularities such as \texttt{Can't Happen} transitions or division by zero (morphisms into the initial object $0$) must be admitted as valid model specifications}. In real-world business and social domains, due to the cognitive finitude of modelers, countless operational models run in production while harboring latent structural defects (singularities) that simply have not yet been triggered, but will cause organizational or system breakdown the moment the fatal event occurs. Likewise, in physical Fields of Sense, reaching the boundary of an equation's domain of definition (a singularity) manifests as the critical boundary of a \textbf{phase transition}, where the current schema category collapses and the system transitions into a distinct Field of Sense governed by a new schema. Admitting singularities (morphisms into $0$) as legitimate components enables this framework to capture the real world---including breakdowns and phase transitions---rather than an idealized closed toy system.
+\end{remark}
+
+\subsection{Global State Updates via Moore Normal Form Actions and Isomorphism with Local Inertial Frames}
+Once the arrival of event $e$ determines the target state $s' \in \Sigma_A$ for instance $a$, the data-flow action model $\mathcal{A}_{s'}$ (formalized in Section~3) attached to state $s'$ is invoked.
+
+\begin{definition}[Global Field-of-Sense Updates via Moore Normal Form Actions]\label{def:moore-action}
+The action $\mathcal{A}_{s'}$ accompanying a state transition $s \xrightarrow{e(\mathbf{d})} s'$ receives the event's supplemental data $\mathbf{d} \in \prod_{j=1}^m \mathcal{F}_n(T_j)$ as its initial input data-flow wires and acts not merely as a local mutation of instance $a$'s internal variables, but as an \textbf{atomic morphism updating the entire instance functor $\mathcal{F}_n \in \Valid(\mathcal{C})$ of the Field of Sense to the next state $\mathcal{F}_{n+1} \in \Valid(\mathcal{C})$}:
+\begin{equation}
+\llbracket \mathcal{A}_{s'} \rrbracket : \Valid(\mathcal{C}) \times \prod_{j=1}^m \mathcal{F}_n(T_j) \longrightarrow \Valid(\mathcal{C}).
+\end{equation}
+(For events carrying no supplemental data, $\prod_{j=1}^m \mathcal{F}_n(T_j) \cong \mathbf{1}$, reducing to $\llbracket \mathcal{A}_{s'} \rrbracket : \Valid(\mathcal{C}) \to \Valid(\mathcal{C})$.) Completion of $\mathcal{A}_{s'}$ establishes the global state $\mathcal{F}_{n+1}$ and simultaneously commits instance $a$'s new state as $s'$ (removing $a$ from $\mathcal{F}_{n+1}(A)$ if $s' \in \Sigma_A^{\mathrm{final}}$).
+\end{definition}
+
+\begin{remark}[Contrast with OOP Encapsulation and Isomorphism between Moore and Mealy Forms]\label{rem:moore-mealy}
+To practitioners accustomed to object-oriented programming (OOP), having an action update the entire Field of Sense rather than remaining encapsulated inside a single instance may initially appear unusual. Under a relation-based ontology (Paper 0 and Paper 1), however, invariants such as multiplicities and referential integrity are always defined globally across the entire Field of Sense, making atomic global updates a structural necessity. Moreover, even if an alternative dynamic formalism is chosen---such as Mealy machines attaching actions to transition arrows---partitioning the state space via coproducts yields a \textbf{categorical equivalence (isomorphism) with the Moore normal form} adopted here, where actions are bound to target states (Section~5, Theorem~\ref{thm:dyn-iso}).
+\end{remark}
+
+Furthermore, the causal structure governing event transmission across concurrently operating instance state machines is geometrically isomorphic to \textbf{Local Inertial Frames} in relativistic physics.
+
+\begin{proposition}[Isomorphism with Local Inertial Frames and Relativistic Causal Structure]\label{prop:inertial-frame}
+The ensemble of concurrent instance state machines within a Field of Sense is isomorphic to local inertial frames in relativistic physics in three respects:
+\begin{enumerate}
+    \item \textbf{State Transitions as Proper Time:} Rather than a single global absolute clock, the chain of steps in which events---including timer events ($e_{\mathrm{time}}$)---arrive at and are processed by an individual instance $a$ defines that entity's own local time axis (proper time $\tau_a$).
+    \item \textbf{Preservation of Local Causality (Self-Event Priority):} Among events generated during the execution of action $\mathcal{A}_{s'}$, events addressed to the executing instance itself (Self-Events) are always processed prior to external events addressed to other instances (Self-Event Priority Axiom), preserving local causality along each entity's worldline.
+    \item \textbf{Spacelike Separation and Commutativity:} State transitions of independent instances that exchange no events are spacelike-separated; regardless of their relative execution order, the symmetry isomorphism (parallel composition $\otimes$) of the symmetric monoidal category guarantees an identical global outcome.
+\end{enumerate}
+\end{proposition}
+
+\section{Data-Flow Action Models, Formal Textual Syntax, and the Symmetric Monoidal Category $\DF$}
+
+\subsection{Four Scopes of Action Models and the Templated Nature of Primitive Processes}
+Section~2 established that actions accompanying state transitions update the global instance functor $\mathcal{F}_n \in \Valid(\mathcal{C})$ of a Field of Sense to $\mathcal{F}_{n+1}$. Within this framework, a data-flow action model (a composition of primitive process components and data-flow wires) is formalized not as an imperative sequence of commands (``Doing''), but as side-effect-free \textbf{equational logic (``Being'')} governed by linear-logic resource flow \cite{girard1987}.
+
+Based on spatial scope and encapsulation rules, action models may be specified in strictly \textbf{four domains}:
+\begin{enumerate}
+    \item \textbf{Entry Action:} Bound to a target state in a state model; transforms the global state of the Field of Sense ($\mathcal{F}_n \to \mathcal{F}_{n+1}$) via instance creation/deletion, property updates, and link reconfiguration.
+    \item \textbf{Mathematical Property:} Bound to a derived attribute of a conceptual class; evaluates automatically upon reference to return a value computed from relationship topology or cardinality without side effects ($\mathcal{F}_n(A) \to \mathcal{F}_n(T)$). Within this derivation flow, \textbf{inputs are strictly restricted to the current global state of the Field of Sense ($\mathcal{F}_n$ queries/traversals) and outputs from external entity functions} (state-mutating operations and event generation are syntactically and semantically prohibited), and \textbf{the output necessarily closes via equational binding to that specific attribute on \texttt{SELF} (Component~15(b) below)}.
+    \item \textbf{Class Function:} A domain-internal pure computation helper bound to a conceptual class sort (direct invocation from external domains is prohibited). Within this flow, \textbf{inputs are strictly restricted to explicitly passed input parameter wires ($\bigotimes_{i=1}^p T_{\mathrm{in}, i}$), the invariant schema structure of the Conceptual Information Model (such as type bounds and enumeration lattices), and outputs from external entity functions}. Reading or mutating the current instance state ($\mathcal{F}_n$) and generating events are strictly prohibited, and the output necessarily closes via a typed \texttt{return} wire (Component~15(a) below).
+    \item \textbf{Domain Function:} Bound to the formal interface boundary of a Field of Sense; serves as the public port interacting with Bridges connecting distinct Fields of Sense (Paper 0 and Paper 3) or external simulators (recursive internal calls from within the same domain are prohibited).
+\end{enumerate}
+
+Crucially, every primitive process component (bubble) placed within a data flow is not generic program code; rather, it is a \textbf{unique function symbol (morphism) that automatically emerges within that Field of Sense the moment its Conceptual Information Model and State Model schemas are fixed}. Every component fires if and only if 100\% of its required input resources are present on its incoming wires as a linear-logic tensor product ($\otimes$).
+
+\begin{table}[htbp]
+\centering
+\caption{Comparison of the Four Action Model Scopes and Their Input--Output Boundaries}
+\label{tab:action-scopes}
+\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{3.7cm} >{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}p{2.8cm} >{\raggedright\arraybackslash}p{3.0cm}}
+\toprule
+\textbf{Action Model Scope} & \textbf{Input Data-Flow Sources} & \textbf{Reading State $\mathcal{F}_n$} & \textbf{Mutating $\mathcal{F}_n$ / Event Gen.} & \textbf{Output Closure} \\
+\midrule
+\textbf{1. Entry Action} & Event Supplemental Data $+$ State $\mathcal{F}_n$ $+$ $\mathcal{EE}$ & \textbf{Allowed} (Read / Select) & \textbf{Allowed} (Global update $\mathcal{F}_n \to \mathcal{F}_{n+1}$) & Committed global state $\mathcal{F}_{n+1}$ (no return value) \\
+\addlinespace
+\textbf{2. Mathematical Property} & Current global state $\mathcal{F}_n$ $+$ $\mathcal{EE}$ (no arguments) & \textbf{Allowed} (Read / Select) & \textbf{Prohibited} (Zero side effects) & Equational assignment to \texttt{SELF}'s attribute \\
+\addlinespace
+\textbf{3. Class Function} & Input parameters (data types) $+$ \textbf{CIM schema structure (form)} $+$ $\mathcal{EE}$ & \textbf{Prohibited} (No instance state) & \textbf{Prohibited} (Pure computation only) & Typed function \texttt{return} wire \\
+\addlinespace
+\textbf{4. Domain Function} & Boundary input parameters (static types) $+$ State $\mathcal{F}_n$ $+$ $\mathcal{EE}$ & \textbf{Allowed} (Read / Select) & \textbf{Allowed} (Global updates / event gen.) & Boundary output wires (projection of state intension) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Exhaustive Catalog of Primitive Process Components (1--16) and New OAL Syntax}
+Grounded in the primitives of the Conceptual Information Model (Paper 1) and State Models (Section~2), the building blocks of data-flow action models are uniquely and exhaustively determined as \textbf{16 orthogonal geometric operators (morphisms)}, expressed textually via \textbf{New OAL} (an equational formalization referencing BridgePoint xtUML's Object Action Language \cite{mellor2002,xtumlorg}):
+
+\begin{enumerate}[label=\textbf{(\arabic*)}, leftmargin=*]
+    \item \textbf{Create Object Instance:}
+    Takes a conceptual class keyletter $A \in \mathcal{K}$ and optional initial property values ($v_i \in \mathcal{F}(T_i)$), outputting a newly instantiated reference $\mathrm{Ref}(A)$ (New OAL: \texttt{CREATE INSTANCE uniqueRef OF ClassKL [PropA: valueA, ...];}).
+    Category-theoretically, this is a pushout from the initial object $0$ producing a provisional functor $\mathcal{F}'(A) = \mathcal{F}(A) \sqcup \{a_{\mathrm{new}}\}$, simultaneously fixing $\mathcal{F}'(\mathrm{attr}_i)(a_{\mathrm{new}}) = v_i$ (or topos default values) and enforcing injectivity of the persistent identifier $\mathcal{F}'(\alpha_I) : \mathcal{F}'(A) \hookrightarrow \prod_{i \in I} \mathcal{F}'(T_i)$ (monomorphism).
+
+    \item \textbf{Delete Object Instance:}
+    Takes a single instance reference $\mathrm{Ref}(A)$ and terminates into the terminal object $1$ (\texttt{DELETE INSTANCE uniqueRef;}).
+    Category-theoretically, this is a local copushout $\mathcal{F}'(A) = \mathcal{F}(A) \setminus \{a\}$ pushing all incident link morphisms of $a$ into empty space ($\mathcal{F}'(r)(a) = \emptyset$). Transient dangling links resulting immediately after deletion are permitted mid-action and checked globally upon state commitment.
+
+    \item \textbf{Read Property:}
+    Takes $\mathrm{Ref}(A)$ and an attribute morphism $\mathrm{attr} : A \to T$ ($T \in \Dstatic$), outputting a single element of $\mathcal{F}(T)$ (\texttt{valueContainer = uniqueRef.PropA;}).
+    Category-theoretically, this is a state-preserving projection $\mathrm{read} : \mathcal{F}(A) \to \mathcal{F}(T)$ ($a \mapsto \mathcal{F}(\mathrm{attr})(a)$) whose sort compatibility is guaranteed functorially.
+
+    \item \textbf{Update Property / Assign:}
+    Takes $\mathrm{Ref}(A)$, $\mathrm{attr} : A \to T$, and $v_{\mathrm{new}} \in \mathcal{F}(T)$, terminating into $1$ (\texttt{ASSIGN uniqueRef.PropA = valueExpression;}). Direct assignment to referential properties ($\Dref$) is syntactically prohibited.
+    Category-theoretically, via the state-update monad $\mathcal{T}_P$ \cite{moggi1991}, this updates $\mathcal{F}'(\mathrm{attr})(a) = v_{\mathrm{new}}$. If $v_{\mathrm{new}}$ violates subobject boundaries $m : T_{\mathrm{sub}} \hookrightarrow T$ (range or enumeration bounds), a type guard immediately collapses the morphism into the initial object $0$.
+    \item \textbf{Relate:}
+    Takes two instance references $\mathrm{Ref}(A),\, \mathrm{Ref}(B)$ (plus $\mathrm{Ref}(R)$ for associative classes) and a relationship specification, terminating into $1$ (\texttt{relate a to b across R1.'phrase';} / \texttt{using assocInst;}).
+    Category-theoretically, it enforces topological constraints: (i) \textbf{Binary:} $\mathcal{F}'(r^{\rightarrow})(a) = b \iff \mathcal{F}'(r^{\leftarrow})(b) = a$; (ii) \textbf{\texttt{Is-a}:} coproduct inclusion $\mathcal{F}'(\iota_i)(c) = s$; (iii) \textbf{Associative:} span monicity $\mathcal{F}'(\langle p_A, p_B \rangle) : \mathcal{F}'(R) \hookrightarrow \mathcal{F}'(A) \times \mathcal{F}'(B)$. Sort mismatches or monicity violations collapse immediately into $0$; multiplicity constraints are verified upon state commitment.
+
+    \item \textbf{Unrelate:}
+    Takes $\mathrm{Ref}(A),\, \mathrm{Ref}(B)$ (and optionally $\mathrm{Ref}(R)$) and terminates into $1$ (\texttt{unrelate a from b across R1.'phrase';}).
+    Category-theoretically, it removes the link from the morphism graph ($b \notin \mathcal{F}'(r^{\rightarrow})(a) \iff a \notin \mathcal{F}'(r^{\leftarrow})(b)$), remaining strictly orthogonal to deleting the associative instance itself.
+
+    \item \textbf{Select From Instances Of:}
+    Takes class $A \in \mathcal{K}$ and a \texttt{WHERE} predicate, outputting $\mathrm{Ref}(A)$ (\texttt{ANY}) or an unordered set $\mathrm{Set}(A)$ (\texttt{MANY}) (\texttt{select any dest from ClassKL where condition;} / \texttt{select many destSet ...}).
+    Category-theoretically, this is a pullback along the characteristic predicate $\chi : \mathcal{F}(A) \to \Omega$ yielding $A_{\mathrm{sub}} = \{a \in \mathcal{F}(A) \mid \chi(a) = \mathrm{True}\}$. For \texttt{ANY}, if $A_{\mathrm{sub}} = \emptyset$, textual syntax holds \texttt{NULL}, whereas in data-flow geometry the output wire vanishes into $1$, cutting off downstream dependent computations.
+
+    \item \textbf{Select Related By:}
+    Takes a starting reference $\mathrm{Ref}(S)$ and a multi-hop phrased relationship path equipped with per-hop local \texttt{WHERE} filters (using keyword \texttt{TARGET}) and fixed-point modifiers (\texttt{flux} / \texttt{root} / \texttt{leaf}), outputting $\mathrm{Ref}(A)$ (\texttt{ONE} / \texttt{ANY}) or $\mathrm{Set}(A)$ (\texttt{MANY}).
+    Category-theoretically, this is a composite global pullback morphism
+    \begin{equation}
+    \mathrm{navigate}_{\mathrm{multi}} = \mathcal{F}(r_n \ \text{restricted by} \ \chi_n) \circ \dots \circ \mathcal{F}(r_1 \ \text{restricted by} \ \chi_1)
+    \end{equation}
+    augmented by transitive-closure fixed-point/colimit operators: \textbf{\texttt{flux}} (maximal terminal element in forward traversal), \textbf{\texttt{root}} (minimal initial element in reverse traversal), and \textbf{\texttt{leaf}} (all terminal leaf nodes lacking outgoing child arrows as $\mathrm{Set}(A)$). For \texttt{ONE}, absence of a target violates multiplicity \texttt{1} and collapses immediately into $0$.
+
+    \item \textbf{Variable Assignment (Data-Flow Wire Creation):}
+    Takes an evaluated resource of any admissible type ($\Dstatic$, $\mathrm{Ref}(A)$, or $\mathrm{Set}(A)$) and binds it to a named solid data-flow wire (\texttt{assign varName = expr;}).
+    Category-theoretically, rather than destructive memory mutation, this binds a unique static single-assignment (SSA) identifier to a live data-flow wire. Any sort mismatch between left-hand and right-hand sides immediately collapses the morphism into $0$.
+
+    \item \textbf{Arithmetic Operation:}
+    Binary (\texttt{+}, \texttt{-}, \texttt{*}, \texttt{/}, \texttt{\%}) or unary (\texttt{cardinality}, unary \texttt{-}) operators taking tensered input wires ($\otimes$) and outputting a single result wire.
+    Category-theoretically: (i) mixed integer ($\mathbb{Z}$) and real ($\mathbb{R}$) operands promote via inclusion adjunction to $\mathbb{R}$; (ii) \textbf{division by zero} collapses immediately into $0$ via pullback failure, proving the action specification itself invalid; (iii) modulo (\texttt{\%}) is restricted to $\mathbb{Z}$ and governed by Euclidean division $a = b \times q + r$ ($0 \le r < \lvert b \rvert$); and (iv) string concatenation (\texttt{+}) and affine time algebra ($\mathrm{DateTime} - \mathrm{DateTime} \to \mathrm{TimeSpan}$, $\mathrm{DateTime} \pm \mathrm{TimeSpan} \to \mathrm{DateTime}$, $\mathrm{TimeSpan} \pm \mathrm{TimeSpan} \to \mathrm{TimeSpan}$) map to external entity functions, whereas invalid combinations (e.g., $\mathrm{DateTime} + \mathrm{DateTime}$) collapse immediately into $0$.
+
+    \item \textbf{Logical Evaluation:}
+    Same-sort comparisons (\texttt{==}, \texttt{!=}, \texttt{<}, \texttt{<=}, \texttt{>}, \texttt{>=}) or boolean algebra (\texttt{and}, \texttt{or}, \texttt{not}) outputting an element of the subobject classifier $\Omega = \{\mathrm{True}, \mathrm{False}\}$.
+    Category-theoretically, string lexicographical order and datetime chronological order map to external entity functions; boolean connectives evaluate via meet ($\wedge$), join ($\vee$), and complement ($\neg$) in $\Omega$. Cross-sort comparisons collapse immediately into $0$ on par with division by zero.
+
+    \item \textbf{Internal Logical Selection (\texttt{If / Else If / Else}):}
+    Takes a boolean guard ($\Omega$) and incoming data wires $X$, routing through branch morphisms ($f, g, h$) into a merged target space $Y$.
+    Category-theoretically, rather than imperative control jumps, this partitions $X$ into an exclusive coproduct $X \to X_{\mathrm{cond0}} \amalg X_{\mathrm{cond1}} \amalg X_{\mathrm{else}}$ followed by the universal copairing morphism $[f, g, h] : X_{\mathrm{cond0}} \amalg X_{\mathrm{cond1}} \amalg X_{\mathrm{else}} \to Y$. Under linear-logic resource flow, unselected branches receive zero resource energy ($0$) and attenuate silently without firing side effects.
+
+    \item \textbf{Set-Wide Concurrent Evaluation (\texttt{For Each Loop}):}
+    Takes an instance set $\mathrm{Set}(A)$ and an inner action morphism $f$, evaluating across all elements (\texttt{for each elem in setVar ... end for;}).
+    Category-theoretically, rather than sequential index iteration, this expands the current finite set $A_{\mathrm{set}} = \{a_1, \dots, a_n\}$ via dynamic colimit $X_{\mathrm{total}} \cong \coprod_{i=1}^n \mathrm{Ref}(a_i)$, spawning $n$ independent, simultaneously executing copies $\coprod_{i=1}^n f_i$. If $A_{\mathrm{set}} = \emptyset$ ($n=0$), total resource energy is $0$ and the block closes silently.
+
+    \item \textbf{Event Generation:}
+    Takes an event label, supplemental data tensor $\bigotimes T_{\mathrm{args}}$, and target ($\mathrm{Ref}(B)$, \texttt{SELF}, class keyletter \texttt{creator}, plus \texttt{TimeSpan} or \texttt{DateTime} for delayed events) (\texttt{generate ... to ... [delay ... | at ...];}).
+    Category-theoretically, this projects an event pulse onto the target instance's local causal poset queue $\mathcal{E}_b = \langle E_b, \le_b \rangle$ \cite{milner1989}. Targeting \texttt{creator} triggers Component~(1) (\texttt{CREATE}) on class $B$; delayed events (\texttt{delay} / \texttt{at}) materialize onto $\mathcal{E}_b$ via pullback upon reaching the boundary condition on $\mathcal{EE}_{\mathrm{Time}}$.
+
+    \item \textbf{Output Flow Termination and Equational Binding (\texttt{Return / Property Assignment}):}
+    Category-theoretically: (a) terminates class functions and domain functions by delivering the converged value to the declared output signature (\texttt{return expr;}), and (b) equationally binds a Mathematical Property upon reference via \texttt{SELF.[PropertyName] = expr;}.
+
+    \item \textbf{External Entity Function Execution:}
+    Maps a tensor product of declared static input types $\bigotimes_{i=1}^n T_{\mathrm{in}, i}$ to at most one static output type $T_{\mathrm{out}}$ or $1$ (\texttt{EE\_KL::funcName(...);}).
+    Category-theoretically, this is an \textbf{opaque (black-box) symmetric monoidal morphism} $f_{\mathcal{EE}} : \bigotimes_{i=1}^n T_{\mathrm{in}, i} \to T_{\mathrm{out}}$ into an autonomous external universe. It cannot inspect or directly mutate the local instance functor $\mathcal{F}_n$ (state invariance), influencing the local domain solely through its output data-flow wire.
+\end{enumerate}
+
+% TikZ String Diagram Styles
+\tikzset{
+    sdbox/.style={draw, rectangle, minimum width=1.45cm, minimum height=0.58cm, font=\scriptsize\ttfamily, inner sep=2pt},
+    sdstate/.style={draw, isosceles triangle, isosceles triangle apex angle=60, shape border rotate=90, minimum width=0.8cm, inner sep=1pt, font=\tiny\ttfamily},
+    sdterm/.style={draw, isosceles triangle, isosceles triangle apex angle=60, shape border rotate=-90, minimum width=0.55cm, inner sep=0.5pt, font=\tiny},
+    sdwire/.style={->, >=Stealth, semithick},
+    sdlbl/.style={font=\tiny\itshape}
+}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.95, transform shape]
+% Row 1: (1) to (4)
+% (1) Create
+\node[sdstate] (c1) at (0, 0) {CREATE};
+\draw[sdwire] (0, 0.95) -- node[right, sdlbl] {$T_{\mathrm{init}}$} (c1.north);
+\draw[sdwire] (c1.south) -- node[right, sdlbl] {$\mathrm{Ref}(A)$} (0, -0.95);
+\node[font=\scriptsize] at (0, -1.3) {\textbf{(1) Create}};
+
+% (2) Delete
+\node[sdbox] (c2) at (3.7, 0.1) {DELETE};
+\draw[sdwire] (3.7, 0.95) -- node[right, sdlbl] {$\mathrm{Ref}(A)$} (c2.north);
+\node[sdterm] (t2) at (3.7, -0.65) {$1$};
+\draw[sdwire] (c2.south) -- (t2.north);
+\node[font=\scriptsize] at (3.7, -1.3) {\textbf{(2) Delete}};
+
+% (3) ReadAttr
+\node[sdbox] (c3) at (7.4, 0) {READ};
+\draw[sdwire] (7.4, 0.95) -- node[right, sdlbl] {$\mathrm{Ref}(A)$} (c3.north);
+\draw[sdwire] (c3.south) -- node[right, sdlbl] {$T$} (7.4, -0.95);
+\node[font=\scriptsize] at (7.4, -1.3) {\textbf{(3) ReadAttr}};
+
+% (4) Assign
+\node[sdbox] (c4) at (11.3, 0.1) {ASSIGN};
+\draw[sdwire] (10.9, 0.95) -- node[left, sdlbl] {$\mathrm{Ref}(A)$} (10.9, 0.39);
+\draw[sdwire] (11.7, 0.95) -- node[right, sdlbl] {$T$} (11.7, 0.39);
+\node[sdterm] (t4) at (11.3, -0.65) {$1$};
+\draw[sdwire] (c4.south) -- (t4.north);
+\node[font=\scriptsize] at (11.3, -1.3) {\textbf{(4) Assign}};
+
+% Row 2: (5) to (8)
+% (5) Relate
+\node[sdbox] (c5) at (0, -2.7) {RELATE};
+\draw[sdwire] (-0.4, -1.85) -- node[left, sdlbl] {$\mathrm{Ref}(A)$} (-0.4, -2.41);
+\draw[sdwire] (0.4, -1.85) -- node[right, sdlbl] {$\mathrm{Ref}(B)$} (0.4, -2.41);
+\node[sdterm] (t5) at (0, -3.45) {$1$};
+\draw[sdwire] (c5.south) -- (t5.north);
+\node[font=\scriptsize] at (0, -4.1) {\textbf{(5) Relate}};
+
+% (6) Unrelate
+\node[sdbox] (c6) at (3.7, -2.7) {UNRELATE};
+\draw[sdwire] (3.3, -1.85) -- node[left, sdlbl] {$\mathrm{Ref}(A)$} (3.3, -2.41);
+\draw[sdwire] (4.1, -1.85) -- node[right, sdlbl] {$\mathrm{Ref}(B)$} (4.1, -2.41);
+\node[sdterm] (t6) at (3.7, -3.45) {$1$};
+\draw[sdwire] (c6.south) -- (t6.north);
+\node[font=\scriptsize] at (3.7, -4.1) {\textbf{(6) Unrelate}};
+
+% (7) Select From
+\node[sdbox] (c7) at (7.4, -2.8) {SELECT};
+\draw[sdwire] (7.4, -1.85) -- node[right, sdlbl] {$\mathcal{F}'(A)$} (c7.north);
+\draw[sdwire] (c7.south) -- node[right, sdlbl] {$\mathrm{Set}(A)$} (7.4, -3.75);
+\node[font=\scriptsize] at (7.4, -4.1) {\textbf{(7) SelectInst}};
+
+% (8) Select Related
+\node[sdbox] (c8) at (11.3, -2.8) {TRAVERSE};
+\draw[sdwire] (11.3, -1.85) -- node[right, sdlbl] {$\mathrm{Ref}(S)$} (c8.north);
+\draw[sdwire] (c8.south) -- node[right, sdlbl] {$\mathrm{Set}(A)$} (11.3, -3.75);
+\node[font=\scriptsize] at (11.3, -4.1) {\textbf{(8) Traverse}};
+\end{tikzpicture}
+\caption{String diagram representations of primitive process components (1)--(8) in $\DF$, showing resource wires, creation triangles, and terminal object ($1$) terminations.}
+\label{fig:primitives-1-8}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.95, transform shape]
+% Row 1: (9) to (12)
+% (9) Wire / SSA
+\node[sdbox] (c9) at (0, 0) {BIND};
+\draw[sdwire] (0, 0.95) -- node[right, sdlbl] {$X$} (c9.north);
+\draw[sdwire] (c9.south) -- node[right, sdlbl] {$X_{\mathrm{var}}$} (0, -0.95);
+\node[font=\scriptsize] at (0, -1.3) {\textbf{(9) AssignWire}};
+
+% (10) Arithmetic
+\node[sdbox] (c10) at (3.7, 0) {ARITH};
+\draw[sdwire] (3.3, 0.95) -- node[left, sdlbl] {$T_1$} (3.3, 0.29);
+\draw[sdwire] (4.1, 0.95) -- node[right, sdlbl] {$T_2$} (4.1, 0.29);
+\draw[sdwire] (c10.south) -- node[right, sdlbl] {$T_{\mathrm{out}}$} (3.7, -0.95);
+\node[font=\scriptsize] at (3.7, -1.3) {\textbf{(10) Arithmetic}};
+
+% (11) Logic Eval
+\node[sdbox] (c11) at (7.4, 0) {EVAL};
+\draw[sdwire] (7.0, 0.95) -- node[left, sdlbl] {$T_1$} (7.0, 0.29);
+\draw[sdwire] (7.8, 0.95) -- node[right, sdlbl] {$T_2$} (7.8, 0.29);
+\draw[sdwire] (c11.south) -- node[right, sdlbl] {$\Omega$} (7.4, -0.95);
+\node[font=\scriptsize] at (7.4, -1.3) {\textbf{(11) LogicEval}};
+
+% (12) Branch / Coproduct
+\node[sdbox] (c12) at (11.3, 0) {BRANCH};
+\draw[sdwire] (10.9, 0.95) -- node[left, sdlbl] {$\Omega$} (10.9, 0.29);
+\draw[sdwire] (11.7, 0.95) -- node[right, sdlbl] {$X$} (11.7, 0.29);
+\draw[sdwire] (10.9, -0.29) -- node[left, sdlbl] {$X_{\mathrm{T}}$} (10.9, -0.95);
+\draw[sdwire] (11.7, -0.29) -- node[right, sdlbl] {$X_{\mathrm{F}}$} (11.7, -0.95);
+\node[font=\scriptsize] at (11.3, -1.3) {\textbf{(12) If-Else ($\amalg$)}};
+
+% Row 2: (13) to (16)
+% (13) For Each
+\node[sdbox] (c13) at (0, -2.7) {MAP $\coprod f_i$};
+\draw[sdwire] (0, -1.85) -- node[right, sdlbl] {$\mathrm{Set}(A)$} (c13.north);
+\node[sdterm] (t13) at (0, -3.45) {$1$};
+\draw[sdwire] (c13.south) -- (t13.north);
+\node[font=\scriptsize] at (0, -4.1) {\textbf{(13) ForEach}};
+
+% (14) Event Gen
+\node[sdbox] (c14) at (3.7, -2.7) {GENERATE};
+\draw[sdwire] (3.3, -1.85) -- node[left, sdlbl] {$\mathbf{d}$} (3.3, -2.41);
+\draw[sdwire] (4.1, -1.85) -- node[right, sdlbl] {$\mathrm{Ref}(B)$} (4.1, -2.41);
+\node[sdterm] (t14) at (3.7, -3.45) {$1$};
+\draw[sdwire] (c14.south) -- (t14.north);
+\node[font=\scriptsize] at (3.7, -4.1) {\textbf{(14) EventGen}};
+
+% (15) Return / Prop
+\node[sdbox] (c15) at (7.4, -2.8) {RETURN};
+\draw[sdwire] (7.4, -1.85) -- node[right, sdlbl] {$T_{\mathrm{out}}$} (c15.north);
+\draw[sdwire] (c15.south) -- node[right, sdlbl] {$\partial_{\mathrm{out}}$} (7.4, -3.75);
+\node[font=\scriptsize] at (7.4, -4.1) {\textbf{(15) Return/Eq}};
+
+% (16) External Entity
+\node[sdbox, fill=gray!12] (c16) at (11.3, -2.8) {EE\_FUNC};
+\draw[sdwire] (11.3, -1.85) -- node[right, sdlbl] {$\bigotimes T_{\mathrm{in}}$} (c16.north);
+\draw[sdwire] (c16.south) -- node[right, sdlbl] {$T_{\mathrm{out}}$} (11.3, -3.75);
+\node[font=\scriptsize] at (11.3, -4.1) {\textbf{(16) ExtEntity}};
+\end{tikzpicture}
+
+\caption{String diagram representations of primitive process components (9)--(16) in $\DF$, including coproduct branching ($\amalg$), colimit expansion ($\coprod$), and opaque external entity morphisms (shaded).}
+\label{fig:primitives-9-16}
+\end{figure}
+
+\subsection{Standard External Entities (\texttt{STR}, \texttt{TIM}) and the Principle of Transient Evaluation and Two-Stage Consistency}
+Because strings and timestamps are ubiquitous across virtually all Fields of Sense, two standard external entities are built into the base action language:
+\begin{enumerate}
+    \item \textbf{String External Entity (\texttt{STR}: $\mathcal{EE}_{\mathrm{String}}$):} Provides equality (\texttt{equal}, \texttt{not\_equal}), lexicographical ordering (\texttt{compare}), concatenation (\texttt{concat}), substring extraction (\texttt{substring}), pattern search (\texttt{index\_of}), replacement (\texttt{replace}), and length measurement (\texttt{length}) over the free monoid $\Sigma^*$.
+    \item \textbf{Datetime External Entity (\texttt{TIM}: $\mathcal{EE}_{\mathrm{Time}}$):} Provides affine time algebra (\texttt{duration}, \texttt{add\_span}, \texttt{subtract\_span}, \texttt{combine\_span}) between time points (\texttt{DATETIME}) and duration vectors (\texttt{TIMESPAN}), chronological ordering (\texttt{compare}), and calendar synthesis/extraction (\texttt{create\_datetime}, \texttt{get\_year} through \texttt{get\_microsecond}), where out-of-bounds calendar values collapse immediately into $0$ on par with division by zero.
+\end{enumerate}
+
+\begin{axiom}[Orthogonal Independence, Evaluation of Transient States, and Two-Stage Consistency Verification]\label{ax:transient}
+The 16 primitive process components defined above are mutually orthogonal, independent geometric operators containing no internal pre-validation logic. Execution of an entry action (or domain function) progresses as a \textbf{chain of provisional/transient instance functors ($\mathcal{F}_n \to \mathcal{F}' \to \mathcal{F}'' \to \cdots \to \mathcal{F}_{n+1}$)} governed globally by three topological rules:
+\begin{enumerate}
+    \item \textbf{Reference to the Current Transient State Functor $\mathcal{F}'$:} Primitive process components that consume the state of the Field of Sense as input data flow (e.g., (3)~\texttt{ReadAttr}, (7)~\texttt{Select From Instances}, (8)~\texttt{Select Related By}) evaluate not against a frozen initial snapshot $\mathcal{F}_n$, but against \textbf{the exact transient instance functor $\mathcal{F}'$ produced by preceding operations at the moment the component fires}. Consequently, mid-execution within an active transition's entry action, static constraints of the Conceptual Information Model (CIM) may be temporarily violated (such as transient dangling links or unsatisfied multiplicities immediately after \texttt{DELETE} or \texttt{UNRELATE}), and those transient values are directly observed and utilized.
+    \item \textbf{Immediate Type-Guard Collapse (Local Singularities):} Division by zero, out-of-bounds values on range-restricted types, cross-sort comparisons, missing targets on multiplicity-\texttt{1} traversals (\texttt{select one}), and duplicate span-monomorphism bindings on associative classes immediately render composition impossible, collapsing into the initial object $0$.
+    \item \textbf{Global Consistency at State Commitment:} Temporary CIM constraint violations in transient states $\mathcal{F}'$ are legitimately permitted mid-action; a transition commits validly if and only if the final functor upon action completion satisfies $\mathcal{F}_{n+1} \in \Valid(\mathcal{C})$ (as well as global requirement norms addressed in Paper 3).
+\end{enumerate}
+\end{axiom}
+
+\begin{remark}[Representability of Transient Inconsistencies, Resource Contention, and Deadlocks]\label{rem:deadlocks}
+Conventional software engineering methodologies attempt to hide intermediate inconsistencies and resource-contention deadlocks behind idealized transaction abstractions and encapsulation. In the real world---whether in human business processes or physical interactions---transient states in which structural constraints are temporarily broken, as well as resource contention leading to deadlocks, are commonplace. By explicitly admitting sequential evaluation over transient functors $\mathcal{F}'$ and collapse singularities ($0$), this formalism enables modelers to specify and analyze transient inconsistencies, resource contention, and deadlocks without concealment. Furthermore, because potential deadlocks and singularity paths are explicitly representable within the model, modelers can systematically identify those conditions and specify \textbf{sound, deadlock-free models within the exact same formalism} via state partitioning and arbitration aspects.
+\end{remark}
+
+\subsection{Homotopical Closure of the Symmetric Monoidal Category $\DF$ and Domain Functions}
+
+\begin{theorem}[Syntax--Semantics Isomorphism and Homotopical Symmetric Monoidal Closure]\label{thm:monoidal-closure}
+There exists a natural categorical equivalence (syntax--semantics isomorphism) between valid New OAL textual programs (quotiented by $\alpha$-equivalence and commutation of independent statements) and acyclic string diagrams (DAGs) formed by sequential composition ($\circ$) and linear-logic tensor products ($\otimes$) of the 16 primitive process components \cite{joyal1991,coecke2017}. By the Joyal--Street coherence theorem, any continuous deformation (isotopy/homotopy) preserving causal data dependencies belongs to the same equivalence class, and every action execution terminates in finitely many steps to commit a unique resulting state $\mathcal{F}_{n+1}$.
+\end{theorem}
+
+\begin{definition}[Domain Functions as Boundary Composite Morphisms and Bridge Interfaces]\label{def:domain-function}
+The fourth scope of action models, a \textbf{Domain Function}, belongs to no specific state transition; rather, it is a boundary composite morphism constructed solely from the 16 primitive components under the DAG rules of $\DF$ whose external signature is closed entirely over static data types ($\Dstatic$):
+\begin{equation}
+F_{\mathrm{dom}} : \bigotimes_{i=1}^p T_{\mathrm{in}, i} \longrightarrow \bigotimes_{j=1}^q T_{\mathrm{out}, j} \qquad (T_{\mathrm{in}, i},\, T_{\mathrm{out}, j} \in \Dstatic).
+\end{equation}
+(Invocation-only ports with no input wires correspond to $p=0$, i.e., morphisms from the monoidal unit $I \to \bigotimes_{j=1}^q T_{\mathrm{out}, j}$, whereas state-updating ports returning no value correspond to $q=0$, i.e., morphisms $\bigotimes_{i=1}^p T_{\mathrm{in}, i} \to I$.) Fundamentally, a domain function is a pure bundle of input and output data-flow wires in a symmetric monoidal category, referred to conventionally as ``input parameters'' and ``return values'' when written in textual New OAL syntax. To preserve the autonomy and logical closure of each Field of Sense, coexisting Fields of Sense cannot directly manipulate one another's internal conceptual classes; instead, \textbf{public events} and \textbf{domain functions} serve as the sole formal connection ports for Bridges (Paper 0) and cross-domain Transformations (Paper 3).
+\end{definition}
+
+\begin{remark}[Formal Characterization of Domain Function Outputs as the ``Intension'' of State]\label{rem:dom-intension}
+As established in Paper 0 \cite{ota2026paper0}, the Universe contains no privileged ``external space'' overarching all Fields of Sense; multiple Fields of Sense coexist on an equal, flat footing. Accordingly, the output data flow ($\bigotimes_{j=1}^q T_{\mathrm{out}, j}$) of a domain function $F_{\mathrm{dom}}$ represents not the view of a transcendent external observer, but \textbf{the formal image obtained by projecting the current state $\mathcal{F}_n \in \Valid(\mathcal{C})$ into static data-type space while forgetting internal conceptual classes and relational links---that is, the ``Intension'' of state formalized in Paper 0}. Because coexisting Fields of Sense cannot inspect one another's internal schemas, only these formal intensional projections (via domain functions and public events) act as bridge interfaces, and in accordance with Paper 0's epistemological limitation theorem, the full internal instance state cannot in general be uniquely inverted from these projected outputs alone.
+\end{remark}
+
+\section{Universal Execution Semantics and Boundary-Condition Aspects}
+
+\subsection{Execution Semantics via Reference to Form ($\Cform$) Independent of Domain Content}
+Paper 1 established the formal specification for static semantic structure (the Conceptual Information Model), and Sections~2 and~3 of the present paper established the formal specification for dynamic state evolution (State Models and Data-Flow Action Models). Yet no matter how rigorously static and dynamic models are specified, they remain inert unless accompanied by constraints governing how they behave---that is, under what causal order, priority rules, and boundary conditions they execute.
+
+A foundational principle derived in this framework is that \textbf{Execution Semantics can be defined universally and uniquely upon the abstract structural form itself (Meta-Form) of the conceptual information model, state model, and action model, without inspecting the concrete domain semantics of any individual Field of Sense} (whether accounting, logistics, embedded control, or physical phenomena).
+
+\begin{definition}[Form Category $\Cform$ and the Four Axioms of Universal Execution Semantics]\label{def:exec-sem}
+Let \textbf{the Form Category $\Cform$} denote the canonical structural meta-form shared by every domain model $\mathcal{M} = (\mathcal{C}, \{M_A\}_{A \in \mathcal{K}}, \DF)$---comprising conceptual classes, monic identifiers, four multiplicities, state transition tables, acyclic DAG actions, and proper-time event queues. \textbf{Universal Execution Semantics} independent of domain content is uniquely defined as a natural state-transition functor $\mathcal{E}_{\mathrm{exec}}$ over $\Cform$ governed by four axioms:
+\begin{enumerate}
+    \item \textbf{Axiom E-1 (Run-to-Completion Atomicity):} When a single event $e$ is dequeued from an instance $a \in \mathcal{F}_n(A)$'s proper-time queue to trigger transition $s \xrightarrow{e} s'$, the entire DAG evaluation of the entry action $\mathcal{A}_{s'}$ attached to target state $s'$ (together with any invoked mathematical properties or class functions) executes as an \textbf{indivisible atomic step} free from external interruption. Intermediate transient functors $\mathcal{F}'$ (such as dangling states immediately after \texttt{delete} or \texttt{unrelate}) are never externally committed; only the final functor $\mathcal{F}_{n+1}$ upon action completion is established as the valid next state.
+    \item \textbf{Axiom E-2 (Self-Event Priority: Preservation of Local Proper Time):} Among multiple events generated (\texttt{generate}) during the execution of entry action $\mathcal{A}_{s'}$, events addressed by instance $a$ \textbf{to itself (\texttt{to SELF})} are always processed prior to external events addressed to other instances (\texttt{to uniqueRef} / \texttt{to creator}), ensuring that local causality along each individual entity's worldline is strictly preserved.
+    \item \textbf{Axiom E-3 (FIFO Ordering and Parallel Commutativity of Asynchronous Events):} External events transmitted between distinct instances strictly preserve emission order (FIFO partial order $\le_b$) along any path from a given sender instance to a given receiver instance. Conversely, event processing across independent instances exchanging no causal signals is spacelike-separated and invariant under any parallel or interleaved execution schedule via the symmetry isomorphism ($\otimes$) of $\DF$.
+    \item \textbf{Axiom E-4 (Pullback Coupling of Boundary-Condition Aspects):} Timer events supplied by external entity $\mathcal{EE}_{\mathrm{Time}}$ (timer expirations, periodic triggers) as well as non-functional execution constraints (synchronization, mutual exclusion locks, transaction boundaries, numerical precision) are applied orthogonally across the entire model form---without polluting first-class domain classes---via the \textbf{pullback (fiber product)} with an aspect category $\mathcal{V}$ over $\Cform$:
+    \begin{equation}
+    \mathcal{M}_{\mathrm{exec}} \equiv \mathcal{M} \times_{\Cform} \mathcal{V}.
+    \end{equation}
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[Universal Execution Semantics Theorem]\label{thm:univ-exec}
+For any domain model $\mathcal{M}$ conforming to the axioms of Paper 1 (quotient 2-category $\mathcal{C}$) and Sections~2--3 of the present paper, the execution semantics $\mathcal{E}_{\mathrm{exec}}$ defined by the four axioms of Definition~\ref{def:exec-sem} induces a \textbf{unique, deterministic state-transition system (up to parallel commutation equivalence) $\Valid(\mathcal{C}) \Rightarrow \Valid(\mathcal{C}) \sqcup \{0\}$ solely from the abstract model form}, without referencing domain-specific business rules or physical laws.
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+Static structures are fully typed via monic identifiers and seven closed data types, while dynamic structures reduce to finite state transition tables (STTs) and acyclic string diagrams (DAGs). Axiom~E-1 fixes the input--output boundary of each transition step; Theorem~\ref{thm:monoidal-closure} (DAG acyclicity) guarantees finite-step termination; Axioms~E-2 and~E-3 uniquely determine the causal partial order of event queues; and the fiber product $\mathcal{M} \times_{\Cform} \mathcal{V}$ in Axiom~E-4 functorially composes external boundary conditions. Hence, a universal execution semantics is uniquely determined independent of domain content.
+\end{proof}
+
+\subsection{Dynamic Preservation of Invariants and Collapse / Phase Transitions at Singularities}
+When a model evolves under Universal Execution Semantics $\mathcal{E}_{\mathrm{exec}}$, its execution trajectories partition strictly into ``regular trajectories'' that preserve all consistency constraints of $\mathcal{C}$ and ``singular trajectories'' that reach a collapse boundary ($0$).
+
+\begin{definition}[Regular Trajectories and Singular Trajectories]\label{def:trajectories}
+For an event-driven execution sequence $\mathcal{F}_0 \xrightarrow{e_1} \mathcal{F}_1 \xrightarrow{e_2} \cdots \xrightarrow{e_n} \mathcal{F}_n$ starting from $\mathcal{F}_0 \in \Valid(\mathcal{C})$:
+\begin{itemize}
+    \item \textbf{Regular Trajectory:} An execution path along which no \texttt{Can't Happen} transition, no immediate type-guard collapse (division by zero, subobject boundary violation, span monicity breach), and no global consistency violation at state commitment ever occurs.
+    \item \textbf{Singular Trajectory:} An execution path that encounters any of the above prohibited conditions at some step $k$, collapsing the state functor into the initial object $0$ (empty space) of the internal topos logic.
+\end{itemize}
+\end{definition}
+
+\begin{theorem}[Dynamic Preservation of Invariants]\label{thm:inv-pres}
+Along any regular execution trajectory, if the pre-transition state $\mathcal{F}_n$ satisfies all axioms and constraints of the static schema category $\mathcal{C}$ ($\mathcal{F}_n \in \Valid(\mathcal{C})$), then the post-transition state $\mathcal{F}_{n+1}$ committed after any event arrival and subsequent completion of entry action $\mathcal{A}_{s'}$ \textbf{necessarily preserves 100\% of the static invariants of $\mathcal{C}$} (identifier injectivity, four multiplicities, referential commutativity, \texttt{Is-a} coproduct exclusivity, associative span monicity, and prohibition of diagonal self-loops):
+\begin{equation}
+\mathcal{F}_n \in \Valid(\mathcal{C}) \quad \Longrightarrow \quad \mathcal{F}_{n+1} \in \Valid(\mathcal{C}).
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+Each entry action $\mathcal{A}_{s'}$ is a finite DAG composition of the 16 primitive components of Section~3. Components~(1) (\texttt{CREATE}) and~(4) (\texttt{ASSIGN}) enforce identifier monicity (Axiom~C-1) and subobject range bounds via immediate type guards, while Component~(5) (\texttt{RELATE}) enforces associative span monicity (Axiom~C-2) and coproduct inclusion (Axiom~C-3). Any temporary multiplicity deficits or dangling links arising mid-action after (2) (\texttt{DELETE}) or (6) (\texttt{UNRELATE}) are evaluated globally upon action completion against the pullback conditions of $\mathcal{C} \equiv CG/\mathcal{R}$ under Axiom~E-1 and Axiom~\ref{ax:transient}. Because a regular trajectory by definition avoids collapse into $0$ at state commitment, $\mathcal{F}_{n+1}$ automatically satisfies all structure-preserving conditions of $\Valid(\mathcal{C})$.
+\end{proof}
+
+\begin{corollary}[Unified Account of Business Breakdowns and Physical Phase Transitions at Singularities]\label{cor:singularities}
+Conversely, when an execution trajectory reaches a singularity (initial object $0$), this represents not a crash of an execution engine, but the \textbf{mathematical manifestation that the system has reached the critical boundary of the ``constitution'' (conditions of possibility) defined by $\mathcal{C}$ and its state model, beyond which that Field of Sense can no longer subsist without contradiction}:
+\begin{itemize}
+    \item \textbf{Commercial and Organizational Domains:} When an operational business or software model harboring latent specification oversights (unhandled \texttt{Can't Happen} transitions, unguarded division by zero, or missing mandatory links) encounters the critical event sequence, its operational order loses consistency and suffers organizational or system breakdown.
+    \item \textbf{Natural and Physical Domains:} In physical Fields of Sense, when state variables reach a singularity of their governing equations (critical temperature, critical pressure, or an event horizon), the description under schema category $\mathcal{C}_1$ collapses to $0$, and the system undergoes a \textbf{phase transition} into a distinct Field of Sense governed by a new schema category $\mathcal{C}_2$ (such as boiling from liquid to gas or transitioning to superconductivity).
+\end{itemize}
+\end{corollary}
+
+\section{Meta-Theorems of Dynamic Modeling, Discrete Representation of Continuous Dynamics, and Isomorphism with Physical Field Theories}
+
+Sections~2--4 formalized causal state transitions and dynamic behavior over a static schema category $\mathcal{C}$ in terms of typed events (including supplemental data), universal instance state machines, active/final states and singularities (\texttt{Can't Happen}), acyclic string diagrams (the symmetric monoidal category $\DF$) built from 16 primitive process components alongside formal New OAL textual syntax, boundary composite morphisms (\textbf{Domain Functions}), and Universal Execution Semantics defined over $\Cform$.
+
+In this section, I prove the four dynamic meta-theorems in exact symmetry with the static theorems of Paper 1 (\textbf{Dynamic Expressive Completeness, Constructive Existence and Homotopical Monoidal Closure, Dynamic Isomorphism, and Dynamic Asymptotic Convergence}), followed by the \textbf{Discrete Representation Theorem for Continuous Dynamics} and the \textbf{Isomorphism Theorem with Physical Field Theories}.
+
+\subsection{Dynamic Expressive Completeness Theorem}
+
+\begin{theorem}[Expressive Completeness of the Dynamic Modeling Formalism]\label{thm:dyn-comp}
+Any computable (Turing-complete) and causal state-transition system defined over the valid state space $\Valid(\mathcal{C})$ of a static schema category $\mathcal{C}$ is adequately representable using solely the minimal primitives of this framework---namely: (1) finite state machines (STTs) bound to conceptual classes, (2) creation, instance, and timer events typed by $\Dstatic$ (with supplemental data), (3) acyclic string diagrams (in $\DF$) composed of the 16 primitive process components, and (4) Universal Execution Semantics.
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+By the Church--Turing thesis and equivalence with Minsky register machines, arbitrary algorithmic and discrete-event dynamics are spanned by: (a) finite state memory and branching, (b) unbounded dynamic allocation and release of structured relational state, and (c) conditional iteration. Within this formalism, (a) is realized by the exclusive coproduct state space $\Sigma_A$ and logical selection~(12), (b) is realized by instance creation~(1), deletion~(2), link binding~(5), and unbinding~(6), and (c) arbitrary iteration or recursion is realized via asynchronous self-events~(14) (\texttt{generate ... to SELF}) driving state-machine transition cycles while keeping every individual action DAG strictly acyclic. Thus, no additional control primitives are required.
+\end{proof}
+
+\subsection{Dynamic Consistency and Homotopical Monoidal Closure Theorem}
+
+\begin{theorem}[Constructive Existence and Homotopical Monoidal Closure of Dynamic Models]\label{thm:dyn-exist}
+For any dynamic model $\mathcal{M} = (\mathcal{C}, \{M_A\}, \DF, \mathcal{E}_{\mathrm{exec}})$ satisfying the axioms of Sections~2--4, there constructively exists a non-empty regular execution trajectory ($\mathcal{F}_0 \to \mathcal{F}_1 \to \cdots$ avoiding the initial object $0$) preserving all static schema invariants at every regular step ($\mathcal{F}_n \in \Valid(\mathcal{C}) \implies \mathcal{F}_{n+1} \in \Valid(\mathcal{C})$). Moreover, the space of dynamic behaviors closes as a \textbf{homotopically closed symmetric monoidal category} under string-diagram isotopy and parallel commutation.
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+By Paper 1 (Theorem~5.2), a non-trivial valid initial state $\mathcal{F}_0 \in \Valid(\mathcal{C})$ exists constructively. Assigning each instance to an active state in $\Sigma_A^{\mathrm{active}}$ and mapping incoming events to \texttt{Ignore} (identity) or invariant-preserving \texttt{WriteAttr}/\texttt{Relate} DAGs yields a well-formed regular trajectory $\mathcal{F}_0 \to \mathcal{F}_0 \to \cdots$. By Theorem~\ref{thm:monoidal-closure} and Axiom~E-3, reordering independent parallel events across spacelike-separated instances forms commuting diamond diagrams (homotopy equivalences) converging to an identical state $\mathcal{F}_{n+1}$.
+\end{proof}
+
+\subsection{Dynamic Isomorphism Theorem}
+
+\begin{definition}[Dynamic Adequacy and Observational Equivalence]\label{def:dyn-adeq}
+Let $\mathcal{T}_{\mathcal{SYS}}$ denote the space of valid state-transition trajectories of a target Field of Sense $\mathcal{SYS}$. A dynamic model $\mathcal{M}$ \textbf{adequately represents} $\mathcal{SYS}$ if the space of regular trajectories (and singularity boundaries) generated under Universal Execution Semantics $\mathcal{E}_{\mathrm{exec}}$ stands in natural bijection with $\mathcal{T}_{\mathcal{SYS}}$, preserving the truth valuation of all meaningful propositions at every transition step.
+\end{definition}
+
+\begin{theorem}[Dynamic Isomorphism Theorem: Uniqueness up to Monoidal Equivalence]\label{thm:dyn-iso}
+Any two dynamic models $\mathcal{M}_1$ and $\mathcal{M}_2$ that adequately represent the same Field of Sense $\mathcal{SYS}$ are \textbf{categorically equivalent as symmetric monoidal state-transition systems ($\mathcal{M}_1 \simeq \mathcal{M}_2$)}, regardless of representational variations (e.g., Mealy transition actions vs.\ Moore normal form, state granularity, visual string diagrams vs.\ New OAL text syntax, or natural-language labels).
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+By Paper 1 (Theorem~5.3), $\mathcal{C}_1 \simeq \mathcal{C}_2$ and $\Valid(\mathcal{C}_1) \simeq \Valid(\mathcal{C}_2)$. Any Mealy-style model attaching actions to transition arrows converts isomorphically into Moore normal form via coproduct splitting of states indexed by incoming event--target pairs, while diagrammatic and textual equivalence holds by Theorem~\ref{thm:monoidal-closure}. By universality of minimal realization for observationally equivalent transition systems, $\mathcal{M}_1$ and $\mathcal{M}_2$ are monoidally equivalent.
+\end{proof}
+
+\subsection{Dynamic Asymptotic Convergence Theorem}
+
+\begin{theorem}[Asymptotic Convergence of Dynamics under Cognitive Finitude]\label{thm:dyn-conv}
+Let $\mathcal{M}^*$ be the true dynamic model of a Field of Sense $\mathcal{SYS}$, and let $\mathcal{M}^{(0)} \to \mathcal{M}^{(1)} \to \cdots \to \mathcal{M}^{(n)} \to \cdots$ be a sequence of approximate dynamic models generated by a finite modeler via abductive refinement---specifically: (1) exclusive state partitioning (refining undifferentiated states in $\Sigma_A$ upon observing unexpected \texttt{Can't Happen} singularities, operational breakdowns, or deadlocks), and (2) decomposing monolithic conditional actions into pure functions, state-mutation DAGs, and arbitration aspects. Then spurious transitions and excess singularity regions contract monotonically, and in the inductive limit the sequence converges up to symmetric monoidal equivalence to the true model ($\varinjlim \mathcal{M}^{(n)} \simeq \mathcal{M}^*$).
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+Exclusive state partitioning is the causal dual of static subclassing $\mathcal{R}_{\mathrm{sub}}$ (Paper 1, Theorem~5.4), monotonically pruning spurious transition trajectories. Since every action morphism decomposes into a finite DAG of primitive generators, the Yoneda Lemma and Density Theorem guarantee that colimits of representable approximations uniquely recover the true transition functor and monoidal category $\DF^*$ in the limit.
+\end{proof}
+
+\begin{remark}[Faithful Simulation as Scientific Validation of Abductive Models]\label{rem:simulation}
+As argued in Paper 1 (Section~1.1), modeling by finite human minds proceeds through an interplay between \textbf{abduction} (hypothesizing underlying structural rules from observed intensions) and \textbf{deductive verification}. Because the integrated formalism of Conceptual Information Models, State Models, Data-Flow Action Models, and Universal Execution Semantics faithfully reproduces the behavioral dynamics of a Field of Sense---including transient inconsistencies, resource contention, and deadlocks---executing \textbf{meaningful simulations} under $\mathcal{E}_{\mathrm{exec}}$ serves as a rigorous, falsifiable scientific instrument to validate whether an abductively hypothesized model accurately captures the laws of the target domain.
+\end{remark}
+
+\subsection{Discrete Representation of Continuous Dynamics}\label{sec:continuous}
+In the physical world and many operational domains, continuous dynamics---such as object motion, temperature/pressure variations, or continuous asset valuations evolving smoothly along continuous time $t \in \mathbb{R}_{\ge 0}$ via differential equations or continuous flows---are routinely observed. By contrast, the present formalism of event-driven finite state machines and data flows is a discrete transition system. This raises the question of whether discrete state-transition models are merely coarse approximations or compromises when representing continuous reality. By applying projective limits ($\varprojlim$) and sheaf gluing conditions to the pullback of boundary-condition aspects introduced in Section~4 (Axiom~E-4), I prove that discrete representations capture continuous dynamics without information loss (up to isomorphism).
+
+\begin{theorem}[Discrete Representation Theorem: Sheaf and Projective Limit Isomorphism]\label{thm:continuous}
+Let $\Phi : T \times X \to X$ be a continuous-time dynamical system over $T = [0, \infty)$ on a topological space or manifold, and let $\{\mathcal{M}_{\varepsilon} \equiv \mathcal{M} \times_{\Cform} \mathcal{V}_{\varepsilon}\}_{\varepsilon > 0}$ be a filtered projective system of discrete state-transition models parameterized by boundary-condition aspects $\mathcal{V}_{\varepsilon}$ specifying temporal step size $\Delta t = \varepsilon$ (via \texttt{TIM} timer events) and numerical precision. Then:
+\begin{enumerate}
+    \item \textbf{Sheaf Gluing Condition:} Families of local discrete trajectories defined over open covers $\{U_i\}$ of $T$ glue uniquely into global trajectories whenever they agree on overlaps, forming a temporal sheaf $\mathcal{F}_{\mathrm{Sheaf}}$ \cite{maclane1992}.
+    \item \textbf{Isomorphic Convergence in the Projective Limit:} In the projective limit as $\varepsilon \to 0$,
+    \begin{equation}
+    \mathcal{M}_{\mathrm{cont}} \equiv \varprojlim_{\varepsilon \to 0} \left(\mathcal{M} \times_{\Cform} \mathcal{V}_{\varepsilon}\right),
+    \end{equation}
+    the induced state-evolution system is categorically equivalent (topologically and structurally isomorphic) to the continuous dynamical system $\Phi$. Thus, continuous behavior requires no separate formalism and is rigorously encompassed as the limit structure of discrete event-driven state transitions and data flows.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+Pulling back timer intervals $\Delta t = \varepsilon$ from $\mathcal{EE}_{\mathrm{Time}}$ via $\mathcal{V}_{\varepsilon}$ induces discrete evolution operators $\mathcal{F}_{k\varepsilon} \to \mathcal{F}_{(k+1)\varepsilon}$ (analogous to Euler/Runge--Kutta discretizations). Coarse-graining projections $\pi_{\varepsilon', \varepsilon} : \mathcal{M}_{\varepsilon'} \to \mathcal{M}_{\varepsilon}$ ($\varepsilon' < \varepsilon$) form a projective system whose sheaf-glued projective limit completes discrete lattice trajectories into continuous solution trajectories, in exact structural analogy with constructing $\mathbb{R}$ as the projective limit/completion of dyadic rational grids.
+\end{proof}
+
+\subsection{Isomorphism with Physical Field Theories}\label{sec:phys-iso}
+Finally, as the culmination of this paper, I prove that the complete conceptual modeling architecture established in Paper 1 and the present paper (Paper 2) is mathematically isomorphic to the formal structure of foundational physical theories (such as classical mechanics, electromagnetism, relativity, and quantum field theory, consisting of equations of motion and universal laws of time evolution).
+
+\begin{definition}[Category-Theoretic Specification of Physical Field Theories $\mathcal{P}_{\mathrm{Phys}}$]\label{def:phys-theory}
+The canonical mathematical specification $\mathcal{P}_{\mathrm{Phys}}$ of a physical field theory or dynamical system comprises five structural components:
+\begin{enumerate}
+    \item \textbf{Configuration / Field Space ($\mathcal{Q}$):} Degrees of freedom, physical quantity domains, and spatial coupling structures governing entities (particles or fields).
+    \item \textbf{Phase Space \& Singularities ($\mathcal{P}$):} Exclusive state classifications and critical singularity boundaries where governing equations break down or undergo phase transitions.
+    \item \textbf{Equations of Motion / Local Operators ($\mathcal{L}_{\mathrm{eq}}$):} Differential or algebraic operators (derived from a Hamiltonian or Lagrangian density) governing local state evolution.
+    \item \textbf{External Forces / Boundary Conditions / S-Matrix ($\mathcal{B}_{\mathrm{ext}}$):} Non-opaque boundary ports mediating energy or signal exchange with external environments or coupled fields.
+    \item \textbf{Universal Time-Evolution \& Causality ($\mathcal{U}_{\mathrm{dyn}}$):} Universal dynamical principles applied to the formal structure itself independent of specific matter content (principle of least action, light-cone locality, and conservation laws).
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[Isomorphism Theorem with Physical Field Theories]\label{thm:phys-iso}
+The complete conceptual modeling architecture for a single Field of Sense,
+\begin{equation}
+\mathfrak{M}_{\mathrm{CM}} \equiv \left(\mathcal{C},\; \{M_A\}_{A \in \mathcal{K}},\; \DF,\; \{F_{\mathrm{dom}}, \mathcal{E}^{\mathrm{public}}\},\; \mathcal{E}_{\mathrm{exec}}\right),
+\end{equation}
+is categorically equivalent (structurally isomorphic) to a physical theory specification $\mathcal{P}_{\mathrm{Phys}} = (\mathcal{Q}, \mathcal{P}, \mathcal{L}_{\mathrm{eq}}, \mathcal{B}_{\mathrm{ext}}, \mathcal{U}_{\mathrm{dyn}})$ under a natural structure-preserving correspondence (Table~\ref{tab:phys-iso}).
+\end{theorem}
+
+\begin{table}[htbp]
+\centering
+\caption{Structural Isomorphism between the Conceptual Modeling Architecture ($\mathfrak{M}_{\mathrm{CM}}$) and Physical Field Theories ($\mathcal{P}_{\mathrm{Phys}}$)}
+\label{tab:phys-iso}
+\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{4.3cm} >{\raggedright\arraybackslash}p{4.1cm} >{\raggedright\arraybackslash}p{6.0cm}}
+\toprule
+\textbf{Conceptual Modeling $\mathfrak{M}_{\mathrm{CM}}$ (Papers 1 \& 2)} & \textbf{Physical Field Theory $\mathcal{P}_{\mathrm{Phys}}$} & \textbf{Mathematical \& Ontological Isomorphism} \\
+\midrule
+\textbf{1. Conceptual Information Model} (Schema Category $\mathcal{C}$) & \textbf{Configuration / Field Space} ($\mathcal{Q}$) & Static geometry of admissible entities (classes), quantities (7 data types), and relations (spans) \\
+\addlinespace
+\textbf{2. State Model} (STT \& \texttt{Can't Happen}) & \textbf{Phase Space \& Singularities} ($\mathcal{P}$) & Exclusive coproduct state partitions ($\Sigma_A$) and critical phase-transition/breakdown boundaries ($0$) \\
+\addlinespace
+\textbf{3. Action Model} (DAGs \& New OAL) & \textbf{Equations of Motion / Operators} ($\mathcal{L}_{\mathrm{eq}}$) & Deterministic local state-update operators $\mathcal{F}_n \to \mathcal{F}_{n+1}$ (isomorphic to differential equations in the continuous limit) \\
+\addlinespace
+\textbf{4. Domain Functions \& Public Events} & \textbf{External Forces / Boundary Conditions / S-Matrix} ($\mathcal{B}_{\mathrm{ext}}$) & Opaque boundary ports mediating interaction via static data types ($\Dstatic$) \\
+\addlinespace
+\textbf{5. Universal Execution Semantics} ($\mathcal{E}_{\mathrm{exec}}$ on $\Cform$) & \textbf{Universal Time-Evolution \& Causality} ($\mathcal{U}_{\mathrm{dyn}}$) & Domain-independent dynamical laws applied to form itself (proper time, local inertial frames, invariant conservation) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{proof}[Proof Sketch]
+By Theorem~\ref{thm:continuous}, discrete transitions $\mathcal{F}_n \to \mathcal{F}_{n+1}$ converge isomorphically to continuous evolution trajectories as $\varepsilon \to 0$. Under this correspondence: (1) instance sets, attributes, and relationship spans of $\mathcal{C}$ map bijectively to configuration spaces and tensor fields $\mathcal{Q}$; (2) state partitions $\Sigma_A$ and collapse boundaries ($0$) correspond to phase spaces and critical manifolds $\mathcal{P}$; (3) entry-action DAGs $\mathcal{A}_{s'}$ correspond to local evolution operators $\mathcal{L}_{\mathrm{eq}}$; (4) domain functions $F_{\mathrm{dom}}$ and public events correspond to external boundary couplings $\mathcal{B}_{\mathrm{ext}}$; and (5) just as physical principles such as least action and relativistic causality apply universally to the formal structure of field equations regardless of specific interactions, Universal Execution Semantics $\mathcal{E}_{\mathrm{exec}}$ applies universally to $\Cform$ independent of domain content (Theorem~\ref{thm:univ-exec}). Hence $\mathfrak{M}_{\mathrm{CM}} \simeq \mathcal{P}_{\mathrm{Phys}}$.
+\end{proof}
+
+\begin{corollary}[Unified Ontology of Information Systems and Physical Phenomena]\label{cor:unified}
+Theorem~\ref{thm:phys-iso} demonstrates that business and control models specified by human modelers and physical theories describing natural phenomena are not fundamentally disparate kinds of knowledge, but \textbf{the exact same mathematical structure evolving via universal execution semantics over forms inscribed on a Field of Sense}. This result bridges directly to cross-domain transformations and Green's function isomorphism (Paper 3) and the universal ontology of conceptual modeling encompassing the holographic principle (Paper 4).
+\end{corollary}
+
+\section{Practical Implications and Conclusion}
+
+\subsection{Mathematical Completion of Executable Modeling and Implications for Systems Engineering}
+The synthesis of static modeling theory (Paper 1) and dynamic modeling theory (Paper 2) goes beyond providing an adequate descriptive formalism for reality; it establishes decisive design principles for software engineering and systems architecture:
+\begin{enumerate}
+
+        \item \textbf{Elevation from ``Diagrams'' to ``Directly Executable Mathematical Models'':} In conventional modeling practice, analysis and design diagrams (such as UML) serve merely as informal reference blueprints for human communication, becoming operational only after manual translation into imperative or object-oriented code. As proved in Theorems~\ref{thm:monoidal-closure} and~\ref{thm:univ-exec}, equipping rigorous Conceptual Information Models and State Transition Tables with acyclic string diagrams of the 16 primitive process components (or equivalent New OAL textual syntax) and Universal Execution Semantics $\mathcal{E}_{\mathrm{exec}}$ turns the problem-domain specification itself into a \textbf{complete, unambiguous, directly executable mathematical system (Executable Model)} capable of deterministic simulation.
+    \item \textbf{Liberation from ``Control Spaghetti'' (Decoupling State Machines and Acyclic String Diagrams):} Conventional imperative and OOP designs suffer from combinatorial complexity because macro-level lifecycle dependencies and micro-level data computations are entangled within a single dimension of synchronous method call chains. Separating macro-level causal control into asynchronous event-driven instance state machines (local inertial frames) while confining intra-transition computations to acyclic DAG string diagrams in $\DF$ structurally eliminates infinite action loops and intermediate state corruption.
+    \item \textbf{Geometric Visualization of Bugs and Breakdowns (Engineering Application of Singularity Theory):} Whereas test-driven development and runtime exception handling react post hoc to failures, explicitly locating \texttt{Can't Happen} transitions, division by zero, range-boundary violations, and span-monicity breaches as collapse points into the initial object $0$ (singularities) on model boundaries (Remark~\ref{rem:singularities}, Corollary~\ref{cor:singularities}) enables static topological verification (reachability analysis of singularities) at the model specification stage. Furthermore, this geometric boundary visibility provides a rigorous mathematical criterion for verifying the validity of code generated by generative AI.
+\end{enumerate}
+
+\subsection{Conclusion and Outlook toward Paper 3 and Paper 4}
+In this paper (Paper 2), building upon the static schema category $\mathcal{C} \equiv CG/\mathcal{R}$ established in Paper 1, I have formalized causal state transitions and dynamic behavior within a single Field of Sense and proved four foundational results:
+\begin{enumerate}
+    \item \textbf{Universal Execution Semantics and Homotopical Monoidal Closure (Theorems~\ref{thm:monoidal-closure}, \ref{thm:univ-exec}, and~\ref{thm:inv-pres}):} Execution semantics can be defined universally and uniquely upon the abstract form of the conceptual information model itself ($\Cform$), without inspecting domain-specific content; acyclic string diagrams composed of the 16 primitive process components (and their isomorphic SSA textual syntax) form a homotopically closed symmetric monoidal category $\DF$ that preserves all static invariants of $\mathcal{C}$ along any regular execution trajectory avoiding singularities ($0$).
+    \item \textbf{Four Dynamic Meta-Theorems (Theorems~\ref{thm:dyn-comp}--\ref{thm:dyn-conv}):} In exact symmetry with the static domain (Paper 1), this dynamic formalism adequately captures all computable and realistic state changes (Dynamic Expressive Completeness), reduces across representational variations (Moore vs.\ Mealy forms, diagrammatic vs.\ textual syntax) to symmetric monoidal equivalence (Dynamic Isomorphism), and enables finite human minds to asymptotically converge to the true dynamic model via abduction and faithful simulation (Dynamic Asymptotic Convergence).
+    \item \textbf{Discrete Representation of Continuous Dynamics (Theorem~\ref{thm:continuous}):} Through projective limits ($\varprojlim_{\varepsilon \to 0}$) and sheaf gluing conditions over boundary-condition aspects governing temporal step size and numerical precision, discrete event-driven finite state machines and data flows capture smooth continuous physical and operational dynamics without information loss.
+    \item \textbf{Structural Isomorphism with Physical Field Theories (Theorem~\ref{thm:phys-iso}):} The integrated conceptual modeling architecture---comprising the Conceptual Information Model (configuration space), State Model (phase space and singularities), Action Model (equations of motion), Domain Functions (external forces and boundary conditions), and Universal Execution Semantics (universal laws of time evolution and causality)---is mathematically isomorphic to the formal structure of foundational physical theories.
+\end{enumerate}
+
+This paper establishes the closed dynamics of static structure (Paper 1) and causal state transitions/equations of motion (Paper 2) within a single Field of Sense. In the next paper (\textbf{Paper 3}), I broaden the perspective from a single Field of Sense to interactions and structural transformations across multiple coexisting Fields of Sense. Specifically, I formalize \textbf{Model Transformation}---mapping application-domain models one-way into execution platform domains under boundary-condition aspects representing non-functional requirements, alongside higher-order bridge operators---and prove that these boundary-value transformations are mathematically isomorphic to \textbf{Green's function propagators} in mathematical physics. Finally, in \textbf{Paper 4}, I synthesize the entire series to demonstrate that conceptual modeling is not merely a tool for human software engineering, but a universal ontological and mathematical formalism for describing the world itself, encompassing the \textbf{Holographic Principle} of modern physics---in which continuous bulk dynamics emerge from discrete boundary forms---as an isomorphic special case (\emph{Ordo Forma Est}).
+
+\begin{thebibliography}{99}
+
+\bibitem{ota2026paper0}
+H.~Ota, \emph{Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe} (Version 1.0.1), Zenodo, 2026. \url{https://doi.org/10.5281/zenodo.24267213}
+
+\bibitem{ota2026paper1}
+H.~Ota, \emph{Category-Theoretic Foundations of Conceptual Information Modeling: Rigorous Schema Representation, Isomorphism, and Asymptotic Refinement under Cognitive Finitude} (Version 1.0.1), Zenodo, 2026. \url{https://doi.org/10.5281/zenodo.24359112}
+
+\bibitem{maclane1998}
+S.~Mac Lane, \emph{Categories for the Working Mathematician}, 2nd ed., Springer, 1998.
+
+\bibitem{joyal1991}
+A.~Joyal and R.~Street, ``The Geometry of Tensor Calculus, I,'' \emph{Advances in Mathematics}, vol.~88, no.~1, pp.~55--112, 1991.
+
+\bibitem{coecke2017}
+B.~Coecke and A.~Kissinger, \emph{Picturing Quantum Processes: A First Course in Quantum Theory and Diagrammatic Reasoning}, Cambridge University Press, 2017.
+
+\bibitem{lawvere1963}
+F.~W. Lawvere, ``Functorial Semantics of Algebraic Theories,'' \emph{Proceedings of the National Academy of Sciences of the United States of America}, vol.~50, no.~5, pp.~869--872, 1963.
+
+\bibitem{maclane1992}
+S.~Mac Lane and I.~Moerdijk, \emph{Sheaves in Geometry and Logic: A First Introduction to Topos Theory}, Springer, 1992.
+
+\bibitem{girard1987}
+J.-Y. Girard, ``Linear Logic,'' \emph{Theoretical Computer Science}, vol.~50, no.~1, pp.~1--101, 1987.
+
+\bibitem{moggi1991}
+E.~Moggi, ``Notions of Computation and Monads,'' \emph{Information and Computation}, vol.~93, no.~1, pp.~55--92, 1991.
+
+\bibitem{shlaer1992}
+S.~Shlaer and S.~J. Mellor, \emph{Object Lifecycles: Modeling the World in States}, Yourdon Press, 1992.
+
+\bibitem{mellor2002}
+S.~J. Mellor and M.~J. Balcer, \emph{Executable UML: A Foundation for Model-Driven Architecture}, Addison-Wesley, 2002.
+
+\bibitem{milner1989}
+R.~Milner, \emph{Communication and Concurrency}, Prentice Hall, 1989.
+
+\bibitem{peirce1903}
+C.~S. Peirce, ``Pragmatism as the Logic of Abduction,'' in \emph{The Essential Peirce: Selected Philosophical Writings}, Vol.~2 (1893--1913), Indiana University Press, 1903/1998.
+
+\bibitem{gabriel2015}
+M.~Gabriel, \emph{Fields of Sense: A New Realist Ontology}, Edinburgh University Press, 2015.
+
+\bibitem{xtumlorg}
+xtUML Project / One Fact Inc., \emph{BridgePoint xtUML Object Action Language (OAL) Reference}, Open Source xtUML Project. Available at: \url{https://xtuml.org}
+
+\bibitem{starr2001}
+L.~Starr, \emph{Executable UML: How to Build Class Models}, Prentice Hall, 2001.
+
+\end{thebibliography}
+
+\end{document}
