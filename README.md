@@ -57,17 +57,21 @@ The series is structured into two tiers: rigorous mathematical and engineering f
  * Japanese Version: `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.ja.pdf`
 * **Summary:** Extends the framework from intra-field dynamics (Papers 1–2) to structural transformations across distinct schemas (Fields of Sense) and aspects. Formalizes the exact boundary conditions required for cross-field transformations via bridges, as well as the laws of structural preservation and information loss.
 
-### [Paper 4] Emergence and Cosmological Scope: Holographic Boundary Conditions *(Conceptual)*
-* **Tentative Title:** *Transformation as Emergence: Holographic Boundary Conditions and the Autonomous Genesis of Fields of Sense*
-* **Summary:** Explores the philosophical and ontological consequences emerging from the mathematical foundations established in Papers 0–3. Proposes that *structural transformation itself constitutes emergence*, and examines its structural correlation with the **Holographic Principle** in theoretical physics—suggesting that wherever rigorous boundary conditions hold, new transformations and autonomous Fields of Sense may arise.
+### [Paper 4] Cosmological Scope, Emergence, and Ontological Necessity *(Published — Nov 25, 2026)*
+* **Title:** *Ordo Forma Est: The Holographic Structure of Spacetime, Emergence, and Consciousness, and the Ontological Necessity of Mathematical Form*
+* **DOI:** [`10.5281/zenodo.24517932`](https://doi.org) (v1.0.0 English Version: [`https://doi.org`](https://doi.org))
+* **Files:**
+  * English Version: `papers/OrdoFormaEst-HolographicStructure-and-OntologicalNecessity.pdf`
+  * Japanese Version: `papers/OrdoFormaEst-HolographicStructure-and-OntologicalNecessity.ja.pdf`
+* **Summary:** Integrates the entire framework into the unified categorical architecture $\mathfrak{U}_{\mathrm{OFE}}$ and demonstrates that the formal structures of conceptual modeling constitute the universal ontological form (*Ordo Forma Est*) by which reality itself exists. Establishes four culminating theorems: (1) **Self-Selection of Form**, showing that inconsistent structures collapse into the initial object $0$ while consistent trajectories autonomously evolve under $\mathcal{E}_{\mathrm{exec}}$; (2) **Holographic Isomorphism**, proving that the emergence of continuous bulk spacetime from discrete relational forms on a low-dimensional boundary screen is categorically isomorphic to the **Holographic Principle**; (3) **Emergence and Consciousness without a Homunculus**, formulating phase transitions as horizontal field-switching and emergence/consciousness as auto-triggering structural transformations via hidden real bridges ($\mathcal{B}^*$), thereby demarcating physical actuality from autonomous fictional worlds and establishing categorical criteria for artificial consciousness; and (4) **Ontological Necessity of Mathematical Form**, resolving Wigner's puzzle from an intrinsic observer standpoint while exercising strict *epoché* (suspension of judgment) regarding the ultimate origin of the primordial boundary screen.
 
 ---
 
 ## 3. Author & Contact
 
 * **Hiroshi Ota (太田 寛)** — Knowledge & Experience / Independent Researcher
-* **Homepage:** https://kae-made.jp
-* **Research Notes:** https://note.com
+* **Homepage:** https://www.kae-made.jp
+* **Research Notes:** https://note.com/kae_made
 * **Ongoing Discussions & Thought Process (Membership):** https://note.com/kae_made/membership *(Sharing the ongoing development of ideas and open discussions)*
 * **Research Ecosystem (Reference Toolset — COGITO):** https://github.com/kae-made/cogito *(Conceptual Modeling and Translative Generation Integrated Toolset)*
 * **Contact:** master@kae-made.jp

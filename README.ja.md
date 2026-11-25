@@ -43,28 +43,32 @@
  * 日本語版: `papers/CategoryTheoreticFoundationsOfCIM.ja.pdf`
 * **概要：** Paper 0 のユニバースを成立させる必要条件として、任意の意味の場のスキーマ（関手意味論の構文圏）を厳密に記述する体系を導出する。データ型、単一・複合識別子（モニック射）、参照特徴値（可換図式）、両辺にフレーズと多重度を持つスパンリレーション、関連クラス（多脚スパン）の厳密な定義を与え、モデリングとは「曖昧化」ではなく「具体的かつ厳密な構造の確定」であることを示す。さらに、同一の意味の場に対する充足的モデルはすべて圏同型に帰着すること、および有限の人間がサブクラス化や関連クラス化を通じて `0..1` や `Nullable` といった未分化な曖昧さを削ぎ落とし、真のスキーマへ漸近していくプロセスを定式化する。
 
-### 【Paper 2】動的プロセス論：状態モデル・データフロー型アクションとモノイド圏（予定 / Planned）
+### 【Paper 2】動的プロセス論：状態モデル・データフロー型アクションとモノイド圏（公開済み / Published — 2026年11月22日）
 * **タイトル：** 動的モデリングの圏論的基礎：状態遷移、データフロー型アクション、普遍的実行セマンティクス、および物理理論との同型性
-  （*Category-Theoretic Foundations of Structural Transformation: Bridges as Fields of Sense, Boundary Conditions via Aspectual Fields of Sense, and Isomorphism with Green's Functions*）
-* **DOI:** [`10.5281/zenodo.24430915`](https://doi.org/10.5281/zenodo.24430915) (英語版 v1.0.0: [`10.5281/zenodo.24430915`](https://doi.org/10.5281/zenodo.24430915))
-* **ファイル:**
- * 英語版: `papers/CategoryTheoriticFondationsOfDynamicModeling.pdf`
- * 日本語版: `papers/CategoryTheoriticFondationsOfDynamicModeling.ja.pdf`
-* **概要：** 外部エンティティとの接点である「境界条件（事前・事後条件）」と、Paper 1 で定義したデータ型上の「演算子（データフロー）」を導入し、状態モデル（状態ごとのアスペクト的意味の場）とアクションモデル（状態遷移）を統合する。厳密な境界条件のもとで状態と変化の全体が「モノイド圏（Monoidal Category）」を形成することを保証し、離散的な状態遷移モデルでありながら、閾値（境界条件）を介した相転移と内部パラメータ軌道によって連続的な変化を矛盾なく描写できることを示す。
+  （*Category-Theoretic Foundations of Dynamic Modeling: State Transitions, Data-Flow Action Models, Universal Execution Semantics, and Isomorphism with Physical Field Theories*）
+* **DOI：** [`10.5281/zenodo.24430915`](https://doi.org)（英語版 v1.0.0：[`10.5281/zenodo.24430915`](https://doi.org)）
+* **ファイル：**
+  * 英語版： `papers/CategoryTheoriticFondationsOfDynamicModeling.pdf`
+  * 日本語版： `papers/CategoryTheoriticFondationsOfDynamicModeling.ja.pdf`
+* **概要：** 外部エンティティとの接点である「境界条件（事前・事後条件）」と、Paper 1 で定義したデータ型上の「演算子（データフロー）」を導入し、状態モデル（状態ごとのアスペクト的意味の場）とアクションモデル（状態遷移）を統合する。厳密な境界条件のもとで状態と変化の全体が「対称モノイド圏（Symmetric Monoidal Category）」および形式圏 $\mathcal{C}_{\mathrm{FORM}}$ 上の普遍的実行セマンティクス $\mathcal{E}_{\mathrm{exec}}$ を形成することを保証し、離散的な状態遷移モデルでありながら、射影極限と層を通じて連続的な物理場の理論と完全に同型であることを証明する。
 
-### 【Paper 3】構造変換論：異なる意味の場とアスペクト間の Transformation（予定 / Planned）
+### 【Paper 3】構造変換論：異なる意味の場とアスペクト間の Transformation（公開済み / Published — 2026年11月22日）
 * **タイトル：** 構造変換の圏論的基礎：意味の場としてのブリッジ、アスペクト的意味の場による境界条件、およびグリーン関数との同型性
   （*Category-Theoretic Foundations of Structural Transformation: Bridges as Fields of Sense, Boundary Conditions via Aspectual Fields of Sense, and Isomorphism with Green's Functions*）
-* **DOI:** [`10.5281/zenodo.24431232`](https://doi.org/10.5281/zenodo.24431232) (英語版 v1.0.0: [`10.5281/zenodo.24431232`](https://doi.org/10.5281/zenodo.24431232))
-* **ファイル:**
- * 英語版: `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.pdf`
- * 日本語版: `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.ja.pdf`
-* **概要：** 単一の意味の場の内部（Paper 1・2）から、異なるスキーマ（意味の場）およびアスペクト間の構造変換（Transformation）へと議論を拡張する。ブリッジを介した変換が成立するための厳密な境界条件と、変換に伴う情報保存・情報損失のメカニズムを圏論的に定式化する。
+* **DOI：** [`10.5281/zenodo.24431232`](https://doi.org)（英語版 v1.0.0：[`10.5281/zenodo.24431232`](https://doi.org)）
+* **ファイル：**
+  * 英語版： `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.pdf`
+  * 日本語版： `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.ja.pdf`
+* **概要：** 単一の意味の場の内部（Paper 1・2）から、異なるスキーマ（意味の場）および「形式そのもの」を扱うアスペクト的意味の場を介した構造変換（Transformation）へと議論を拡張する。ブリッジ自体が独立した意味の場であること（自己相似性）を示したうえで、境界条件アスペクトのもとで変換元の形式を変換先の状態へと構成する一意の構造変換が、数理物理学におけるグリーン関数（Green's Function）による伝播作用素と完全に同型であることを証明する。
 
-### 【Paper 4】創発と宇宙論的射程：ホログラフィー原理との相関（構想中 / Conceptual）
-* **仮題：** 創発としての構造変換：ホログラフィー的境界条件と意味の場の自律的生成
-  （*Transformation as Emergence: Holographic Boundary Conditions and the Autonomous Genesis of Fields of Sense*）
-* **概要：** Paper 0〜3 で確立された数理的・モデリング的基盤から導かれる哲学的・存在論的帰結を論じる。「ある意味の場から別の場への Transformation（構造変換）そのものが創発（Emergence）である」という視座を提示し、物理学におけるホログラフィー原理（境界上の情報への符号化）との構造的相関を考察する。境界条件が成立する場においては、既存の枠組みを超えて新たな Transformation や意味の場が自律的に立ち上がり得るという存在論的ビジョンを提示する。
+### 【Paper 4】宇宙論的射程・創発・存在論的必然性（公開済み / Published — 2026年11月25日）
+* **タイトル：** 存在の形式（*Ordo Forma Est*）：時空・創発・意識のホログラフィック構造、および数学的形式の存在論的必然性
+  （*Ordo Forma Est: The Holographic Structure of Spacetime, Emergence, and Consciousness, and the Ontological Necessity of Mathematical Form*）
+* **DOI：** [`10.5281/zenodo.24517932`](https://doi.org)（英語版 v1.0.0：[`10.5281/zenodo.24517932`](https://doi.org)）
+* **ファイル：**
+  * 英語版： `papers/OrdoFormaEst-HolographicStructure-and-OntologicalNecessity.pdf`
+  * 日本語版： `papers/OrdoFormaEst-HolographicStructure-and-OntologicalNecessity.ja.pdf`
+* **概要：** Paper 0〜3 の全道具立てを統合圏論アーキテクチャ $\mathfrak{U}_{\mathrm{OFE}}$ として定式化し、概念モデリングの形式がこの世界そのものが成立・現象するための普遍的な存在論的形式（*Ordo Forma Est*）であることを証明する。具体的には、(1) 矛盾や不整合が始対象 $0$ へ自己淘汰され無矛盾軌道が自律的に自己展開する**形式の自己淘汰定理**、(2) 低次元境界スクリーン上の離散的形式から高次元バルクの連続時空が創発する構造が現代物理学の**ホログラフィー原理と完全に同型**であることの証明、(3) 相転移を水平的な場の切り替え、創発・意識を隠れた実在ブリッジ（$\mathcal{B}^*$）を介した**観察者（ホムンクルス）なき自動発動変換**として定式化し、物語世界の自立的実在との境界および人工意識の成立条件を規定する理論、ならびに (4) 内在的観測者の立場から「なぜ数学的原理が成り立つのか」を**存在論的必然**として解答しつつ、大元の境界スクリーンの起源については厳密な判断留保（エポケー）を行うことを確立する。
 
 ---
 
