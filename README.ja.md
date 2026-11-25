@@ -75,8 +75,8 @@
 ## 3. 著者・連絡先（Author）
 
 * **太田 寛（Hiroshi Ota）** — Knowledge & Experience / 独立研究者
-* **Homepage:** https://kae-made.jp
-* **Research Notes:** https://note.com
+* **Homepage:** https://www.kae-made.jp
+* **Research Notes:** https://note.com/kae_made
 * **Ongoing Discussions & Thought Process (Membership):** https://note.com/kae_made/membership *(Sharing the ongoing development of ideas and open discussions)*
 * **Research Ecosystem (Reference Toolset — COGITO):** https://github.com/kae-made/cogito *(Conceptual Modeling and Translative Generation Integrated Toolset)*
 * **Contact:** master@kae-made.jp
