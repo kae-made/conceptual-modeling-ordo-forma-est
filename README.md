@@ -1,7 +1,7 @@
 # Ordo Forma Est: Relation-Based Ontology and a Category-Theoretic Formalization of General Modeling Methodologies
 
-- Date : 2026/11/16
-- Version : 1.0.0
+- Date : 2026/11/25
+- Version : 1.3.0
 
 [English](README.md) | [日本語](README.ja.md)
 
