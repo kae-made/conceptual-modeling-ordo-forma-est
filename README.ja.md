@@ -1,8 +1,8 @@
 # Ordo Forma Est: 関係基底の存在論と一般モデリング手法の圏論的定式化
 **（Relation-Based Ontology and a Category-Theoretic Formalization of General Modeling Methodologies）**
 
-- Date : 2026/11/25
-- Version : 1.3.0
+- Date : 2026/11/26
+- Version : 1.4.0
 
 [English](README.md) | [日本語](README.ja.md)
 
@@ -14,7 +14,7 @@
 
 従来の言語哲学および一般的なモデリング手法の多くは、「対象（モノ）」を基底とし、関係をその間に付随する二次的な属性とみなす「対象基底（Object-Based）」のパラダイムに立脚してきた。しかし、この枠組みでは言語の多義性による意味の崩壊や、異なる文脈（意味の場）間の構造変換、さらには「なぜ人間は有限の思考から厳密なモデルへ到達しうるのか」という根本問題を統一的に説明できなかった。
 
-本研究プログラムでは、**「関係（スパン構造）こそが実在の主題である」**という関係基底の存在論を出発点とし、以下の5段階（**Paper 0 〜 Paper 4**）を通じて、存在論・認識論から静的・動的モデリングの数学的基礎、そして創発の哲学に至る一貫した理論体系を構築することを目的とする。
+本研究プログラムでは、 **「関係（スパン構造）こそが実在の主題である」** という関係基底の存在論を出発点とし、以下の5段階（ **Paper 0 〜 Paper 4** ）を通じて、存在論・認識論から静的・動的モデリングの数学的基礎、そして創発の哲学に至る一貫した理論体系を構築することを目的とする。
 
 ### 理論的出発点（Conceptual Foundation）
 本研究プログラムは、実践的・体系的な概念モデリングの原則をまとめた『[*Conceptual Modeling Principle*](https://github.com/kae-made/conceptual-modeling-articles/blob/main/Conceptual-Modeling-Principle.pdf)』をベースとし、そこで提示された諸原理を圏論によって数学的に厳密化・基礎づけることを目的としている。
@@ -23,12 +23,12 @@
 
 ## 2. 論文シリーズ構成・刊行ロードマップ（Paper 0 – Paper 4）
 
-本研究は、厳密な数理的・工学的定式化（**Paper 0〜3**）と、そこから導かれる哲学的・宇宙論的帰結（**Paper 4**）の二層構造で順次公開する。
+本研究は、厳密な数理的・工学的定式化（ **Paper 0〜3** ）と、そこから導かれる哲学的・宇宙論的帰結（ **Paper 4** ）の二層構造で公開する。
 
 ### 【Paper 0】基礎存在論・認識論（公開済み / Published — 2026年11月16日）
 * **タイトル：** 関係基底の存在論と意味の場の圏論的定式化：言語的多義性による構造崩壊とユニバースの内包としての現象
   （*Relation-Based Ontology and a Category-Theoretic Formalization of Fields of Sense: Structural Collapse via Linguistic Polysemy and Phenomena as the Intension of a Universe*）
-* **DOI：** [`10.5281/zenodo.24267213`](https://doi.org/10.5281/zenodo.24267213)（英語版初版 v1.0.0：[`10.5281/zenodo.24267213`](https://doi.org/10.5281/zenodo.24267213)）
+* **DOI：** [`10.5281/zenodo.24548467`](https://doi.org/10.5281/zenodo.24548467)（英語版初版 v1.0.0：[`10.5281/zenodo.24267213`](https://doi.org/10.5281/zenodo.24267213)）
 * **ファイル：**
   * 英語版： `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.pdf`
   * 日本語版： `papers/RelationBasedOntology-and-a-CategoryTheoreticFormalization-of-FieldsOfSense.jp.pdf`
@@ -37,7 +37,7 @@
 ### 【Paper 1】静的モデリング論：単一の意味の場の厳密性と漸近的接近（公開済み / Published - 2026年11月19日）
 * **タイトル：** 概念情報モデリングの圏論的基礎：厳密なスキーマ表現、同型性、および思考の有限性のもとでの漸近的接近
   （*Category-Theoretic Foundations of Conceptual Information Modeling: Rigorous Schema Representation, Isomorphism, and Asymptotic Refinement under Cognitive Finitude*）
-* **DOI:** [`10.5281/zenodo.24359112`](https://doi.org/10.5281/zenodo.24359112) (英語版 v1.0.1: [`10.5281/zenodo.24359112`](https://doi.org/10.5281/zenodo.24359112))
+* **DOI:** [`10.5281/zenodo.24548590`](https://doi.org/10.5281/zenodo.24548590) (英語版 v1.0.1: [`10.5281/zenodo.24359112`](https://doi.org/10.5281/zenodo.24359112))
 * **ファイル:**
  * 英語版: `papers/CategoryTheoreticFoundationsOfCIM.pdf`
  * 日本語版: `papers/CategoryTheoreticFoundationsOfCIM.ja.pdf`
@@ -46,7 +46,7 @@
 ### 【Paper 2】動的プロセス論：状態モデル・データフロー型アクションとモノイド圏（公開済み / Published — 2026年11月22日）
 * **タイトル：** 動的モデリングの圏論的基礎：状態遷移、データフロー型アクション、普遍的実行セマンティクス、および物理理論との同型性
   （*Category-Theoretic Foundations of Dynamic Modeling: State Transitions, Data-Flow Action Models, Universal Execution Semantics, and Isomorphism with Physical Field Theories*）
-* **DOI：** [`10.5281/zenodo.24430915`](https://doi.org)（英語版 v1.0.0：[`10.5281/zenodo.24430915`](https://doi.org)）
+* **DOI：** [`10.5281/zenodo.24548721`](https://doi.org/10.5281/zenodo.24548721)（英語版 v1.0.0：[`10.5281/zenodo.24430915`](https://doi.org/10.5281/zenodo.24430915)）
 * **ファイル：**
   * 英語版： `papers/CategoryTheoriticFondationsOfDynamicModeling.pdf`
   * 日本語版： `papers/CategoryTheoriticFondationsOfDynamicModeling.ja.pdf`
@@ -55,7 +55,7 @@
 ### 【Paper 3】構造変換論：異なる意味の場とアスペクト間の Transformation（公開済み / Published — 2026年11月22日）
 * **タイトル：** 構造変換の圏論的基礎：意味の場としてのブリッジ、アスペクト的意味の場による境界条件、およびグリーン関数との同型性
   （*Category-Theoretic Foundations of Structural Transformation: Bridges as Fields of Sense, Boundary Conditions via Aspectual Fields of Sense, and Isomorphism with Green's Functions*）
-* **DOI：** [`10.5281/zenodo.24431232`](https://doi.org)（英語版 v1.0.0：[`10.5281/zenodo.24431232`](https://doi.org)）
+* **DOI：** [`10.5281/zenodo.24548803`](https://doi.org/10.5281/zenodo.24548803)（英語版 v1.0.0：[`10.5281/zenodo.24431232`](https://doi.org/10.5281/zenodo.24431232)）
 * **ファイル：**
   * 英語版： `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.pdf`
   * 日本語版： `papers/CategoryTheoriticFondationsOfStructuralTransformationTheory.ja.pdf`
@@ -64,11 +64,57 @@
 ### 【Paper 4】宇宙論的射程・創発・存在論的必然性（公開済み / Published — 2026年11月25日）
 * **タイトル：** 存在の形式（*Ordo Forma Est*）：時空・創発・意識のホログラフィック構造、および数学的形式の存在論的必然性
   （*Ordo Forma Est: The Holographic Structure of Spacetime, Emergence, and Consciousness, and the Ontological Necessity of Mathematical Form*）
-* **DOI：** [`10.5281/zenodo.24517932`](https://doi.org)（英語版 v1.0.0：[`10.5281/zenodo.24517932`](https://doi.org)）
+* **DOI：** [`10.5281/zenodo.24548901`](https://doi.org/10.5281/zenodo.24548901)（英語版 v1.0.0：[`10.5281/zenodo.24517932`](https://doi.org/10.5281/zenodo.24517932)）
 * **ファイル：**
   * 英語版： `papers/OrdoFormaEst-HolographicStructure-and-OntologicalNecessity.pdf`
   * 日本語版： `papers/OrdoFormaEst-HolographicStructure-and-OntologicalNecessity.ja.pdf`
-* **概要：** Paper 0〜3 の全道具立てを統合圏論アーキテクチャ $\mathfrak{U}_{\mathrm{OFE}}$ として定式化し、概念モデリングの形式がこの世界そのものが成立・現象するための普遍的な存在論的形式（*Ordo Forma Est*）であることを証明する。具体的には、(1) 矛盾や不整合が始対象 $0$ へ自己淘汰され無矛盾軌道が自律的に自己展開する**形式の自己淘汰定理**、(2) 低次元境界スクリーン上の離散的形式から高次元バルクの連続時空が創発する構造が現代物理学の**ホログラフィー原理と完全に同型**であることの証明、(3) 相転移を水平的な場の切り替え、創発・意識を隠れた実在ブリッジ（$\mathcal{B}^*$）を介した**観察者（ホムンクルス）なき自動発動変換**として定式化し、物語世界の自立的実在との境界および人工意識の成立条件を規定する理論、ならびに (4) 内在的観測者の立場から「なぜ数学的原理が成り立つのか」を**存在論的必然**として解答しつつ、大元の境界スクリーンの起源については厳密な判断留保（エポケー）を行うことを確立する。
+* **概要：** Paper 0〜3 の全道具立てを統合圏論アーキテクチャ $\mathfrak{U}_{\mathrm{OFE}}$ として定式化し、概念モデリングの形式がこの世界そのものが成立・現象するための普遍的な存在論的形式（*Ordo Forma Est*）であることを証明する。具体的には、(1) 矛盾や不整合が始対象 $0$ へ自己淘汰され無矛盾軌道が自律的に自己展開する **形式の自己淘汰定理** 、(2) 低次元境界スクリーン上の離散的形式から高次元バルクの連続時空が創発する構造が現代物理学の **ホログラフィー原理と完全に同型** であることの証明、(3) 相転移を水平的な場の切り替え、創発・意識を隠れた実在ブリッジ（$\mathcal{B}^*$）を介した **観察者（ホムンクルス）なき自動発動変換** として定式化し、物語世界の自立的実在との境界および人工意識の成立条件を規定する理論、ならびに (4) 内在的観測者の立場から「なぜ数学的原理が成り立つのか」を**存在論的必然**として解答しつつ、大元の境界スクリーンの起源については厳密な判断留保（エポケー）を行うことを確立する。
+
+```mermaid
+flowchart TB
+    %% スタイル定義
+    classDef base fill:#f4f6f9,stroke:#4a5568,stroke-width:2px,color:#1a202c
+    classDef formal fill:#ebf8ff,stroke:#2b6cb0,stroke-width:2px,color:#1a202c
+    classDef bridge fill:#faf5ff,stroke:#6b46c1,stroke-width:2px,color:#1a202c
+    classDef holo fill:#f0fff4,stroke:#2f855a,stroke-width:2px,color:#1a202c
+    classDef mind fill:#fffaf0,stroke:#c05621,stroke-width:2px,color:#1a202c
+    classDef collapse fill:#fff5f5,stroke:#c53030,stroke-width:1.5px,stroke-dasharray: 5 5,color:#9b2c2c
+
+    subgraph L0 ["【基底層 / Paper 0】存在の最小単位（関係基底の存在論）"]
+        ID["<b>恒等射（Identity: id）</b><br/>区別・自己同一性・識別子の最小アンカー"]:::base
+        SPAN["<b>関係（Span 構造）</b><br/>対象同士を結びつける実在の一次的主題"]:::base
+        ID <-->|"区別と結合"| SPAN
+    end
+
+    subgraph L1 ["【第1層 / Paper 1 & 2】単一の意味の場と普遍的形式"]
+        C_FORM["<b>形式圏 C_FORM ＆ 普遍的実行セマンティクス E_exec</b><br/>静的構造（商2-圏 C）＋ 動的振る舞い（対称モノイド圏 DF）"]:::formal
+        ZERO["<b>始対象 0（空空間・矛盾状態）</b><br/>不整合・多義性・違反の即時自己淘汰"]:::collapse
+        C_FORM -.->|"不整合は崩壊"| ZERO
+    end
+
+    subgraph L2 ["【第2層 / Paper 3】意味の場間の連携と構造変換"]
+        BRIDGE["<b>ブリッジ B ＆ アスペクト的意味の場 M_Aspect</b><br/>並立する場を結ぶ構造対応（=>, <=>, REQUIRE）と境界条件"]:::bridge
+        TRANS["<b>一意の構造変換（Transformation）</b><br/>グリーン関数伝播核と同型な余エンド再構成作用素"]:::bridge
+        BRIDGE --> TRANS
+    end
+
+    subgraph L3 ["【第3層 / Paper 4】ホログラフィック時空創発（境界 → バルク）"]
+        BULK["<b>創発する連続的バルク時空・物理法則</b><br/>射影極限と層の張り合わせによる滑らかな時空・重力（ホログラフィー同型）"]:::holo
+    end
+
+    subgraph L4 ["【第4層 / Paper 4】創発と内在的意識（ホムンクルス不要）"]
+        CONSC["<b>意識・思考の意味の場（M_Consciousness）</b><br/>隠れた実在ブリッジ B* を介した自動発動変換<br/>（内在的観測者による数学的原理の存在論的必然性）"]:::mind
+    end
+
+    %% 層間の接続
+    L0 -->|"分節化された意味の場へ"| C_FORM
+    C_FORM -->|"形式の充満と自己展開"| BRIDGE
+    TRANS -->|"低次元境界の離散形式から創発"| BULK
+    BULK -->|"世界の『内側』からの多段階変換"| CONSC
+    BRIDGE -.->|"隠れた実在ブリッジ B*"| CONSC
+    CONSC -.->|"内包（現象）の観測・数学的記述"| L0
+```
+
 
 ---
 

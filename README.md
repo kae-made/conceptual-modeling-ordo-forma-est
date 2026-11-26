@@ -1,7 +1,7 @@
 # Ordo Forma Est: Relation-Based Ontology and a Category-Theoretic Formalization of General Modeling Methodologies
 
-- Date : 2026/11/25
-- Version : 1.3.0
+- Date : 2026/11/26
+- Version : 1.4.0
 
 [English](README.md) | [日本語](README.ja.md)
 
@@ -64,6 +64,53 @@ The series is structured into two tiers: rigorous mathematical and engineering f
   * English Version: `papers/OrdoFormaEst-HolographicStructure-and-OntologicalNecessity.pdf`
   * Japanese Version: `papers/OrdoFormaEst-HolographicStructure-and-OntologicalNecessity.ja.pdf`
 * **Summary:** Integrates the entire framework into the unified categorical architecture $\mathfrak{U}_{\mathrm{OFE}}$ and demonstrates that the formal structures of conceptual modeling constitute the universal ontological form (*Ordo Forma Est*) by which reality itself exists. Establishes four culminating theorems: (1) **Self-Selection of Form**, showing that inconsistent structures collapse into the initial object $0$ while consistent trajectories autonomously evolve under $\mathcal{E}_{\mathrm{exec}}$; (2) **Holographic Isomorphism**, proving that the emergence of continuous bulk spacetime from discrete relational forms on a low-dimensional boundary screen is categorically isomorphic to the **Holographic Principle**; (3) **Emergence and Consciousness without a Homunculus**, formulating phase transitions as horizontal field-switching and emergence/consciousness as auto-triggering structural transformations via hidden real bridges ($\mathcal{B}^*$), thereby demarcating physical actuality from autonomous fictional worlds and establishing categorical criteria for artificial consciousness; and (4) **Ontological Necessity of Mathematical Form**, resolving Wigner's puzzle from an intrinsic observer standpoint while exercising strict *epoché* (suspension of judgment) regarding the ultimate origin of the primordial boundary screen.
+
+### Structure of Paper 0 ～ 4
+
+```mermaid
+flowchart TB
+    %% Style Definitions
+    classDef base fill:#f4f6f9,stroke:#4a5568,stroke-width:2px,color:#1a202c
+    classDef formal fill:#ebf8ff,stroke:#2b6cb0,stroke-width:2px,color:#1a202c
+    classDef bridge fill:#faf5ff,stroke:#6b46c1,stroke-width:2px,color:#1a202c
+    classDef holo fill:#f0fff4,stroke:#2f855a,stroke-width:2px,color:#1a202c
+    classDef mind fill:#fffaf0,stroke:#c05621,stroke-width:2px,color:#1a202c
+    classDef collapse fill:#fff5f5,stroke:#c53030,stroke-width:1.5px,stroke-dasharray: 5 5,color:#9b2c2c
+
+    subgraph L0 ["[Foundation / Paper 0] Minimal Units of Being (Relation-Based Ontology)"]
+        ID["<b>Identity Morphism (id)</b><br/>Minimal anchor of distinction, self-identity & identifiers"]:::base
+        SPAN["<b>Relation (Span Structure)</b><br/>Primary subject of reality connecting entities"]:::base
+        ID <-->|"Distinction & Binding"| SPAN
+    end
+
+    subgraph L1 ["[Layer 1 / Papers 1 & 2] Single Field of Sense & Universal Form"]
+        C_FORM["<b>Category of Form (C_FORM) & Execution Semantics (E_exec)</b><br/>Static Schema (Quotient 2-Cat C) + Dynamic Flow (Monoidal Cat DF)"]:::formal
+        ZERO["<b>Initial Object 0 (Empty Space)</b><br/>Immediate self-elimination of inconsistency & polysemy"]:::collapse
+        C_FORM -.->|"Inconsistency collapses"| ZERO
+    end
+
+    subgraph L2 ["[Layer 2 / Paper 3] Inter-Field Bridges & Structural Transformation"]
+        BRIDGE["<b>Bridges (B) & Aspectual Fields (M_Aspect)</b><br/>Cross-field correspondences (=>, <=>, REQUIRE) & boundary conditions"]:::bridge
+        TRANS["<b>Unique Structural Transformation</b><br/>Coend reconstruction isomorphic to Green's Function propagators"]:::bridge
+        BRIDGE --> TRANS
+    end
+
+    subgraph L3 ["[Layer 3 / Paper 4] Holographic Emergence (Boundary -> Bulk)"]
+        BULK["<b>Emergent Continuous Bulk Spacetime & Physical Laws</b><br/>Smooth spacetime & gravity via projective limits and sheaves"]:::holo
+    end
+
+    subgraph L4 ["[Layer 4 / Paper 4] Emergence & Intrinsic Consciousness (No-Homunculus)"]
+        CONSC["<b>Field of Consciousness & Thought (M_Consciousness)</b><br/>Auto-triggering transformation via Hidden Real Bridges (B*)<br/>(Ontological Necessity of Mathematical Form via Intrinsic Observer)"]:::mind
+    end
+
+    %% Inter-layer connections
+    L0 -->|"Partitioned into Fields of Sense"| C_FORM
+    C_FORM -->|"Plenitude & Autonomous Evolution"| BRIDGE
+    TRANS -->|"Emerges from discrete boundary forms"| BULK
+    BULK -->|"Multi-stage transformation from within"| CONSC
+    BRIDGE -.->|"Hidden Real Bridge (B*)"| CONSC
+    CONSC -.->|"Observes intension (phenomena)"| L0
+```
 
 ---
 
