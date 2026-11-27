@@ -279,6 +279,25 @@ $$\langle p_O, p_T \rangle : A \longrightarrow O \times T$$
 
    圏論におけるスケッチ理論（Sketch Theory）の標準定理により、有限積（識別子・構造型）、有限余積（`Is-a`）、引き戻し・スパン（関連クラス・参照特徴値）、および可換図式（合同関係 $\mathcal{R}$）を備えた商圏の記述力は、幾何学的論理（Geometric Logic）で公理化可能なあらゆる数理的・概念的構造のモデル圏（局所表示可能圏）と圏同値となる表現能力を持つ。 $\blacksquare$
 
+#### 【証明（Proof）】
+
+幾何学的論理（Geometric Logic）の断片および局所表示可能圏（Locally Presentable Category）の標準理論（Gabriel–Ulmer 双対性および Barr–Wells のスケッチ理論）により、対象領域 $\mathcal{SYS}$ の任意の静的意味構造は、有限極限（Finite Limits）と有限余極限（Finite Colimits）の図式を備えた圏論的スケッチ（Sketch） $\mathbb{S} = (\mathcal{G}_{\mathbb{S}}, \mathcal{L}_{\mathbb{S}}, \mathcal{K}_{\mathbb{S}})$ として表現される。以下、スケッチ $\mathbb{S}$ のすべての構成要素が、本稿の最小基底からなる商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ へと情報損失なく等価還元されることを4段階で示す。
+
+1. **任意多項関係（$n$-ary Relations）の関連クラススパンへの還元：**
+   対象領域に任意の $n$ 項関係 $R \subseteq X_1 \times X_2 \times \dots \times X_n$（$n \ge 2$）が存在するとき、独立した概念クラス（関連クラス） $A_R \in \mathcal{K}$ を導入し、各成分への $n$ 本の射影射 $p_k : A_R \to X_k$（$A_R$ 側の多重度はすべて `1`）と、その普遍媒介射
+   $$\langle p_1, p_2, \dots, p_n \rangle : A_R \hookrightarrow \prod_{k=1}^n X_k$$
+   を課す（公理 C-2 の自然な $n$ 脚スパン拡張）。任意の構造保存関手 $\mathcal{F}$ において、$\mathcal{F}(A_R)$ の元は直積 $\prod_{k=1}^n \mathcal{F}(X_k)$ の部分集合と一意に同一視されるため、任意の $n$ 項関係および関係自体に付随する高次属性は、二項リレーションシップと関連クラスの組み合わせに完全に還元される。
+
+2. **有限積・イコライザー・引き戻しの識別子および参照可換図式への還元：**
+   有限積 $A \times B$ は、両端に多重度 `1` を持つ関連クラススパン $A \xleftarrow{p_A} P \xrightarrow{p_B} B$（ただし $P$ の台集合が直積全体と一致する全射的スパン）として表現される。また、平行な射の対 $f, g : A \rightrightarrows B$ のイコライザー（等化子）および引き戻し $A \times_C B$ は、商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ の合同関係 $\mathcal{R}$ における可換図式制約（公理 C-1.5 および公理 C-4 の参照特徴値等式 $\beta_{B \to A} = \alpha_I \circ r$）と、個体一意性を保証する識別子モニック射 $\alpha_I$（公理 C-1）によって一意に実現される。
+
+3. **有限余積および部分対象分類の `Is-a`・列挙型・4種多重度への還元：**
+   対象領域における任意の排他的直和分解（有限余積）は `Is-a` 関係 $S \cong \coprod_{i=1}^m C_i$（公理 C-3）によって表現され、有限個の定数選択肢は内因性・外因性列挙型（$\mathcal{D}_{\mathrm{Enum-Int}}, \mathcal{D}_{\mathrm{Enum-Ext}}$）によって表現される。また、二項対応における任意の濃度制約は、全域性（下限 $0$ か $1$ か）と単射性・関数性（上限 $1$ か可算無限 $\infty$ か）の直積 $2 \times 2 = 4$ 通りに対応する4種の多重度基底（`1`, `0..1`, `1..*`, `*`）によってトポロジー的に網羅される。
+
+4. **モデル圏の圏同値性（スケッチ定理による普遍性）：**
+   以上の還元構成により、元の幾何学的論理・スケッチ $\mathbb{S}$ のモデル圏 $\mathrm{Mod}(\mathbb{S})$ と、構成された商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ 上の構造保存 2-関手圏 $\mathrm{Valid}(\mathcal{C})$ とのあいだに自然な圏同値 $\mathrm{Mod}(\mathbb{S}) \simeq \mathrm{Valid}(\mathcal{C})$ が誘導される。よって、新たなプリミティブを追加することなく、本稿の最小基底のみで任意の静的意味構造が過不足なく記述可能である。 $\blacksquare$
+
+
 ### 5.2 存在定理：厳密なスキーマ圏の構成的実在
 まず、厳密な制約（公理 C-Base 〜 C-5 および非縮退公理）を課したスキーマ圏 $\mathcal{C}$ が、制約同士の矛盾によって空虚な体系（$\mathrm{Valid}(\mathcal{C}) = \emptyset$）に陥ることなく、実効的な「存在の形式」として構成可能であることを示す。
 
@@ -306,6 +325,29 @@ $$\mathrm{Valid}(\mathcal{C}) \neq \emptyset$$
 
    上記の構成において、すべての可換図式（参照整合性および閉路の可換性）と 2-射による命題評価（公理 C-0, C-5）は定義により等式拘束を満たすため、誘導される関手 $\mathcal{F}$ は商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ のすべての制約を保存する $\mathrm{Valid}(\mathcal{C})$ の元となる。 $\blacksquare$
 
+#### 【証明（Proof）】
+
+商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ の普遍性により、$\mathcal{C}$ 上の構造保存 2-関手 $\mathcal{F} : \mathcal{C} \to \mathbf{2\text{-}Set}$ を構成することは、生成自由 2-圏 $CG$ 上の 2-関手 $\widetilde{\mathcal{F}} : CG \to \mathbf{2\text{-}Set}$ を構成し、それが合同関係 $\mathcal{R}$ を生成するすべての等式制約および公理 C-0〜C-5 を保存することを示すことと同値である。以下、4つの補題を通じて $\widetilde{\mathcal{F}}$ を段階的に構成する。
+
+1. **補題 1（`Is-a` 階層の非循環性と概念クラスの帰納的個体割り当て）：**
+   公理 C-3（排他必須な `Is-a` 特化）および非縮退公理（恒等射縮退の禁止）を満足する概念クラス集合 $\mathcal{K}$ において、`Is-a` 包含射 $\iota_i : C_i \to S$ が張る特化関係は有限の有向非循環グラフ（DAG）をなす。仮に循環列 $A_0 \to A_1 \to \dots \to A_m = A_0$（$m \ge 1$）が存在すれば、余積包含の合成により $A_0$ が自身の真部分対象と同型になるか、非自明な合成経路が恒等射 $\mathrm{id}_{A_0}$ と同一視されることになり前提に反するためである。
+   よってトポロジカルソートにより、他のいかなるクラスのスーパー側にもなっていない最下層の葉クラス群 $\mathcal{K}_{\mathrm{leaf}}$ が存在する。各葉クラス $L \in \mathcal{K}_{\mathrm{leaf}}$ に対し、互いに素な非空有限集合 $\widetilde{\mathcal{F}}(L)$（濃度 $N \ge 2$）を割り当て、サブクラス群 $\{C_1, \dots, C_n\}$ がすでに定義されたスーパークラス $S$ に対しては、非交和（余積）
+   $$\widetilde{\mathcal{F}}(S) \equiv \coprod_{i=1}^n \widetilde{\mathcal{F}}(C_i)$$
+   とカノニカル単射 $\widetilde{\mathcal{F}}(\iota_i) = \mathrm{in}_i$ を帰納的に割り当てる。これにより任意の $i \neq j$ で引き戻し $\widetilde{\mathcal{F}}(C_i) \times_{\widetilde{\mathcal{F}}(S)} \widetilde{\mathcal{F}}(C_j) = \emptyset$（始対象 $0$）が成立し、公理 C-3 が厳密に充足される。
+
+2. **補題 2（データ型の割り当てと識別子の単射埋め込み）：**
+   各静的データ型 $T \in \mathcal{D}_{\mathrm{static}}$ に対し、定義 2.5 に従い非空の台集合 $\widetilde{\mathcal{F}}(T)$（$\mathcal{D}_{\mathrm{Scalar}}$ には対応する数集合、$\mathcal{D}_{\mathrm{UID}}$ には可算無限集合 $\mathbb{N}$、$\mathcal{D}_{\mathrm{Enum}}$ には指定された有限完備束、$\mathcal{D}_{\mathrm{Ext}}$ には自由モノイド $\Sigma^*$ 等）を割り当てる。各識別子 $I = \{i_1, \dots, i_k\} \in \mathcal{U}_A$ の積集合 $\mathcal{P}_I \equiv \prod_{j=1}^k \widetilde{\mathcal{F}}(T_{i_j})$ に対し、補題 1 の葉クラス個体数 $N$ を $N \le \min_{A, I} |\mathcal{P}_I|$ と選ぶことで常に $|\widetilde{\mathcal{F}}(A)| \le |\mathcal{P}_I|$ が保証される。したがって、特徴値直積 $\prod_{i \in \Lambda_A} \widetilde{\mathcal{F}}(T_i)$ への単射を固定し各成分へ射影することで、すべての $I \in \mathcal{U}_A$ について単射 $\widetilde{\mathcal{F}}(\alpha_I)$ が構成され、公理 C-1 が充足される。
+
+3. **補題 3（多重度制約および非対角性を同時に満たす意味的リンクの構成）：**
+   - **異なるクラス間の場合（$O \neq T$）：** `Is-a` による制約等式を満たす共通の個体数 $M \ge 2$ に台集合の濃度を揃えることで、全単射グラフ $E_R = \{(o_s, t_s) \mid 1 \le s \le M\} \subseteq \widetilde{\mathcal{F}}(O) \times \widetilde{\mathcal{F}}(T)$ を構成できる。全単射グラフはすべての元のファイバー濃度が厳密に $1$ であるため、`1`, `0..1`, `1..*`, `*` の4種すべての多重度条件を同時に満たす。
+   - **再帰的リレーションシップの場合（$O = T$）：** 同一クラス $A$ 上の自己参照射 $r : A \to A$ については、$\widetilde{\mathcal{F}}(A) = \{a_0, a_1, \dots, a_{M-1}\}$（$M \ge 2$）上の巡回置換（シフト写像） $\sigma(a_s) \equiv a_{(s+1) \bmod M}$ のグラフ $E_R = \{(a_s, a_{(s+1) \bmod M}) \mid 0 \le s < M\}$ を割り当てる。$M \ge 2$ よりすべての $s$ で $a_s \neq a_{(s+1) \bmod M}$ となるため対角成分 $(a, a)$ は一切含まれず（定義 4.1 の対角線埋没の排除）、かつ $\sigma$ は全単射であるため4種すべての多重度基底を充足する。
+   - **関連クラスおよび可換閉路の整合性：** 関連クラス $R_{\mathrm{assoc}}$ にはリンク集合 $E_R$ 自体を台集合として割り当てることで媒介射 $\langle \widetilde{\mathcal{F}}(p_O), \widetilde{\mathcal{F}}(p_T) \rangle : E_R \hookrightarrow \widetilde{\mathcal{F}}(O) \times \widetilde{\mathcal{F}}(T)$ が包含単射となる（公理 C-2）。また、閉路（可換図式）を形成するリレーション群には共通の巡回群 $\mathbb{Z}/M\mathbb{Z}$ の生成元の冪乗として全単射を割り当てることで、すべての合成等式を保存する。
+
+4. **補題 4（参照特徴値の確定と商 2-圏への降下）：**
+   公理 C-1.5 および公理 C-4 が要請するすべての参照特徴値射 $\beta_{B \to A}$ を合成 $\widetilde{\mathcal{F}}(\beta_{B \to A}) \equiv \widetilde{\mathcal{F}}(\alpha_I) \circ \widetilde{\mathcal{F}}(r)$ によって定義し、2-射 $\widetilde{\mathcal{F}}(\mu)$ には $E_R$ 上で $\mathrm{True}$ を返す特性写像（公理 C-0）を割り当て、$\mathcal{C}$ 外部の語彙を始対象 $0$ へ写像する（公理 C-5）。以上により $\widetilde{\mathcal{F}}$ は合同関係 $\mathcal{R}$ を生成するすべての制約を保存するため、商 2-圏 $\mathcal{C} \equiv CG/\mathcal{R}$ の普遍性により $\widetilde{\mathcal{F}} = \mathcal{F} \circ \pi_{\mathcal{R}}$ を満たす構造保存 2-関手 $\mathcal{F} \in \mathrm{Valid}(\mathcal{C})$ が一意に誘導される。よって $\mathrm{Valid}(\mathcal{C}) \neq \emptyset$ が証明された。 $\blacksquare$
+
+
+
 この定理は、実務における「抽象化＝曖昧化」という誤解を完全に覆す。むしろ、曖昧さを排除して識別子・型・多重度・直和分解を厳密に固定したからこそ、矛盾のないインスタンスモデルが構成可能となり、スキーマ圏 $\mathcal{C}$ の実在性が保証されるのである。
 
 ---
@@ -330,6 +372,31 @@ $\mathcal{C}_1$ と $\mathcal{C}_2$ がともに同一の意味の場 $\mathcal{
 2. **Lawvere 関手意味論の双対性（再構成定理）：**
 
    関手意味論（Lawvere Theories および有限完備・余完備圏における Gabriel-Ulmer 双対性）の標準定理により、有限極限・余極限を保存するモデル圏の間の圏同値 $\mathrm{Valid}(\mathcal{C}_1) \simeq \mathrm{Valid}(\mathcal{C}_2)$ は、元のスキーマ圏の間の本質的な圏同値 $F : \mathcal{C}_1 \simeq \mathcal{C}_2$ を一意に誘導する。 $\blacksquare$
+
+
+#### 【証明（Proof）】
+
+スキーマ圏 $\mathcal{C}_1, \mathcal{C}_2$ がともに同一の意味の場 $\mathcal{SYS}$ を過不足なく厳密に記述している（定義 5.3）とき、両者の正当なモデル圏 $\mathrm{Valid}(\mathcal{C}_1)$ と $\mathrm{Valid}(\mathcal{C}_2)$ のあいだには、対象領域の状態空間 $\Omega_{\mathcal{SYS}}$ を媒介として、すべての有意味命題の真理値評価（内部論理）を保存する自然な圏同値
+$$\Phi : \mathrm{Valid}(\mathcal{C}_1) \xrightarrow{\;\sim\;} \mathrm{Valid}(\mathcal{C}_2), \qquad \Psi : \mathrm{Valid}(\mathcal{C}_2) \xrightarrow{\;\sim\;} \mathrm{Valid}(\mathcal{C}_1)$$
+（ただし $\Psi \circ \Phi \cong \mathrm{Id}_{\mathrm{Valid}(\mathcal{C}_1)}$ かつ $\Phi \circ \Psi \cong \mathrm{Id}_{\mathrm{Valid}(\mathcal{C}_2)}$）が存在する。以下、Gabriel–Ulmer 双対性および Lawvere 関手意味論の再構成手続きに従い、元のスキーマ圏の間の準逆 2-関手 $F : \mathcal{C}_1 \to \mathcal{C}_2$ および $G : \mathcal{C}_2 \to \mathcal{C}_1$ を明示的に構成する。
+
+1. **評価関手（Evaluation Functor）によるスキーマの埋め込み：**
+   各スキーマ圏 $\mathcal{C}_i$（$i \in \{1, 2\}$）に対し、対象 $X \in \mathrm{Ob}(\mathcal{C}_i)$ へ評価関手 $\mathrm{Ev}_X^{(i)} : \mathrm{Valid}(\mathcal{C}_i) \to \mathbf{2\text{-}Set}$（$\mathcal{F} \mapsto \mathcal{F}(X)$）を対応させる反変米田型評価 2-関手
+   $$\Upsilon_i : \mathcal{C}_i^{\mathrm{op}} \longrightarrow \mathbf{2\text{-}Cat}\!\left(\mathrm{Valid}(\mathcal{C}_i),\, \mathbf{2\text{-}Set}\right)$$
+   を考える。商 2-圏 $\mathcal{C}_i \equiv CG_i/\mathcal{R}_i$ は有限完備・有限余完備であり、かつ定理 5.2 により十分な数のモデル（分離族）を持つため、$\Upsilon_i$ は忠実充満（Fully Faithful）な 2-関手であり、その像は「極限およびフィルター余極限を保存する連続関手」の圏と圏同値となる（Lawvere–Gabriel–Ulmer 再構成定理）。
+
+2. **関手 $F : \mathcal{C}_1 \to \mathcal{C}_2$ の構成と普遍性による正規化：**
+   任意の対象 $X \in \mathrm{Ob}(\mathcal{C}_1)$ に対し、合成関手 $\mathrm{Ev}_X^{(1)} \circ \Psi : \mathrm{Valid}(\mathcal{C}_2) \to \mathbf{2\text{-}Set}$ は極限とフィルター余極限を保存する。したがって、$\Upsilon_2$ の本質的全射性により、$\mathcal{C}_2$ 内に
+   $$\mathrm{Ev}_{F(X)}^{(2)} \cong \mathrm{Ev}_X^{(1)} \circ \Psi$$
+   を満たす対象 $F(X) \in \mathrm{Ob}(\mathcal{C}_2)$ が一意（同型を除いて一意）に定まり、$\Upsilon_2$ の忠実充満性によって射および 2-射への作用 $F(f) : F(X) \to F(Y)$ も一意に誘導される。
+   このとき、表現形式の差異は商 2-圏の合同関係 $\mathcal{R}_i$ と普遍性によって自動的に吸収される。たとえば、$\mathcal{C}_1$ がリレーション射 $r : B \to A$ を基本射として持ち、$\mathcal{C}_2$ が参照特徴値 $\beta_{B \to A}$ と識別子 $\alpha_I$ の引き戻しとして同一の事実を表現している場合でも、可換図式 $\beta_{B \to A} = \alpha_I \circ r$（公理 C-1.5, C-4）が評価関手 $\mathrm{Ev}^{(i)}$ のもとで自然同型なファイバーを誘導するため、$F$ はこの両者を $\mathcal{C}_2$ 内の同型な射へと写す。同様に、関連クラスのスパン頂点（公理 C-2）と `Is-a` の余積分解（公理 C-3）もそれぞれの普遍性の一意性（Unique up to unique isomorphism）により保存される。
+
+3. **圏同値 $\mathcal{C}_1 \simeq \mathcal{C}_2$ の成立：**
+   まったく対称に $\Phi$ から 2-関手 $G : \mathcal{C}_2 \to \mathcal{C}_1$ を構成すると、すべての $X \in \mathrm{Ob}(\mathcal{C}_1)$ に対して
+   $$\mathrm{Ev}_{G(F(X))}^{(1)} \cong \mathrm{Ev}_{F(X)}^{(2)} \circ \Phi \cong \mathrm{Ev}_X^{(1)} \circ \Psi \circ \Phi \cong \mathrm{Ev}_X^{(1)}$$
+   が成り立つ。$\Upsilon_1$ が忠実充満であることから自然同型 $\eta : \mathrm{Id}_{\mathcal{C}_1} \xrightarrow{\sim} G \circ F$ が誘導され、同様に $\varepsilon : F \circ G \xrightarrow{\sim} \mathrm{Id}_{\mathcal{C}_2}$ が誘導される。よって $F$ と $G$ は準逆な 2-関手対をなし、スキーマ圏の圏同値 $\mathcal{C}_1 \simeq \mathcal{C}_2$ が証明された。 $\blacksquare$
+
+
 
 この同型定理により、「ある意味の場を厳密に記述する正しいスキーマは本質的にただ一つ（同型を除いて一意）である」ことが保証される。したがって、どれほど異なる記法や異なる表現経路から出発したモデラーであっても、厳密化の条件を突き詰めていく限り、必ず数学的に同一のスキーマ構造へと到達する。
 
@@ -372,6 +439,30 @@ $$\mathcal{C}^{(0)} \longrightarrow \mathcal{C}^{(1)} \longrightarrow \cdots \lo
 **証明の概略（Proof Sketch）：**
 
 精密化演算 $\mathcal{R}_{\text{sub}}$（余積分解）および $\mathcal{R}_{\text{assoc}}$（スパン頂点の導入）は、いずれもスキーマ圏の生成グラフに新たな対象・識別子・直和／スパン制約を追加し、合同関係 $\mathcal{R}^{(n)} \subset \mathcal{R}^{(n+1)}$ を強める操作であるため、対応するインスタンス空間の忘却射影 $\mathrm{Valid}(\mathcal{C}^{(n+1)}) \to \mathrm{Valid}(\mathcal{C}^{(n)})$ は、過剰に許容されていた偽モデル（`0..1` や未分化多対多が許していた不正状態）を段階的に排除する単射的制限を与える。対象領域 $\mathcal{SYS}$ が可算個の生成要素（クラスと関係）によって稠密に張られる（可分性の公理）とき、圏論の密度の定理（Density Theorem）により、すべての表現関手 $h^X$ の有限余極限の増大列の極限は元の関手 $\mathcal{F}$ を自然同型を除いて一意に復元する。したがって、有限の人間による段階的なアブダクションと構造精密化は、数学的に必ず真のスキーマ圏 $\mathcal{C}^*$ へと漸近収束する。 $\blacksquare$
+
+#### 【証明（Proof）】
+
+有限のモデラーがアブダクションと構造精密化演算（$\mathcal{R}_{\mathrm{sub}}, \mathcal{R}_{\mathrm{assoc}}$）を反復して構成する近似スキーマ圏の列を $\mathcal{C}^{(0)} \xrightarrow{J_0} \mathcal{C}^{(1)} \xrightarrow{J_1} \cdots \xrightarrow{J_{n-1}} \mathcal{C}^{(n)} \to \cdots$ とし、各段階から真のスキーマ圏 $\mathcal{C}^*$ への構造埋め込み関手を $I_n : \mathcal{C}^{(n)} \to \mathcal{C}^*$ とする。以下、3つの主張を順に証明する。
+
+1. **主張 1（モデル空間の単調縮小と偽状態の排除）：**
+   - **演算 $\mathcal{R}_{\mathrm{sub}}$（サブクラス化による直和分解）の場合：** 近似段階 $\mathcal{C}^{(n)}$ においてクラス $S$ が多重度 `0..1` の関係 $r : S \to B$ や部分的属性を持っていたとき、モデル空間 $\mathrm{Valid}(\mathcal{C}^{(n)})$ には「条件を満たさない個体にもリンクが張られる／必須の個体にリンクが欠落する」という現実にはあり得ない偽状態が含まれる。$\mathcal{R}_{\mathrm{sub}}$ によって $S \cong C_1 \amalg C_2$ と排他直和分解し（公理 C-3）、リンクをサブクラス $C_1$ 上の多重度 `1` の関係 $r' : C_1 \to B$ へと制約強化すると、前合成（Precomposition）によって誘導される忘却制限関手
+     $$J_n^* : \mathrm{Valid}(\mathcal{C}^{(n+1)}) \longrightarrow \mathrm{Valid}(\mathcal{C}^{(n)}), \qquad \mathcal{F} \longmapsto \mathcal{F} \circ J_n$$
+     は、$C_2$ に属する個体が $r$ を持つような不正なインスタンス関手をすべて排除するため、同型を除いて単射的（忠実かつ対象上で単射）な部分圏への埋め込みを与える。
+   - **演算 $\mathcal{R}_{\mathrm{assoc}}$（関連クラス化による多脚スパンへの統合）の場合：** 未分化な多対多関係 $O \leftrightarrow T$ を媒介単射 $\langle p_O, p_T \rangle : A \hookrightarrow O \times T$ を持つ関連クラス $A$（公理 C-2）へと対象化することで、重複ペアの混入や関係固有属性の不整合を持つ偽状態が $\mathrm{Valid}(\mathcal{C}^{(n+1)})$ から排除される。
+   以上より、近似列に沿って正当なモデル空間の単調包含列
+   $$\mathrm{Valid}(\mathcal{C}^*) \subseteq \cdots \subseteq \mathrm{Valid}(\mathcal{C}^{(n+1)}) \subseteq \mathrm{Valid}(\mathcal{C}^{(n)}) \subseteq \cdots \subseteq \mathrm{Valid}(\mathcal{C}^{(0)})$$
+   が成立し、近似誤差（許容される偽状態の領域）は単調に縮小する。
+
+2. **主張 2（密度の定理と帰納的極限における圏同値 $\varinjlim \mathcal{C}^{(n)} \simeq \mathcal{C}^*$）：**
+   対象領域 $\mathcal{SYS}$ は可算個の概念クラスと関係によって張られる（可分性の公理）ため、各ステップで識別可能な区別（ファイバー分離）が厳密に増加するとき、真のスキーマ圏 $\mathcal{C}^*$ のすべての対象 $X$ と射 $f$ はある有限段階 $N$ 以降の $\mathcal{C}^{(N)}$ の像に含まれ、かつ $\mathcal{C}^*$ の合同関係 $\mathcal{R}^*$ を生成するすべての可換図式・直和・スパン制約は精密化列の合同関係の和集合 $\bigcup_{n=0}^{\infty} \mathcal{R}^{(n)}$ によって網羅される。したがって、2-圏の圏におけるフィルター付き帰納的極限（Colimit）について
+   $$\mathcal{C}_{\infty} \equiv \varinjlim_{n \to \infty} \mathcal{C}^{(n)} \simeq \mathcal{C}^*$$
+   が成り立つ。さらに、圏論の密度の定理（Density Theorem / Co-Yoneda 補題）により、任意の正当な状態関手 $\mathcal{F} \in \mathrm{Valid}(\mathcal{C}^*)$ は表現関手 $h^X = \mathcal{C}^*(X, -)$ の余極限
+   $$\mathcal{F} \cong \operatorname{colim}_{(X, a) \in \int \mathcal{F}} h^X$$
+   として一意に展開されるため、極限スキーマ $\mathcal{C}_{\infty}$ のモデル空間も $\mathrm{Valid}(\mathcal{C}_{\infty}) \simeq \mathrm{Valid}(\mathcal{C}^*)$ へと一意に収束する。
+
+3. **主張 3（有限ステップでの実用的十分性）：**
+   無限の極限に到達する前の任意の有限段階 $N$ において停止した場合であっても、すでに $\mathcal{R}_{\mathrm{sub}}, \mathcal{R}_{\mathrm{assoc}}$ によって分節化が完了した部分スキーマ圏 $\mathcal{C}_{\mathrm{sub}}^{(N)} \subseteq \mathcal{C}^{(N)}$ 上では、埋め込み $I_N|_{\mathcal{C}_{\mathrm{sub}}^{(N)}}$ は忠実充満かつ極限・余極限を保存する。したがって、任意の真の状態 $\mathcal{F}^* \in \mathrm{Valid}(\mathcal{C}^*)$ の制限 $\mathcal{F}^*|_{\mathcal{C}_{\mathrm{sub}}^{(N)}}$ は $\mathrm{Valid}(\mathcal{C}_{\mathrm{sub}}^{(N)})$ の正当な元となり、当該業務・制御領域のスコープ内においては真のスキーマと完全に同型な健全モデルとして機能する。 $\blacksquare$
+
 
 ## 6. 実践的意義と結論（Practical Implications and Conclusion）
 
